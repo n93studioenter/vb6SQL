@@ -72,23 +72,23 @@ Private Function FixFormatDate(ByVal SQL As String) As String
     Dim matches As Object
     Set matches = regex.Execute(result)
     Dim match As Object
-    Dim fieldName As String
+    Dim FieldName As String
     Dim dateFormat As String
     Dim sqlCode As String
     For Each match In matches
-        fieldName = match.SubMatches(0)
+        FieldName = match.SubMatches(0)
         dateFormat = LCase(match.SubMatches(1))
         Select Case dateFormat
             Case "dd/mm/yy", "dd/mm/yyyy", "dd\/mm\/yy", "dd\/mm\/yyyy"
-                sqlCode = "CONVERT(varchar, " & fieldName & ", 3)"
+                sqlCode = "CONVERT(varchar, " & FieldName & ", 3)"
             Case "mm/dd/yy", "mm/dd/yyyy"
-                sqlCode = "CONVERT(varchar, " & fieldName & ", 1)"
+                sqlCode = "CONVERT(varchar, " & FieldName & ", 1)"
             Case "yyyymmdd"
-                sqlCode = "CONVERT(varchar, " & fieldName & ", 112)"
+                sqlCode = "CONVERT(varchar, " & FieldName & ", 112)"
             Case "dd/mm/yyyy hh:nn:ss", "dd/mm/yy hh:nn:ss"
-                sqlCode = "CONVERT(varchar, " & fieldName & ", 103)"
+                sqlCode = "CONVERT(varchar, " & FieldName & ", 103)"
             Case Else
-                sqlCode = "CONVERT(varchar, " & fieldName & ", 103)"
+                sqlCode = "CONVERT(varchar, " & FieldName & ", 103)"
         End Select
         result = Replace(result, match.Value, sqlCode)
     Next
@@ -106,11 +106,11 @@ Private Function FixConvertError(ByVal SQL As String) As String
     Dim matches As Object
     Set matches = regex.Execute(result)
     Dim match As Object
-    Dim fieldName As String
+    Dim FieldName As String
     Dim dateFormat As String
     Dim formatCode As String
     For Each match In matches
-        fieldName = match.SubMatches(0)
+        FieldName = match.SubMatches(0)
         dateFormat = LCase(match.SubMatches(1))
         Select Case dateFormat
         Case "dd/mm/yy", "dd/mm/yyyy", "dd\/mm\/yy", "dd\/mm\/yyyy"
@@ -122,7 +122,7 @@ Private Function FixConvertError(ByVal SQL As String) As String
         Case Else
             formatCode = "3"
         End Select
-        result = Replace(result, match.Value, "CONVERT(varchar, " & fieldName & ", " & formatCode & ")")
+        result = Replace(result, match.Value, "CONVERT(varchar, " & FieldName & ", " & formatCode & ")")
     Next
     FixConvertError = result
 End Function
@@ -140,10 +140,10 @@ Private Function FixElseEndConcat(ByVal SQL As String) As String
         Do While endField <= Len(result) And (Mid(result, endField, 1) Like "[A-Za-z0-9_.]")
             endField = endField + 1
         Loop
-        Dim fieldName As String
-        fieldName = Mid(result, startField, endField - startField)
+        Dim FieldName As String
+        FieldName = Mid(result, startField, endField - startField)
         Dim newText As String
-        newText = "ELSE ISNULL(" & fieldName & ", '') END"
+        newText = "ELSE ISNULL(" & FieldName & ", '') END"
         result = Left(result, pos - 1) & newText & Mid(result, endField)
         pos = InStr(pos + 1, result, "ELSE '' END+", vbTextCompare)
     Loop
@@ -436,15 +436,19 @@ Public Function FixSQL(ByVal SQL As String) As String
     s = Replace(s, "(TRUE)", "(1=1)", , , vbTextCompare)
     s = Replace(s, " TRUE ", " 1=1 ", , , vbTextCompare)
 
-    ' Val(field) -> CAST(field AS BIGINT)
+    ' Val(field) -> CAST(field AS BIGINT) - S?A L?I PATTERN
     Dim reg As Object
     Set reg = CreateObject("VBScript.RegExp")
-
+    
     reg.Global = True
     reg.IgnoreCase = True
-    reg.pattern = "Val\s*\(\s*([^)]+)\s*\)"
-
-    s = reg.Replace(s, "CAST($1 AS BIGINT)")
+    ' Pattern m?i: b?t du?c val(ChungTu.SoHieu), val(ChungTuP.SoHieu), val(SoHieu), v.v.
+    reg.pattern = "Val\s*\(\s*([\w\.]+\.)?SoHieu\s*\)"
+    
+    s = reg.Replace(s, "TRY_CAST($1SoHieu AS BIGINT)")
+    
+    ' N?u v?n mu?n dùng CAST thông thu?ng:
+    ' s = reg.Replace(s, "CAST($1SoHieu AS BIGINT)")
 
     ' Lo?i b? DISTINCT n?u có GROUP BY
     If InStr(1, s, "GROUP BY", vbTextCompare) > 0 Then
@@ -498,10 +502,10 @@ Public Function FixSpecialSQL(ByVal SQL As String) As String
             If comma2 > 0 Then
                 endPos = InStr(comma2 + 1, result, ")")
                 If endPos > 0 Then
-                    Dim fieldName As String
-                    fieldName = Trim(Mid(result, pos + 16, comma1 - pos - 16))
+                    Dim FieldName As String
+                    FieldName = Trim(Mid(result, pos + 16, comma1 - pos - 16))
                     Dim newConvert As String
-                    newConvert = "CONVERT(varchar, " & fieldName & ", 103)"
+                    newConvert = "CONVERT(varchar, " & FieldName & ", 103)"
                     result = Left(result, pos - 1) & newConvert & Mid(result, endPos + 1)
                 End If
             End If
@@ -695,17 +699,17 @@ Public Function CreateTableDef(Name As String) As Object
     Set CreateTableDef = tdf
 End Function
 
-Public Function GetTableDef(TableName As String) As Object
+Public Function GetTableDef(tableName As String) As Object
     On Error Resume Next
     Dim tdf As Object
     If m_TableDefs.count = 0 Then
         LoadTableDefs
     End If
-    Set tdf = m_TableDefs(TableName)
+    Set tdf = m_TableDefs(tableName)
     If tdf Is Nothing Then
         Set tdf = CreateObject("clsTableDef")
-        tdf.Init TableName, Conn
-        m_TableDefs.Add tdf, TableName
+        tdf.Init tableName, Conn
+        m_TableDefs.Add tdf, tableName
     End If
     Set GetTableDef = tdf
 End Function
@@ -759,19 +763,19 @@ Public Function GetLastRow(q As String, f As String) As Variant
     Set rs = Nothing
 End Function
 
-Public Sub CreateIndex(TableName As String, IndexName As String, ColumnName As String, Optional IsUnique As Boolean = False, Optional IsClustered As Boolean = False)
+Public Sub CreateIndex(tableName As String, IndexName As String, ColumnName As String, Optional IsUnique As Boolean = False, Optional IsClustered As Boolean = False)
     Dim SQL As String
     Dim uniqueStr As String
     Dim clusteredStr As String
-    SQL = "IF EXISTS (SELECT * FROM sys.indexes WHERE name = '" & IndexName & "' AND object_id = OBJECT_ID('" & TableName & "')) " & _
-          "DROP INDEX " & IndexName & " ON " & TableName & "; "
+    SQL = "IF EXISTS (SELECT * FROM sys.indexes WHERE name = '" & IndexName & "' AND object_id = OBJECT_ID('" & tableName & "')) " & _
+          "DROP INDEX " & IndexName & " ON " & tableName & "; "
     If IsUnique Then
         uniqueStr = "UNIQUE "
     End If
     If IsClustered Then
         clusteredStr = "CLUSTERED "
     End If
-    SQL = SQL & "CREATE " & uniqueStr & clusteredStr & "INDEX " & IndexName & " ON " & TableName & " (" & ColumnName & ")"
+    SQL = SQL & "CREATE " & uniqueStr & clusteredStr & "INDEX " & IndexName & " ON " & tableName & " (" & ColumnName & ")"
     Me.ExecuteSQL SQL
 End Sub
 
