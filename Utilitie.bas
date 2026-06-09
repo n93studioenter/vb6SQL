@@ -617,7 +617,7 @@ Public Sub SetRptInfo()
     
     ' Ch? dùng Connect
     'frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=pc43\SQLEXPRESS;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
-    frmMain.Rpt.connect = "DSN=THB;UID=sa;PWD=123456"
+    frmMain.Rpt.Connect = "DSN=THB;UID=sa;PWD=123456"
 
     frmMain.Rpt.WindowShowPrintSetupBtn = True
 End Sub
@@ -905,7 +905,9 @@ Public Function BangDaCo(T As String) As Boolean
     Dim i As Integer
     
     BangDaCo = False
-    For i = 0 To DBKetoan.TableDefs.count - 1
+    DBKetoan.LoadTableDefs
+
+    For i = 1 To DBKetoan.TableDefs.count - 1
         If UCase(DBKetoan.TableDefs(i).Name) = UCase(T) Then
             BangDaCo = True
             Exit For

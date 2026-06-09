@@ -7043,7 +7043,7 @@ End Function
 
 Private Sub btnImportXML_Click()
     Dim kq As String
-    kq = LayThongTinMST_Masothue("037051000158-bui-duc-cuong")
+    'kq = LayThongTinMST_Masothue("037051000158-bui-duc-cuong")
 
     btnReset_Click
     dshdloi = ""
@@ -7062,20 +7062,20 @@ Private Sub btnImportXML_Click()
             "AND t.ID = (" & _
           "   SELECT MIN(t2.ID) FROM tbimport AS t2 " & _
           "   WHERE t2.SHDon = t.SHDon " & _
-          " And t2.KHHDon = t.KHHDon " & _
+          "   AND t2.KHHDon = t.KHHDon " & _
           "   AND t2.Type = t.Type " & _
-          "   AND DateValue(t2.NLap) = DateValue(t.NLap)" & _
+          "   AND CAST(t2.NLap AS DATE) = CAST(t.NLap AS DATE)" & _
             ") " & _
             "AND NOT EXISTS (" & _
           "   SELECT * FROM HoaDon AS h " & _
           "   INNER JOIN ChungTu AS c ON h.MaSo = c.MaSo " & _
           "   WHERE t.SHDon = h.SoHD " & _
-          " AND t.KHHDon = h.KyHieu " & _
+          "   AND t.KHHDon = h.KyHieu " & _
           "   AND ( " & _
           "       (t.Type = '1' AND h.Loai = -1) " & _
           "       OR (t.Type = '2' AND h.Loai = 1) " & _
           "   ) " & _
-          "   AND DateValue(t.NLap) = DateValue(h.NgayPH)" & _
+          "   AND CAST(t.NLap AS DATE) = CAST(h.NgayPH AS DATE)" & _
             ")"
 
 
@@ -11850,8 +11850,15 @@ Private Sub GrdChungtu_DblClick()
         .col = 27
         frmSoLo.txtsolo.Text = .Text
         .col = 28
-        frmSoLo.txtngaynhap.Text = IIf(Len(.Text) <= 0, "01/01/11", .Text)
-
+        'frmSoLo.txtngaynhap.Text = IIf(Len(.Text) <= 0, "01/01/11", .Text)
+        With frmSoLo.txtngaynhap
+            If Len(.Text & "") <= 0 Then
+                .Text = "01/01/11"
+            Else
+                .Text = .Text
+            End If
+ 
+        End With
         .Row = r
         .RemoveItem .Row
         If .Rows < .tag Then .Rows = .tag
@@ -13391,15 +13398,15 @@ Private Sub txtChungtu_KeyPress(Index As Integer, KeyAscii As Integer)
                         Dim getPlvt As String
                         getPlvt = SelectSQL("SELECT SoHieu AS f1 FROM PhanLoaiVattu WHERE MaTK = " & CLng(getMaSo))
                         Dim i As Integer
-                        Dim Idx As Integer
-                        Idx = -1
+                        Dim idx As Integer
+                        idx = -1
                         For i = 0 To FrmVattu.CboLoai.ListCount - 1
                             Dim getchuoi As String
                             getchuoi = FrmVattu.CboLoai.List(i)
                             getchuoi = Split(getchuoi, " - ")(0)
                             If getchuoi = getPlvt Then
-                                Idx = i
-                                FrmVattu.CboLoai.ListIndex = Idx
+                                idx = i
+                                FrmVattu.CboLoai.ListIndex = idx
                                 Exit For
                             End If
                         Next
@@ -16325,8 +16332,12 @@ Private Sub TxtVT_Change(Index As Integer)
             txtVT(7).Text = rs!Ten
             Text1.Text = rs!Ten
             txtTenKH.Text = VniToUnicode(rs!Ten)
-            txtVT(8).Text = rs!DiaChi
-            txtDiaChi.Text = VniToUnicode(rs!DiaChi)
+            txtVT(8).Text = IIf(IsNull(rs!DiaChi), "", rs!DiaChi)
+            If IsNull(rs!DiaChi) Then
+                txtDiaChi.Text = ""
+            Else
+                txtDiaChi.Text = VniToUnicode(rs!DiaChi)
+            End If
             If txtVT(9).Text <> rs!mst Then
                 txtVT(9).Text = rs!mst
             End If
@@ -16349,7 +16360,7 @@ Private Sub TxtVT_Change(Index As Integer)
             End If
         Else
             If txtVT(9).Text <> "" And txtVT(9).Text <> "..." Then
-               ' ReadMst txtVT(9).Text
+                ' ReadMst txtVT(9).Text
             End If
         End If
 

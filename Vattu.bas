@@ -929,19 +929,19 @@ Public Sub TinhGVBHBQ(tdau As Integer, tcuoi As Integer, tl As Integer, mvt As L
       Dim m1 As Long, n1 As Long, SQL As String
 
     If OutCost = 0 Then
-        ExecuteSQL5 "DELETE * FROM ChungTu WHERE MaLoai=2 AND RIGHT(SoHieu,2)='GV' AND SoPS=0 AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mvt > 0, " AND MaVattu=" + CStr(mvt), "")
+        ExecuteSQL5 "DELETE  FROM ChungTu WHERE MaLoai=2 AND RIGHT(SoHieu,2)='GV' AND SoPS=0 AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mvt > 0, " AND MaVattu=" + CStr(mvt), "")
         If tl = vbYes Then
-            ExecuteSQL5 "DELETE * FROM ChungTu WHERE MaLoai=2 AND Right(SoHieu,2)='GV' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mvt > 0, " AND MaVattu=" + CStr(mvt), "")
+            ExecuteSQL5 "DELETE  FROM ChungTu WHERE MaLoai=2 AND Right(SoHieu,2)='GV' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mvt > 0, " AND MaVattu=" + CStr(mvt), "")
         End If
 
         m1 = SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '632*' AND TKCon=0 ORDER BY SoHieu")
         n1 = SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '1561*' AND TKCon=0 ORDER BY SoHieu")
         SQL = "INSERT INTO Chungtu (MaCT, MaLoai, SoHieu, ThangCT, NgayCT, NgayGS, MaNguon, MaKho, DienGiai," + IIf(pSongNgu, "DienGiaiE,", "") _
             + "MaTkNo, MaTkCo, SoPS, SoPS2No, SoPS2Co, MaVattu, GhiChu, CT_ID, MaDT, MaDT1, MaDT2, MaDT3,MaKH,CTGS,MaKHC,MaTP,DVT,User_ID,MaNV,HanTT,SH1,T1,TLCK,CK" + IIf(pTygia > 0, ",TyGia", "") + IIf(pGiaUSD > 0, ",PSUSD", "") + ") " _
-            & "SELECT DISTINCTROW 1000000+MaCT,2,ChungTu.SoHieu+'GV',ThangCT,NgayCT,NgayGS,MaNguon,MaKho,DienGiai," + IIf(pSongNgu, "DienGiaiE,", "") _
+            & "SELECT 1000000+MaCT,2,ChungTu.SoHieu+'GV',ThangCT,NgayCT,NgayGS,MaNguon,MaKho,DienGiai," + IIf(pSongNgu, "DienGiaiE,", "") _
             + "IIF(KhoHang.MaTKGV=0," + CStr(m1) + ",KhoHang.MaTKGV),IIF(PhanLoaiVattu.MaTK=0," + CStr(n1) + ",PhanLoaiVattu.MaTK), SoPS, SoPS2No, SoPS2Co, MaVattu, ChungTu.GhiChu, ChungTu.MaSo+500000000, MaDT, MaDT1, MaDT2, MaDT3,MaKH,CTGS,MaKHC,MaTP,DVT,User_ID,MaNV,HanTT,SH1,T1,TLCK,ChungTu.CK" + IIf(pTygia > 0, ",TyGia", "") + IIf(pGiaUSD > 0, ",PSUSD", "") _
             + " FROM (((" + ChungTu2TKNC(1) + ") INNER JOIN KhoHang ON ChungTu.MaKho=KhoHang.MaSo) INNER JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo" _
-            + " WHERE MaLoai=8 AND MaVattu>0 AND TK_ID=" + CStr(TKDT_ID) + " AND (Not HethongTK.SoHieu LIKE '5113*') AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mvt > 0, " AND MaVattu=" + CStr(mvt), "") + " ORDER BY ChungTu.NgayCT,ChungTu.MaCT"
+            + " WHERE MaLoai=8 AND MaVattu>0 AND TK_ID=" + CStr(TKDT_ID) + " AND (Not HethongTK.SoHieu LIKE '5113%') AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mvt > 0, " AND MaVattu=" + CStr(mvt), "") + " ORDER BY ChungTu.NgayCT,ChungTu.MaCT"
         ExecuteSQL5 SQL
         Debug.Print "Mysql" & SQL
         If loai = 1 Then
@@ -1670,14 +1670,19 @@ Public Sub TinhGXKBQ(tdau As Integer, tcuoi As Integer, shvt As String, tkno As 
     Dim rs As Object, ms As Long, tien As Double, luong As Double, SQL As String, i As Integer
     Dim mk As Long, mv As Long, mt As Long, thang As Integer, n As Date, tienx As Double, luongx As Double, tien2 As Double, tienx2 As Double, dgia As Double, dgia2 As Double
     Dim soct As Long, Counter As Long
-        
+
     If shvt = "0" Then shvt = ""
-        
-    ExecuteSQL5 "UPDATE " + ChungTu2TKNC(0) + " SET MaTKNo=MaTKCo,MaTKTCNo=MaTKTCCo WHERE MaLoai=4 AND HethongTK.Cap=0 AND HethongTK.Loai=0 AND TK.Loai>0"
-    ExecuteSQL5 "UPDATE ChungTu SET SoPS=Fix(IIF(SoPS>=0,0.5,-0.5)+SoPS), SoPS2Co=Fix(IIF(SoPS2Co>=0,0.5,-0.5)+SoPS2Co*" + CStr(Mask_N) + ")/" + CStr(Mask_N)
-    
+
+    'ExecuteSQL5 "UPDATE " + ChungTu2TKNC(0) + " SET MaTKNo=MaTKCo,MaTKTCNo=MaTKTCCo WHERE MaLoai=4 AND HethongTK.Cap=0 AND HethongTK.Loai=0 AND TK.Loai>0"
+    ExecuteSQL5 "UPDATE ChungTu SET MaTKNo = MaTKCo, MaTKTCNo = MaTKTCCo " & _
+                "FROM ChungTu " & _
+                "INNER JOIN HethongTK ON ChungTu.MaTKNo = HethongTK.MaSo " & _
+                "INNER JOIN HethongTK AS TK ON ChungTu.MaTKCo = TK.MaSo " & _
+                "WHERE MaLoai = 4 AND HethongTK.Cap = 0 AND HethongTK.Loai = 0 AND TK.Loai > 0"
+    'ExecuteSQL5 "UPDATE ChungTu SET SoPS=Fix(IIF(SoPS>=0,0.5,-0.5)+SoPS), SoPS2Co=Fix(IIF(SoPS2Co>=0,0.5,-0.5)+SoPS2Co*" + CStr(Mask_N) + ")/" + CStr(Mask_N)
+    ExecuteSQL5 "UPDATE ChungTu SET SoPS = SoPS + IIF(SoPS >= 0, 0.5, -0.5), SoPS2Co = (SoPS2Co * " + CStr(Mask_N) + " + IIF(SoPS2Co >= 0, 0.5, -0.5)) / " + CStr(Mask_N)
     If OutCost > 0 Then Exit Sub
-    
+
     If Len(tkno) > 0 Then
         SQL = "SELECT DISTINCTROW ChungTu.MaSo,ThangCT,NgayGS,MaCT,MaKho,MaVattu,MaTKCo,SoPS,SoPS2Co" + IIf(pGiaUSD > 0, ",PSUSD", "") + " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo WHERE HethongTK.SoHieu LIKE '" + tkno + "*' AND (MaLoai=2 OR MaLoai=4) AND MaVattu>0 AND MaTKNo>0 AND TK.TK_ID=" + CStr(TKVT_ID) + " AND SoPS2Co>0 AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shvt) > 0, " AND Vattu.SoHieu='" + shvt + "'", "") + " ORDER BY MaKho,MaTKCo,MaVattu,ThangCT,NgayGS,ChungTu.MaCT"
     Else
@@ -1706,7 +1711,7 @@ Public Sub TinhGXKBQ(tdau As Integer, tcuoi As Integer, shvt As String, tkno As 
             If luong <> 0 Then dgia = Abs(tien / luong) Else dgia = 0
             If luong <> 0 Then dgia2 = Abs(tien2 / luong) Else dgia2 = 0
         End If
-                
+
         If Abs(luong - rs!SoPS2Co) < (1 / Mask_N) Then
             tienx = tien
             luong = 0
@@ -1716,7 +1721,7 @@ Public Sub TinhGXKBQ(tdau As Integer, tcuoi As Integer, shvt As String, tkno As 
         End If
         tien = tien - tienx
         If tienx <> rs!sops Then ExecuteSQL5 "UPDATE ChungTu SET SoPS=" + DoiDau(tienx) + " WHERE MaSo=" + CStr(rs!MaSo)
-        
+
         If pGiaUSD > 0 Then
             If luong - rs!SoPS2Co < (1 / Mask_N) Then
                 tienx2 = tien2
@@ -1731,7 +1736,7 @@ Public Sub TinhGXKBQ(tdau As Integer, tcuoi As Integer, shvt As String, tkno As 
     Loop
     rs.Close
     Set rs = Nothing
-    
+
     If mv > 0 And ktra = 0 Then
         KiemTraTaiKhoan 1
         KiemTraVatTu 1

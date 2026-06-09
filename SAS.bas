@@ -604,7 +604,16 @@ Private Function ConvertToSQLServer(ByVal SQL As String) As String
     s = Replace(s, "first(", "MIN(")
 
     ' 3. Chuy?n ký t? d?i di?n LIKE (* -> %, ? -> _)
-    s = Replace(s, "*", "%")
+    ' s = Replace(s, "*", "%")
+    ' Thay dòng: s = Replace(s, "*", "%")
+    ' Thành 3 dòng này:
+
+    Dim re As Object
+    Set re = CreateObject("VBScript.RegExp")
+    re.pattern = "(LIKE\s+')([^']*)\*([^']*') "
+    re.Global = True
+    s = re.Replace(s, "$1$2%$3")
+    
     s = Replace(s, "?", "_")
 
     ' 4. Chuy?n True/False thành 1/0
@@ -724,19 +733,25 @@ End Function
 '======================================================================================
 Public Sub KiemTraVatTu(Optional ktraxuat As Integer = 0)
     Dim rs_taikhoan As Object, j As Integer, st3 As String, m As Long, n As Long, mk As Long, m1 As Long, st4 As String
-    Dim rs_ktra As Object, i As Integer, SQL As String, st As String, st2 As String, Idx As Index
+    Dim rs_ktra As Object, i As Integer, SQL As String, st As String, st2 As String, idx As clsIndex
+    Dim tdf As Object
 
-    For i = 0 To DBKetoan.TableDefs("Vattu").Indexes.count - 1
-        If DBKetoan.TableDefs("Vattu").Indexes(i).Name = "SoHieu" Then GoTo tt
+    Set tdf = DBKetoan.TableDefs("Vattu")
+
+    For i = 1 To tdf.Indexes.count  ' B? - 1
+        If tdf.Indexes(i).Name = "SoHieu" Then GoTo tt
     Next
 
-    FixCode "Vattu", "MaSo"
 
-    Set Idx = DBKetoan.TableDefs("Vattu").CreateIndex("SoHieu")
-    Idx.Fields.Append Idx.CreateField("SoHieu")
-    Idx.Unique = True
+    FixCode "Vattu", "MaSo"
+    DBKetoan.LoadTableDefs
+    ' T?o index SoHieu
+    Set idx = tdf.CreateIndex("SoHieu")
+    idx.AddField "SoHieu"  ' Dùng AddField, không ph?i CreateField
+    idx.Append  ' Th?c thi CREATE INDEX
+    idx.Unique = True
     On Error Resume Next
-    DBKetoan.TableDefs("Vattu").Indexes.Append Idx
+    DBKetoan.TableDefs("Vattu").Indexes.Append idx
     On Error GoTo 0
 
 tt:
@@ -770,7 +785,7 @@ tt:
     'HienThongBao "KiÓm tra sè nhËp xuÊt tån ...", 1
     Dim s As String
     s = ChrW(75) & ChrW(105) & ChrW(7875) & ChrW(109) & ChrW(32) & ChrW(116) & ChrW(114) & ChrW(97) & ChrW(32) & ChrW(115) & ChrW(7889) & ChrW(32) & ChrW(110) & ChrW(104) & ChrW(7853) & ChrW(112) & ChrW(32) & ChrW(120) & ChrW(117) & ChrW(7845) & ChrW(116) & ChrW(32) & ChrW(116) & ChrW(7891) & ChrW(110)
-     
+
     HienThongBao s, 1
 
     ExecuteSQL5 "DELETE DISTINCTROW TonKho.* FROM Vattu RIGHT JOIN TonKho ON Vattu.MaSo = TonKho.MaVatTu WHERE ((Vattu.MaSo Is Null))"

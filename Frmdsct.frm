@@ -2009,57 +2009,57 @@ End Sub
 
 
 Public Sub LietKeChungtu(shtk As String, mvt As Long, mts As Long, mcn As Long, shd As String)
-    Dim sql As String, loaict As String, i As Integer, mct As Long, uID As Long, mct1 As Long, mloai As Integer
+    Dim SQL As String, loaict As String, i As Integer, mct As Long, uID As Long, mct1 As Long, mloai As Integer
     Dim rs_chungtu As Object, st As Double, ovr As Integer, sh As String
 
     Me.MousePointer = 11
     st = Cdbl5(txtShTk(5).Text)
     sh = IIf(ChkLoai(7).Value = 1 Or pPhieu > 0, "P", "")
     ' sql = "SELECT MaCT,Sum(IIF(MaTKCo>0,SoPS,0)) AS TPS FROM ChungTu" + sh + " WHERE "
-    sql = "SELECT MaCT,Sum(IIF(MaTKCo>0,SoPS,0)) AS TPS,sum(TLCK+val(iif(isnull(phantramchietkhau),0,phantramchietkhau))) as tylechietkhau,sum(CK+val(iif(isnull(sotienchietkhau) ,0,sotienchietkhau))) as chietkhau FROM ChungTu" + sh + " WHERE "
+    SQL = "SELECT MaCT,SUM(CASE WHEN MaTKCo>0 THEN SoPS ELSE 0 END) AS TPS,SUM(TLCK + ISNULL(CAST(phantramchietkhau AS FLOAT),0)) as tylechietkhau,SUM(CK + ISNULL(CAST(sotienchietkhau AS FLOAT),0)) as chietkhau FROM ChungTu" + sh + " WHERE "
 
     If OptLK(0).Value Then
-        sql = sql + WThang("ThangCT", CboThang(0).ItemData(CboThang(0).ListIndex), CboThang(1).ItemData(CboThang(1).ListIndex)) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " GROUP BY MaCT"
+        SQL = SQL + WThang("ThangCT", CboThang(0).ItemData(CboThang(0).ListIndex), CboThang(1).ItemData(CboThang(1).ListIndex)) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " GROUP BY MaCT"
     Else
-        sql = sql + WNgay("NgayGS", ngay(0), ngay(1)) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " GROUP BY MaCT"
+        SQL = SQL + WNgay("NgayGS", ngay(0), ngay(1)) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " GROUP BY MaCT"
     End If
-    SetSQL "MienTru", sql
+    SetSQL "MienTru", SQL
 
-    sql = "SELECT DISTINCTROW ChungTu" + sh + ".MaCT, ChungTu" + sh + ".SoHieu, NgayCT, NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + " AS DG,TPS,tylechietkhau,chietkhau,User_ID,ChungTu" + sh + ".MaLoai FROM ((((ChungTu" + sh + " INNER JOIN MienTru ON ChungTu" + sh + ".MaCT=MienTru.MaCT) LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN CTTaiSan ON ChungTu" + sh + ".MaCT = CTTaiSan.MaCTKT) LEFT JOIN HeThongTK ON ChungTu" + sh + ".MaTKNo = HeThongTK.MaSo) LEFT JOIN HeThongTK AS HeThongTK_1 ON ChungTu" + sh + ".MaTKCo = HeThongTK_1.MaSo WHERE (TRUE)"
+    SQL = "SELECT DISTINCTROW ChungTu" + sh + ".MaCT, ChungTu" + sh + ".SoHieu, NgayCT, NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + " AS DG,TPS,tylechietkhau,chietkhau,User_ID,ChungTu" + sh + ".MaLoai FROM ((((ChungTu" + sh + " INNER JOIN MienTru ON ChungTu" + sh + ".MaCT=MienTru.MaCT) LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN CTTaiSan ON ChungTu" + sh + ".MaCT = CTTaiSan.MaCTKT) LEFT JOIN HeThongTK ON ChungTu" + sh + ".MaTKNo = HeThongTK.MaSo) LEFT JOIN HeThongTK AS HeThongTK_1 ON ChungTu" + sh + ".MaTKCo = HeThongTK_1.MaSo WHERE (TRUE)"
 
     If Len(shd) > 0 Then
         If ChkTaikhoan(10).Value = 0 Then
             'Truong hop tim gan dung
-            sql = sql + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "*' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "*')"
+            SQL = SQL + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "*' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "*')"
         Else
             'Truong hop tim chinh xac
-            sql = sql + " AND (HoaDon" & sh & ".SoHD = '" & shd & "' OR ChungTu" & sh & ".SoHieu = '" & shd & "')"
+            SQL = SQL + " AND (HoaDon" & sh & ".SoHD = '" & shd & "' OR ChungTu" & sh & ".SoHieu = '" & shd & "')"
         End If
     End If
-    If mvt > 0 Then sql = sql + " AND (ChungTu" + sh + ".MaLoai = 1 OR ChungTu" + sh + ".MaLoai = 2 OR ChungTu" + sh + ".MaLoai = 8) AND (MaVattu = " + CStr(mvt) + ")"
-    If mts > 0 Then sql = sql + " AND (CTTaiSan.MaTS = " + CStr(mts) + ")"
-    If mcn > 0 Then sql = sql + " AND (MaKH = " + CStr(mcn) + " OR MaKhachHang = " + CStr(mcn) + " OR MaKHC=" + CStr(mcn) + ")"
+    If mvt > 0 Then SQL = SQL + " AND (ChungTu" + sh + ".MaLoai = 1 OR ChungTu" + sh + ".MaLoai = 2 OR ChungTu" + sh + ".MaLoai = 8) AND (MaVattu = " + CStr(mvt) + ")"
+    If mts > 0 Then SQL = SQL + " AND (CTTaiSan.MaTS = " + CStr(mts) + ")"
+    If mcn > 0 Then SQL = SQL + " AND (MaKH = " + CStr(mcn) + " OR MaKhachHang = " + CStr(mcn) + " OR MaKHC=" + CStr(mcn) + ")"
     If Len(shtk) > 0 Then
-        sql = sql + " AND (HethongTK.SoHieu LIKE '" + shtk + "*' OR HethongTK_1.SoHieu LIKE '" + shtk + "*')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
+        SQL = SQL + " AND (HethongTK.SoHieu LIKE '" + shtk + "*' OR HethongTK_1.SoHieu LIKE '" + shtk + "*')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
         'sql = sql + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
-        If ChkTaikhoan(7).Value = 1 Then sql = sql + " AND ((HethongTK.TK_ID=" + CStr(TKCNPT_ID) + " OR HethongTK_1.TK_ID=" + CStr(TKCNKH_ID) + ") AND CT_ID=0)"
+        If ChkTaikhoan(7).Value = 1 Then SQL = SQL + " AND ((HethongTK.TK_ID=" + CStr(TKCNPT_ID) + " OR HethongTK_1.TK_ID=" + CStr(TKCNKH_ID) + ") AND CT_ID=0)"
     End If
     If st > 0 Then
-        sql = sql + " AND SoPS=" + DoiDau(st)
+        SQL = SQL + " AND SoPS=" + DoiDau(st)
     End If
     If ChkTaikhoan(9).Value = 1 Then
-        sql = sql + " AND ChungTu" + sh + ".nhanban=1"
+        SQL = SQL + " AND ChungTu" + sh + ".nhanban=1"
     End If
     If ChkTaikhoan(11).Value = 1 Then
-        sql = sql & " AND ChungTu" & sh & ".NgayImport >= DateAdd('n', -5, Now())"
+        SQL = SQL & " AND ChungTu" & sh & ".NgayImport >= DateAdd('n', -5, Now())"
     End If
     If ChkTaikhoan(4).Value = 1 And CboN(2).ListIndex >= 0 Then
-        sql = sql + " AND ChungTu" + sh + ".CTGS=" + CStr(CboN(2).ItemData(CboN(2).ListIndex))
+        SQL = SQL + " AND ChungTu" + sh + ".CTGS=" + CStr(CboN(2).ItemData(CboN(2).ListIndex))
     End If
     If ChkTaikhoan(8).Value = 1 And txtShTk(6).tag > 0 Then
-        sql = sql + " AND ChungTu" + sh + ".MaTP=" + CStr(txtShTk(6).tag)
+        SQL = SQL + " AND ChungTu" + sh + ".MaTP=" + CStr(txtShTk(6).tag)
     End If
-    If ChkTaikhoan(6).Value = 1 Then sql = sql + " AND (ChungTu" + sh + ".User_ID=" + CStr(CboN(3).ItemData(CboN(3).ListIndex)) + ")"
+    If ChkTaikhoan(6).Value = 1 Then SQL = SQL + " AND (ChungTu" + sh + ".User_ID=" + CStr(CboN(3).ItemData(CboN(3).ListIndex)) + ")"
 
     loaict = ""
     For i = 0 To 12
@@ -2071,22 +2071,22 @@ Public Sub LietKeChungtu(shtk As String, mvt As Long, mts As Long, mcn As Long, 
     Next
 
     If Len(loaict) = 0 Then GoTo KT
-    If Len(loaict) > 0 Then sql = sql + " AND (" + Left(loaict, Len(loaict) - 4) + ")"
+    If Len(loaict) > 0 Then SQL = SQL + " AND (" + Left(loaict, Len(loaict) - 4) + ")"
 
-    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(0).ListIndex > 0 Then sql = sql + " AND (ChungTu" + sh + ".MaKho=" + CStr(CboN(0).ItemData(CboN(0).ListIndex)) + ")"
-    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(1).ListIndex > 0 Then sql = sql + " AND (ChungTu" + sh + ".MaNguon=" + CStr(CboN(1).ItemData(CboN(1).ListIndex)) + ")"
+    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(0).ListIndex > 0 Then SQL = SQL + " AND (ChungTu" + sh + ".MaKho=" + CStr(CboN(0).ItemData(CboN(0).ListIndex)) + ")"
+    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(1).ListIndex > 0 Then SQL = SQL + " AND (ChungTu" + sh + ".MaNguon=" + CStr(CboN(1).ItemData(CboN(1).ListIndex)) + ")"
 
-    If pProcessMode = 1 Then sql = sql + " AND XuLy<2 "
+    If pProcessMode = 1 Then SQL = SQL + " AND XuLy<2 "
 
-    sql = sql + " GROUP BY ChungTu" + sh + ".MaCT,User_ID,ChungTu" + sh + ".MaLoai,ChungTu" + sh + ".SoHieu, ChungTu" + sh + ".NgayCT, ChungTu" + sh + ".NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + ",TPS,tylechietkhau,chietkhau "
+    SQL = SQL + " GROUP BY ChungTu" + sh + ".MaCT,User_ID,ChungTu" + sh + ".MaLoai,ChungTu" + sh + ".SoHieu, ChungTu" + sh + ".NgayCT, ChungTu" + sh + ".NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + ",TPS,tylechietkhau,chietkhau "
 
     Select Case ord
     Case 0:
-        sql = sql + "ORDER BY NgayGS asc ,val( ChungTu" + sh + ".SoHieu) asc "
+        SQL = SQL + "ORDER BY NgayGS asc ,val( ChungTu" + sh + ".SoHieu) asc "
     Case 1:
-        sql = sql + "ORDER BY NgayCT asc, val(ChungTu" + sh + ".SoHieu) asc "
+        SQL = SQL + "ORDER BY NgayCT asc, val(ChungTu" + sh + ".SoHieu) asc "
     Case 2:
-        sql = sql + "ORDER BY  NgayCT asc,val(ChungTu" + sh + ".SoHieu) asc"
+        SQL = SQL + "ORDER BY  NgayCT asc,val(ChungTu" + sh + ".SoHieu) asc"
     End Select
 
     ClearGrid GrdChungtu, GrdChungtu.tag
@@ -2103,9 +2103,9 @@ Public Sub LietKeChungtu(shtk As String, mvt As Long, mts As Long, mcn As Long, 
     'lay dieu kien de loc du lieu
     Dim so_cong
     so_cong = 0
-    chuoidieukien_intoanbo = sql
+    chuoidieukien_intoanbo = SQL
 
-    Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     Do While Not rs_chungtu.EOF
         If mct <> rs_chungtu!MaCT Then
             mct = rs_chungtu!MaCT
@@ -2187,7 +2187,7 @@ End Sub
 
 
 Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long, shd As String)
-    Dim sql As String, loaict As String, i As Integer, mct As Long, uID As Long, mct1 As Long, mloai As Integer
+    Dim SQL As String, loaict As String, i As Integer, mct As Long, uID As Long, mct1 As Long, mloai As Integer
     Dim rs_chungtu As Object, st As Double, ovr As Integer, sh As String
 
     Me.MousePointer = 11
@@ -2257,45 +2257,45 @@ Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long
     st = Cdbl5(txtShTk(5).Text)
     sh = IIf(ChkLoai(7).Value = 1 Or pPhieu > 0, "P", "")
     ' sql = "SELECT MaCT,Sum(IIF(MaTKCo>0,SoPS,0)) AS TPS FROM ChungTu" + sh + " WHERE "
-    sql = "SELECT MaCT, "
-    sql = sql & "SUM(CASE WHEN MaTKCo > 0 THEN SoPS ELSE 0 END) AS TPS, "
-    sql = sql & "SUM(TLCK + ISNULL(phantramchietkhau, 0)) AS tylechietkhau, "
-    sql = sql & "SUM(CK + ISNULL(sotienchietkhau, 0)) AS chietkhau "
-    sql = sql & "FROM ChungTu " & sh & " "
+    SQL = "SELECT MaCT, "
+    SQL = SQL & "SUM(CASE WHEN MaTKCo > 0 THEN SoPS ELSE 0 END) AS TPS, "
+    SQL = SQL & "SUM(TLCK + ISNULL(phantramchietkhau, 0)) AS tylechietkhau, "
+    SQL = SQL & "SUM(CK + ISNULL(sotienchietkhau, 0)) AS chietkhau "
+    SQL = SQL & "FROM ChungTu " & sh & " "
 
     ' WHERE và GROUP BY
     If OptLK(0).Value Then
-        sql = sql & "WHERE " & WThang("ThangCT", CboThang(0).ItemData(CboThang(0).ListIndex), CboThang(1).ItemData(CboThang(1).ListIndex))
+        SQL = SQL & "WHERE " & WThang("ThangCT", CboThang(0).ItemData(CboThang(0).ListIndex), CboThang(1).ItemData(CboThang(1).ListIndex))
     Else
-        sql = sql & "WHERE " & WNgay("NgayGS", ngay(0), ngay(1))
+        SQL = SQL & "WHERE " & WNgay("NgayGS", ngay(0), ngay(1))
     End If
 
     If pProcessMode = 1 Then
-        sql = sql & " AND XuLy < 2"
+        SQL = SQL & " AND XuLy < 2"
     End If
 
-    sql = sql & " GROUP BY MaCT"
-    SetSQL "MienTru", sql
-    Debug.Print "mmtru " & sql
+    SQL = SQL & " GROUP BY MaCT"
+    SetSQL "MienTru", SQL
+    Debug.Print "mmtru " & SQL
 
-    sql = "SELECT DISTINCTROW ChungTu" + sh + ".MaCT, ChungTu" + sh + ".SoHieu, NgayCT, NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + " AS DG,TPS,tylechietkhau,chietkhau,User_ID,ChungTu" + sh + ".MaLoai FROM ((((ChungTu" + sh + " INNER JOIN MienTru ON ChungTu" + sh + ".MaCT=MienTru.MaCT) LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN CTTaiSan ON ChungTu" + sh + ".MaCT = CTTaiSan.MaCTKT) LEFT JOIN HeThongTK ON ChungTu" + sh + ".MaTKNo = HeThongTK.MaSo) LEFT JOIN HeThongTK AS HeThongTK_1 ON ChungTu" + sh + ".MaTKCo = HeThongTK_1.MaSo WHERE (TRUE)"
+    SQL = "SELECT DISTINCTROW ChungTu" + sh + ".MaCT, ChungTu" + sh + ".SoHieu, NgayCT, NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + " AS DG,TPS,tylechietkhau,chietkhau,User_ID,ChungTu" + sh + ".MaLoai FROM ((((ChungTu" + sh + " INNER JOIN MienTru ON ChungTu" + sh + ".MaCT=MienTru.MaCT) LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN CTTaiSan ON ChungTu" + sh + ".MaCT = CTTaiSan.MaCTKT) LEFT JOIN HeThongTK ON ChungTu" + sh + ".MaTKNo = HeThongTK.MaSo) LEFT JOIN HeThongTK AS HeThongTK_1 ON ChungTu" + sh + ".MaTKCo = HeThongTK_1.MaSo WHERE (TRUE)"
 
-    If Len(shd) > 0 Then sql = sql + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "*' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "*')"
-    If mvt > 0 Then sql = sql + " AND (ChungTu" + sh + ".MaLoai = 1 OR ChungTu" + sh + ".MaLoai = 2 OR ChungTu" + sh + ".MaLoai = 8) AND (MaVattu = " + CStr(mvt) + ")"
-    If mts > 0 Then sql = sql + " AND (CTTaiSan.MaTS = " + CStr(mts) + ")"
-    If mcn > 0 Then sql = sql + " AND (MaKH = " + CStr(mcn) + " OR MaKhachHang = " + CStr(mcn) + " OR MaKHC=" + CStr(mcn) + ")"
+    If Len(shd) > 0 Then SQL = SQL + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "*' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "*')"
+    If mvt > 0 Then SQL = SQL + " AND (ChungTu" + sh + ".MaLoai = 1 OR ChungTu" + sh + ".MaLoai = 2 OR ChungTu" + sh + ".MaLoai = 8) AND (MaVattu = " + CStr(mvt) + ")"
+    If mts > 0 Then SQL = SQL + " AND (CTTaiSan.MaTS = " + CStr(mts) + ")"
+    If mcn > 0 Then SQL = SQL + " AND (MaKH = " + CStr(mcn) + " OR MaKhachHang = " + CStr(mcn) + " OR MaKHC=" + CStr(mcn) + ")"
     If Len(shtk) > 0 Then
-        sql = sql + " AND (HethongTK.SoHieu LIKE '" + shtk + "*' OR HethongTK_1.SoHieu LIKE '" + shtk + "*')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
-        If ChkTaikhoan(7).Value = 1 Then sql = sql + " AND ((HethongTK.TK_ID=" + CStr(TKCNPT_ID) + " OR HethongTK_1.TK_ID=" + CStr(TKCNKH_ID) + ") AND CT_ID=0)"
+        SQL = SQL + " AND (HethongTK.SoHieu LIKE '" + shtk + "*' OR HethongTK_1.SoHieu LIKE '" + shtk + "*')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
+        If ChkTaikhoan(7).Value = 1 Then SQL = SQL + " AND ((HethongTK.TK_ID=" + CStr(TKCNPT_ID) + " OR HethongTK_1.TK_ID=" + CStr(TKCNKH_ID) + ") AND CT_ID=0)"
     End If
 
     If ChkTaikhoan(4).Value = 1 And CboN(2).ListIndex >= 0 Then
-        sql = sql + " AND ChungTu" + sh + ".CTGS=" + CStr(CboN(2).ItemData(CboN(2).ListIndex))
+        SQL = SQL + " AND ChungTu" + sh + ".CTGS=" + CStr(CboN(2).ItemData(CboN(2).ListIndex))
     End If
     If ChkTaikhoan(8).Value = 1 And txtShTk(6).tag > 0 Then
-        sql = sql + " AND ChungTu" + sh + ".MaTP=" + CStr(txtShTk(6).tag)
+        SQL = SQL + " AND ChungTu" + sh + ".MaTP=" + CStr(txtShTk(6).tag)
     End If
-    If ChkTaikhoan(6).Value = 1 Then sql = sql + " AND (ChungTu" + sh + ".User_ID=" + CStr(CboN(3).ItemData(CboN(3).ListIndex)) + ")"
+    If ChkTaikhoan(6).Value = 1 Then SQL = SQL + " AND (ChungTu" + sh + ".User_ID=" + CStr(CboN(3).ItemData(CboN(3).ListIndex)) + ")"
 
     loaict = ""
     For i = 0 To 12
@@ -2307,22 +2307,22 @@ Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long
     Next
 
     If Len(loaict) = 0 Then GoTo KT
-    If Len(loaict) > 0 Then sql = sql + " AND (" + Left(loaict, Len(loaict) - 4) + ")"
+    If Len(loaict) > 0 Then SQL = SQL + " AND (" + Left(loaict, Len(loaict) - 4) + ")"
 
-    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(0).ListIndex > 0 Then sql = sql + " AND (ChungTu" + sh + ".MaKho=" + CStr(CboN(0).ItemData(CboN(0).ListIndex)) + ")"
-    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(1).ListIndex > 0 Then sql = sql + " AND (ChungTu" + sh + ".MaNguon=" + CStr(CboN(1).ItemData(CboN(1).ListIndex)) + ")"
+    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(0).ListIndex > 0 Then SQL = SQL + " AND (ChungTu" + sh + ".MaKho=" + CStr(CboN(0).ItemData(CboN(0).ListIndex)) + ")"
+    If (ChkLoai(1).Value = 1 Or ChkLoai(2).Value = 1 Or ChkLoai(8).Value = 1) And CboN(1).ListIndex > 0 Then SQL = SQL + " AND (ChungTu" + sh + ".MaNguon=" + CStr(CboN(1).ItemData(CboN(1).ListIndex)) + ")"
 
-    If pProcessMode = 1 Then sql = sql + " AND XuLy<2 "
+    If pProcessMode = 1 Then SQL = SQL + " AND XuLy<2 "
 
-    sql = sql + " GROUP BY ChungTu" + sh + ".MaCT,User_ID,ChungTu" + sh + ".MaLoai,ChungTu" + sh + ".SoHieu, ChungTu" + sh + ".NgayCT, ChungTu" + sh + ".NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + ",TPS,tylechietkhau,chietkhau "
+    SQL = SQL + " GROUP BY ChungTu" + sh + ".MaCT,User_ID,ChungTu" + sh + ".MaLoai,ChungTu" + sh + ".SoHieu, ChungTu" + sh + ".NgayCT, ChungTu" + sh + ".NgayGS, ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") + ",TPS,tylechietkhau,chietkhau "
 
     Select Case ord
     Case 0:
-        sql = sql + "ORDER BY NgayGS desc ,val( ChungTu" + sh + ".SoHieu) desc "
+        SQL = SQL + "ORDER BY NgayGS desc ,val( ChungTu" + sh + ".SoHieu) desc "
     Case 1:
-        sql = sql + "ORDER BY NgayCT desc, val(ChungTu" + sh + ".SoHieu) desc "
+        SQL = SQL + "ORDER BY NgayCT desc, val(ChungTu" + sh + ".SoHieu) desc "
     Case 2:
-        sql = sql + "ORDER BY  NgayCT desc,val(ChungTu" + sh + ".SoHieu) desc"
+        SQL = SQL + "ORDER BY  NgayCT desc,val(ChungTu" + sh + ".SoHieu) desc"
     End Select
 
     ClearGrid GrdChungtu, GrdChungtu.tag
@@ -2338,25 +2338,25 @@ Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long
 
     'lay dieu kien de loc du lieu
 
-    chuoidieukien_intoanbo = sql
+    chuoidieukien_intoanbo = SQL
     Dim so_cong As Integer
     so_cong = 0
 
-    sql = Replace(sql, "(TRUE) AND ", "")
-    sql = Replace(sql, "DISTINCTROW", "DISTINCT")
-    sql = Replace(sql, " ORDER BY NgayGS desc ,val( ChungTu.SoHieu) desc", "")    ' B? ORDER BY trong subquery
+    SQL = Replace(SQL, "(TRUE) AND ", "")
+    SQL = Replace(SQL, "DISTINCTROW", "DISTINCT")
+    SQL = Replace(SQL, " ORDER BY NgayGS desc ,val( ChungTu.SoHieu) desc", "")    ' B? ORDER BY trong subquery
 
     ' Câu 1: Gi? nguyên c?u trúc, ch? d?i TRY_CAST thành CONVERT
     ' Câu 1
-    sql = "SELECT TOP 500 a.* FROM (SELECT tong.* FROM (" & sql & ") tong) a ORDER BY a.NgayGS DESC, " & _
+    SQL = "SELECT TOP 500 a.* FROM (SELECT tong.* FROM (" & SQL & ") tong) a ORDER BY a.NgayGS DESC, " & _
           "CASE WHEN ISNUMERIC(a.sohieu) = 1 THEN CONVERT(INT, CONVERT(FLOAT, a.sohieu)) ELSE 0 END DESC"
 
     ' Câu 2
-    sql = "SELECT a.* FROM (SELECT tong.* FROM (" & sql & ") tong) a ORDER BY a.NgayGS ASC, " & _
+    SQL = "SELECT a.* FROM (SELECT tong.* FROM (" & SQL & ") tong) a ORDER BY a.NgayGS ASC, " & _
           "CASE WHEN ISNUMERIC(a.sohieu) = 1 THEN CONVERT(INT, CONVERT(FLOAT, a.sohieu)) ELSE 0 END ASC"
-    Debug.Print "mysql" & sql
+    Debug.Print "mysql" & SQL
 
-    Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     Do While Not rs_chungtu.EOF
         If mct <> rs_chungtu!MaCT Then
             mct = rs_chungtu!MaCT
@@ -2522,7 +2522,7 @@ Private Sub MedNgay_LostFocus(Index As Integer)
 End Sub
 
 Private Sub DSCTu(dest As Integer)
-    Dim i As Integer, sql As String
+    Dim i As Integer, SQL As String
     
     ExecuteSQL5 "DELETE * FROM BaoCaoCP2"
     With GrdChungtu
@@ -2534,10 +2534,10 @@ Private Sub DSCTu(dest As Integer)
         Next
     End With
     
-    sql = "SELECT -1 AS LoaiCT,MaCT,ChungTu.SoHieu AS SHCT,NgayCT,DienGiai" + IIf(pNN = 1, "E", "") + ",Sum(SoPS) AS PS,Sum(SoPS2No) AS Luong,HethongTK.SoHieu AS SHTK,First(HethongTK.Ten) AS TenTK,IIF(TK_ID=" + CStr(TKVT_ID) + ",Vattu.SoHieu,'') AS SHVT, First(TenVattu) AS TenVT, IIF(TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ",KhachHang.SoHieu,'') AS SHKH,First(KhachHang.Ten) AS TenKH FROM (((" + ChungTu2TKNC(-1) + ") INNER JOIN BaoCaoCP2 ON ChungTu.MaCT=BaoCaoCP2.MaSo) LEFT JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo) LEFT JOIN KhachHang ON ChungTu.MaKH=KhachHang.MaSo GROUP BY MaCT,ChungTu.SoHieu,NgayCT,DienGiai,HethongTK.SoHieu,IIF(TK_ID=" + CStr(TKVT_ID) + ",Vattu.SoHieu,''),IIF(TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ",KhachHang.SoHieu,'')" _
+    SQL = "SELECT -1 AS LoaiCT,MaCT,ChungTu.SoHieu AS SHCT,NgayCT,DienGiai" + IIf(pNN = 1, "E", "") + ",Sum(SoPS) AS PS,Sum(SoPS2No) AS Luong,HethongTK.SoHieu AS SHTK,First(HethongTK.Ten) AS TenTK,IIF(TK_ID=" + CStr(TKVT_ID) + ",Vattu.SoHieu,'') AS SHVT, First(TenVattu) AS TenVT, IIF(TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ",KhachHang.SoHieu,'') AS SHKH,First(KhachHang.Ten) AS TenKH FROM (((" + ChungTu2TKNC(-1) + ") INNER JOIN BaoCaoCP2 ON ChungTu.MaCT=BaoCaoCP2.MaSo) LEFT JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo) LEFT JOIN KhachHang ON ChungTu.MaKH=KhachHang.MaSo GROUP BY MaCT,ChungTu.SoHieu,NgayCT,DienGiai,HethongTK.SoHieu,IIF(TK_ID=" + CStr(TKVT_ID) + ",Vattu.SoHieu,''),IIF(TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ",KhachHang.SoHieu,'')" _
         & " UNION SELECT 1 AS LoaiCT,MaCT,ChungTu.SoHieu AS SHCT,NgayCT,DienGiai,Sum(SoPS) AS PS,Sum(SoPS2Co) AS Luong,HethongTK.SoHieu AS SHTK,First(HethongTK.Ten) AS TenTK,IIF(TK_ID=" + CStr(TKVT_ID) + ",Vattu.SoHieu,'') AS SHVT, First(TenVattu) AS TenVT, IIF(TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ",KhachHang.SoHieu,'') AS SHKH,First(KhachHang.Ten) AS TenKH FROM (((" + ChungTu2TKNC(1) + ") INNER JOIN BaoCaoCP2 ON ChungTu.MaCT=BaoCaoCP2.MaSo) LEFT JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo) LEFT JOIN KhachHang ON ChungTu.MaKHC=KhachHang.MaSo GROUP BY MaCT,ChungTu.SoHieu,NgayCT,DienGiai,HethongTK.SoHieu,IIF(TK_ID=" + CStr(TKVT_ID) + ",Vattu.SoHieu,''),IIF(TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ",KhachHang.SoHieu,'')" ' them chung tu
     
-    SetSQL "QNhatKy", sql
+    SetSQL "QNhatKy", SQL
     
     SetRptInfo
     frmMain.Rpt.ReportFileName = "CHUNGTU3.RPT"

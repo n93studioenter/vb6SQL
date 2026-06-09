@@ -116,30 +116,30 @@ Public Sub InitVattuMaSo(mvt As Long)
         sohieu = rs_vattu!sohieu
         TenVattu = rs_vattu!TenVattu
         DonVi = rs_vattu!DonVi
-        TonMin = rs_vattu!TonMin
-        TonMax = rs_vattu!TonMax
-        GiaHT = rs_vattu!GiaHT
+        TonMin = IIf(IsNull(rs_vattu!TonMin), 0, rs_vattu!TonMin)
+        TonMax = IIf(IsNull(rs_vattu!TonMax), 0, rs_vattu!TonMax)
+        GiaHT = IIf(IsNull(rs_vattu!GiaHT), 0, rs_vattu!GiaHT)
         If IsNull(rs_vattu!Dvt2) Then
             Dvt2 = 0
         Else
             Dvt2 = rs_vattu!Dvt2
         End If
-        DonVi2 = rs_vattu!DonVi2
+        DonVi2 = IIf(IsNull(rs_vattu!DonVi2), 0, rs_vattu!DonVi2)
         If IsNull(rs_vattu!TyLeQD) Then
             TyLeQD = 0
         Else
             TyLeQD = rs_vattu!TyLeQD
         End If
-        GhiChu = rs_vattu!GhiChu
+        GhiChu = IIf(IsNull(rs_vattu!GhiChu), 0, rs_vattu!GhiChu)
         If IsNull(rs_vattu!VAT) Then
             VAT = 0
         Else
             VAT = rs_vattu!VAT
         End If
-        GiaBan1 = rs_vattu!GiaBan1
-        GiaBan2 = rs_vattu!GiaBan2
-        GiaBan3 = rs_vattu!GiaBan3
-        CK = rs_vattu!CK
+        GiaBan1 = IIf(IsNull(rs_vattu!GiaBan1), 0, rs_vattu!GiaBan1)
+        GiaBan2 = IIf(IsNull(rs_vattu!GiaBan2), 0, rs_vattu!GiaBan2)
+        GiaBan3 = IIf(IsNull(rs_vattu!GiaBan3), 0, rs_vattu!GiaBan3)
+        CK = IIf(IsNull(rs_vattu!CK), 0, rs_vattu!CK)
         'ThueNK = rs_vattu!ThueNK
         rs_vattu.Close
         Set rs_vattu = Nothing
@@ -183,9 +183,8 @@ End Function
 Public Function GhiVattu() As Integer
     Dim SQL As String
         
-   SQL = "INSERT INTO Vattu (MaSo, MaPhanLoai,SoHieu,TenVattu,DonVi,TonMin,TonMax,GiaHT,Dvt2,DonVi2,TyLeQD,GhiChu,VAT,GiaBan1,GiaBan2,GiaBan3,CK,ThueNK,TendokhoInventory) VALUES (" _
-        & CStr(Lng_MaxValue("MaSo", "Vattu") + 1) _
-        & "," & CStr(MaPhanLoai) _
+   SQL = "INSERT INTO Vattu (MaPhanLoai,SoHieu,TenVattu,DonVi,TonMin,TonMax,GiaHT,Dvt2,DonVi2,TyLeQD,GhiChu,VAT,GiaBan1,GiaBan2,GiaBan3,CK,ThueNK,TendokhoInventory) VALUES (" _
+        & CStr(MaPhanLoai) _
         & ",'" & sohieu & "'" _
         & ",'" & TenVattu & "'" _
         & ",'" & DonVi & "'" _

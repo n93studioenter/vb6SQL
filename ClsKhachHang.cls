@@ -95,8 +95,8 @@ End Function
 Public Function GhiKhachHang() As Integer
     Dim SQL As String
 
-    SQL = "INSERT INTO KhachHang (MaSo,MaPhanLoai,SoHieu,Ten,DiaChi,MST,Tel,Fax,EMail,DaiDien,TaiKhoan,DuMax,GhiChu,MaNT) VALUES (" _
-        + CStr(Lng_MaxValue("MaSo", "KhachHang") + 1) + "," + CStr(MaPhanLoai) + ",'" + sohieu + "','" + Ten + "','" + DiaChi + "','" + mst + "','" + Tel + "','" + Fax + "','" + email + "','" + DaiDien + "','" _
+    SQL = "INSERT INTO KhachHang (MaPhanLoai,SoHieu,Ten,DiaChi,MST,Tel,Fax,EMail,DaiDien,TaiKhoan,DuMax,GhiChu,MaNT) VALUES (" _
+        + CStr(MaPhanLoai) + ",'" + sohieu + "','" + Ten + "','" + DiaChi + "','" + mst + "','" + Tel + "','" + Fax + "','" + email + "','" + DaiDien + "','" _
         + taikhoan + "'," + DoiDau(DuMax) + ",'" + GhiChu + "'," + CStr(MaNT) + ")"
     DBKetoanSQL.ExecuteSQL SQL
     If ExecuteSQL5(SQL) <> 0 Then

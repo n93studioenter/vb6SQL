@@ -761,7 +761,7 @@ Begin VB.Form FrmVattu
          Height          =   285
          Index           =   1
          Left            =   2880
-         MaxLength       =   50
+         MaxLength       =   255
          TabIndex        =   6
          Top             =   4200
          Visible         =   0   'False
@@ -2891,7 +2891,7 @@ Private Sub Pic_DblClick()
 End Sub
 
 Private Sub SSCmdF_Click()
-    Dim sql As String
+    Dim SQL As String
     
     If Len(txtF.Text) = 0 Then
         RFocus txtSearch
@@ -2899,10 +2899,10 @@ Private Sub SSCmdF_Click()
     End If
     
     Me.MousePointer = 11
-    sql = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM Vattu WHERE MaSo>" + CStr(MaDaTim) + IIf(SSOpt(0).Value, " AND SoHieu LIKE '" + txtF.Text + "'", " AND InStr(TenVattu,'" + txtF.Text + "')>0")
-    sql = CStr(SelectSQL(sql))
-    If sql <> "0" Then
-        ChonVattu sql
+    SQL = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM Vattu WHERE MaSo>" + CStr(MaDaTim) + IIf(SSOpt(0).Value, " AND SoHieu LIKE '" + txtF.Text + "'", " AND InStr(TenVattu,'" + txtF.Text + "')>0")
+    SQL = CStr(SelectSQL(SQL))
+    If SQL <> "0" Then
+        ChonVattu SQL
         MaDaTim = vattu.MaSo
     Else
         MaDaTim = 0

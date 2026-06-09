@@ -4335,7 +4335,7 @@ Private Sub Form_Load()
 
     SetFont Me
     Set Combo(3).Font = Me.Font
-    mst = frmMain.LbCty(8).Caption
+    mst = frmMain.lbCty(8).Caption
     If IsNumeric(mst) Then
         vis = (Cdbl5(mst) = 0)
     Else
@@ -4708,7 +4708,7 @@ Public Sub Command_Click(Index As Integer)
 
         If Combo(2).ListIndex >= 0 Then T = Combo(2).ItemData(Combo(2).ListIndex) Else T = pTien
         If CInt5(Left(Text(Index).Text, 2)) <> 0 Then Check(55).Value = 0
-        If ((((pTenCty = Text(0).Text And (pTenCn = Text(1).Text Or suatencn = 1) And (Check(19).Value = suatencn) And pMaVach = Check(9).Value And pDinhmuc = Check(13).Value And pSongNgu = (Check(14).Value = 1) And pRpt = Check(15).Value And pTygia = Check(18).Value And T = pTien And mk = 0) Or (DEMO = 1 And CLng5(Left(Text(7).Text, 2)) > 0)) And (mst = Text(7).Text Or (suatencn = 1 And Left(mst, 10) = Left(Text(7).Text, 10)))) Or Combo(3).ListIndex = 4 Or (Cdbl5(Left(Text(7).Text, 10)) = 0 And Cdbl5(Left(frmMain.LbCty(8).Caption, 10)) = 0)) And (pNoiBo = Check(55).Value) And (CInt5(Combo(0).Text) = pNamTC) Then GoTo a
+        If ((((pTenCty = Text(0).Text And (pTenCn = Text(1).Text Or suatencn = 1) And (Check(19).Value = suatencn) And pMaVach = Check(9).Value And pDinhmuc = Check(13).Value And pSongNgu = (Check(14).Value = 1) And pRpt = Check(15).Value And pTygia = Check(18).Value And T = pTien And mk = 0) Or (DEMO = 1 And CLng5(Left(Text(7).Text, 2)) > 0)) And (mst = Text(7).Text Or (suatencn = 1 And Left(mst, 10) = Left(Text(7).Text, 10)))) Or Combo(3).ListIndex = 4 Or (Cdbl5(Left(Text(7).Text, 10)) = 0 And Cdbl5(Left(frmMain.lbCty(8).Caption, 10)) = 0)) And (pNoiBo = Check(55).Value) And (CInt5(Combo(0).Text) = pNamTC) Then GoTo a
         If (Len(pMST) > 0 And Left(Text(7).Text, Len(pMST)) = pMST) Then GoTo a
         If boolean_kiemtra() = False Then GoTo a    ' kiem tra da active thi bat khung nhap ma so le
         'If FrmGetStr.GetMK(Text(7).Text) Then
@@ -4770,8 +4770,8 @@ a:
                          + ",Thang = " + CStr(Combo(1).Text) + " , Tag = '" + IIf(DEMO = 0, "S", "DEMO") + "',OutCost=" + CStr(ttVT) + ",MKUP=" + CStr(pRev) + ",MaSoThue = '" + Text(7).Text + "',MST_ID = " + CStr(Int_StrToCode(Text(7).Text)) _
                          + ",App1Path='" + pctpath + "',TyGia=" + DoiDau(tygia) + ",FixedoutCost=" + CStr(ChkVT(0).Value) + ",GiaHT=" + CStr(ChkVT(1).Value) + ",RptOrder=" + CStr(IIf(Check(22).Value = 1, 1000, 0) + IIf(Check(16).Value = 1, 100, 0) _
                                                                                                                                                                                    + IIf(Check(15).Value = 1, 10, 0) + 1 - Check(3).Value) + ",NgayDauThang=" + IIf(CInt5(Text(14).Text) > 1, Text(14).Text, "0") + ",MV=" + CStr(pMaVach) + ",SoKT=" + CStr(pSoKT) _
-                                                                                                                                                                                   + ",EMail='" + Text(15).Text + "',SMTP='" + Text(16).Text + "',EMailDB='" + Text(17).Text + "',CTGS_GV=" + CStr(CTGS.ItemData(CTGS.ListIndex)) + ",LoaiTien=" + CStr(pTien) + ",Flag1=" + CStr(Fx) + ",Lock0=Lock0 Mod 10 + " + CStr(F0) _
-                                                                                                                                                                                   + ",Lock1=Lock1 Mod 10 + " + CStr(f1) + ",Lock2=Lock2 Mod 10 + " + CStr(F2), True) <> 0 Then
+                                                                                                                                                                                   + ",EMail='" + Text(15).Text + "',SMTP='" + Text(16).Text + "',EMailDB='" + Text(17).Text + "',CTGS_GV=" + CStr(CTGS.ItemData(CTGS.ListIndex)) + ",LoaiTien=" + CStr(pTien) + ",Flag1=" + CStr(Fx) + ",Lock0=Lock0 % 10 + " + CStr(F0) _
+                                                                                                                                                                                   + ",Lock1=Lock1 % 10 + " + CStr(f1) + ",Lock2=Lock2 % 10 + " + CStr(F2), True) <> 0 Then
 
                 GoTo KT
             End If

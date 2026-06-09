@@ -1,4 +1,16 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+  Persistable = 0  'NotPersistable
+  DataBindingBehavior = 0  'vbNone
+  DataSourceBehavior  = 0  'vbNone
+  MTSTransactionMode  = 0  'NotAnMTSObject
+END
 Attribute VB_Name = "clsIndex"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = True
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
 ' clsIndex - Class Module
 Option Explicit
 
@@ -47,14 +59,14 @@ Public Property Let Primary(Value As Boolean)
 End Property
 
 ' Cách 1: Dùng CreateField (không c?n clsIndexField)
-Public Function CreateField(FieldName As String) As Object
-    m_Fields.Add FieldName, FieldName
+Public Function CreateField(fieldName As String) As Object
+    m_Fields.Add fieldName, fieldName
     Set CreateField = Nothing
 End Function
 
 ' Cách 2: Dùng AddField (khuy?n ngh?)
-Public Sub AddField(FieldName As String)
-    m_Fields.Add FieldName, FieldName
+Public Sub AddField(fieldName As String)
+    m_Fields.Add fieldName, fieldName
 End Sub
 
 Public Sub Append()
@@ -92,3 +104,4 @@ Public Sub Append()
     End If
     On Error GoTo 0
 End Sub
+

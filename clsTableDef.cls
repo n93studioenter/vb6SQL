@@ -34,8 +34,49 @@ Public Property Get Fields() As Collection
 End Property
 
 Public Property Get Indexes() As Collection
+    If m_Indexes.count = 0 Then LoadIndexes
     Set Indexes = m_Indexes
 End Property
+
+Private Sub LoadIndexes()
+    Dim rs As Object
+    Dim idx As clsIndex
+    Dim SQL As String
+    
+    Set m_Indexes = New Collection
+    
+    SQL = "SELECT i.name, i.is_unique, i.is_primary_key, " & _
+          "COL_NAME(ic.object_id, ic.column_id) AS ColName " & _
+          "FROM sys.indexes i " & _
+          "INNER JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id " & _
+          "WHERE i.object_id = OBJECT_ID('" & m_Name & "') " & _
+          "AND i.is_hypothetical = 0 AND i.type <> 0 " & _
+          "ORDER BY i.name, ic.key_ordinal"
+    
+    Set rs = CreateObject("ADODB.Recordset")
+    rs.Open SQL, m_Conn, 3, 1
+    
+    Dim lastIdx As String
+    lastIdx = ""
+    
+    Do While Not rs.EOF
+        If rs!Name <> lastIdx Then
+            Set idx = New clsIndex
+            idx.Init m_Name, m_Conn
+            idx.Name = rs!Name
+            idx.Unique = rs!is_unique
+            idx.Primary = rs!is_primary_key
+            idx.AddField rs!ColName
+            m_Indexes.Add idx, rs!Name
+            lastIdx = rs!Name
+        Else
+            m_Indexes(lastIdx).AddField rs!ColName
+        End If
+        rs.MoveNext
+    Loop
+    rs.Close
+    Set rs = Nothing
+End Sub
 
 Public Function CreateField(FieldName As String, Optional FieldType As Long = 10, Optional FieldSize As Long = 255) As Object
     Dim fld As New clsField
@@ -45,49 +86,42 @@ Public Function CreateField(FieldName As String, Optional FieldType As Long = 10
 End Function
 
 Public Function CreateIndex(IndexName As String) As Object
-   ' Dim Idx As New clsIndex
-    'Idx.Init m_Name, m_Conn  ' C?n truy?n thêm tham s?
-    'Idx.Name = IndexName
-   ' m_Indexes.Add Idx, IndexName
-   ' Set CreateIndex = Idx
+    Dim idx As New clsIndex
+    idx.Init m_Name, m_Conn
+    idx.Name = IndexName
+    m_Indexes.Add idx, IndexName
+    Set CreateIndex = idx
 End Function
 
 Public Sub Append(tdf As Object)
-    Dim sql As String
+    Dim SQL As String
     Dim fld As Object
     Dim fieldDefs As String
     
-    ' Xây d?ng câu l?nh CREATE TABLE
-    sql = "CREATE TABLE [" & m_Name & "] ("
+    SQL = "CREATE TABLE [" & m_Name & "] ("
     
     For Each fld In m_Fields
         fieldDefs = fieldDefs & "[" & fld.Name & "] " & GetSQLType(fld.Type, fld.Size)
-        
         If fld.IsPrimaryKey Then
             fieldDefs = fieldDefs & " PRIMARY KEY"
         End If
-        
         If fld.IsIdentity Then
             fieldDefs = fieldDefs & " IDENTITY(1,1)"
         End If
-        
         If Not fld.IsNullable Then
             fieldDefs = fieldDefs & " NOT NULL"
         End If
-        
         fieldDefs = fieldDefs & ", "
     Next
     
-    ' Xóa d?u ph?y cu?i
     If Right(fieldDefs, 2) = ", " Then
         fieldDefs = Left(fieldDefs, Len(fieldDefs) - 2)
     End If
     
-    sql = sql & fieldDefs & ")"
+    SQL = SQL & fieldDefs & ")"
     
-    ' Th?c thi t?o b?ng
     On Error Resume Next
-    m_Conn.Execute sql
+    m_Conn.Execute SQL
     If Err.number <> 0 Then
         Err.Raise Err.number, "clsTableDef.Append", Err.Description
     End If
@@ -96,17 +130,18 @@ End Sub
 
 Private Function GetSQLType(FieldType As Long, FieldSize As Long) As String
     Select Case FieldType
-        Case 1:      GetSQLType = "BIT"                ' dbBoolean
-        Case 2:      GetSQLType = "TINYINT"            ' dbByte
-        Case 3:      GetSQLType = "SMALLINT"           ' dbInteger
-        Case 4:      GetSQLType = "INT"                ' dbLong
-        Case 5:      GetSQLType = "MONEY"              ' dbCurrency
-        Case 6:      GetSQLType = "REAL"               ' dbSingle
-        Case 7:      GetSQLType = "FLOAT"              ' dbDouble
-        Case 8:      GetSQLType = "DATETIME"           ' dbDate
-        Case 10:     GetSQLType = "NVARCHAR(" & FieldSize & ")"  ' dbText
-        Case 11:     GetSQLType = "VARBINARY(MAX)"     ' dbLongBinary
-        Case 12:     GetSQLType = "NVARCHAR(MAX)"      ' dbMemo
+        Case 1:      GetSQLType = "BIT"
+        Case 2:      GetSQLType = "TINYINT"
+        Case 3:      GetSQLType = "SMALLINT"
+        Case 4:      GetSQLType = "INT"
+        Case 5:      GetSQLType = "MONEY"
+        Case 6:      GetSQLType = "REAL"
+        Case 7:      GetSQLType = "FLOAT"
+        Case 8:      GetSQLType = "DATETIME"
+        Case 10:     GetSQLType = "NVARCHAR(" & FieldSize & ")"
+        Case 11:     GetSQLType = "VARBINARY(MAX)"
+        Case 12:     GetSQLType = "NVARCHAR(MAX)"
         Case Else:   GetSQLType = "NVARCHAR(255)"
     End Select
 End Function
+
