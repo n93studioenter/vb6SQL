@@ -491,7 +491,7 @@ Private Sub ListGia(thang As Integer, mkho As Long, maloai As Long)
     ClearGrid GrdGia, GrdGia.tag
     Set rs_vattu = DBKetoan.OpenRecordset("SELECT Vattu.MaSo, Vattu.SoHieu, Vattu.TenVattu, Vattu.DonVi, Vattu.GiaDuPhong " _
         & " FROM (Vattu INNER JOIN TonKho ON Vattu.MaSo=TonKho.MaVattu) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo " _
-        & " WHERE Luong_" + CStr(thang) + "<>0 " + IIf(mkho > 0, " AND MaSoKho = " + CStr(mkho), "") + IIf(maloai <> 0, "PhanLoaiVattu.SoHieu LIKE '" + MaSo2SoHieu(maloai, "PhanLoaiVattu") + "*'", "") _
+        & " WHERE Luong_" + CStr(thang) + "<>0 " + IIf(mkho > 0, " AND MaSoKho = " + CStr(mkho), "") + IIf(maloai <> 0, "PhanLoaiVattu.SoHieu LIKE '" + MaSo2SoHieu(maloai, "PhanLoaiVattu") + "%'", "") _
         + " ORDER BY PhanLoaiVattu.SoHieu DESC, Vattu.SoHieu DESC", dbOpenSnapshot, dbForwardOnly)
     i = 0
     Do While Not rs_vattu.EOF
@@ -527,7 +527,7 @@ Private Sub InDuPhong(thang As Integer, mkho As Long, mloai As Long, dest As Int
     
     ExecuteSQL5 "INSERT INTO BaoCaoCP (MaSo,SoHieu) SELECT DISTINCTROW Vattu.MaSo,Cstr(Vattu.MaSo) " _
         & " FROM (Vattu INNER JOIN TonKho ON Vattu.MaSo=TonKho.MaVattu) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo " _
-        & " WHERE Luong_" + CStr(thang) + "<>0 " + IIf(mkho > 0, " AND MaSoKho = " + CStr(mkho), "") + IIf(mloai <> 0, "PhanLoaiVattu.SoHieu LIKE '" + MaSo2SoHieu(mloai, "PhanLoaiVattu") + "*'", "") _
+        & " WHERE Luong_" + CStr(thang) + "<>0 " + IIf(mkho > 0, " AND MaSoKho = " + CStr(mkho), "") + IIf(mloai <> 0, "PhanLoaiVattu.SoHieu LIKE '" + MaSo2SoHieu(mloai, "PhanLoaiVattu") + "%'", "") _
         + " GROUP BY Vattu.MaSo"
     
     If DBKetoan.RecordsAffected = 0 Then

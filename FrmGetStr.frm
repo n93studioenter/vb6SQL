@@ -217,11 +217,14 @@ Private Sub Form_Activate()
             Case 1:
                 Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, Sohieu+' - '+Ten AS F1 FROM HethongTK WHERE TK_ID=" + CStr(TKVT_ID) + " AND TKCon=0 ORDER BY SoHieu", List
             Case 2:
-                Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, Sohieu+' - '+Ten AS F1 FROM HethongTK WHERE (TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ") AND TKCon=0 ORDER BY SoHieu", List
+              '  Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, Sohieu+' - '+Ten AS F1 FROM HethongTK WHERE (TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ") AND TKCon=0 ORDER BY SoHieu", List
+           Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, CONCAT(CAST(Sohieu AS VARCHAR), ' - ', CAST(Ten AS VARCHAR)) AS F1 FROM HethongTK WHERE (TK_ID=" + CStr(TKCNKH_ID) + " OR TK_ID=" + CStr(TKCNPT_ID) + ") AND TKCon=0 ORDER BY F1", List
             Case 3:
-                Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, Sohieu+' - '+Ten AS F1 FROM HethongTK WHERE TK_ID2=" + CStr(TKCPSX_ID) + " AND TKCon=0 ORDER BY SoHieu", List
+                'Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, Sohieu+' - '+Ten AS F1 FROM HethongTK WHERE TK_ID2=" + CStr(TKCPSX_ID) + " AND TKCon=0 ORDER BY SoHieu", List
+            Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, CONCAT(CAST(Sohieu AS VARCHAR), ' - ', CAST(Ten AS VARCHAR)) AS F1 FROM HethongTK WHERE TK_ID2=" + CStr(TKCPSX_ID) + " AND TKCon=0 ORDER BY F1", List
             Case 4:
-                Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, Sohieu+' - '+Ten AS F1 FROM HethongTK WHERE TK_ID2=" + CStr(TKDT_ID) + " AND TKCon=0 ORDER BY SoHieu", List
+                'Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, Sohieu+' - '+Ten AS F1 FROM HethongTK WHERE TK_ID2=" + CStr(TKDT_ID) + " AND TKCon=0 ORDER BY SoHieu", List
+        Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, CONCAT(CAST(Sohieu AS VARCHAR), ' - ', CAST(Ten AS VARCHAR)) AS F1 FROM HethongTK WHERE TK_ID2=" + CStr(TKDT_ID) + " AND TKCon=0 ORDER BY F1", List
         End Select
     End If
 End Sub
@@ -240,7 +243,7 @@ Private Sub picFakeTitle_MouseDown(Button As Integer, Shift As Integer, X As Sin
     ReleaseCapture
     SendMessage Me.hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0
 End Sub
-Private Sub lblTitle_MouseDown(index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub lblTitle_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
     picFakeTitle_MouseDown Button, Shift, X, Y
 End Sub
 Private Sub Form_Load()
@@ -319,7 +322,7 @@ Private Function GetRandom4() As String
     GetRandom4 = st
 End Function
 
-Private Sub Text_Change(index As Integer)
+Private Sub Text_Change(Index As Integer)
 Dim a() As String
  On Error GoTo Error_Handler
 If (Text(1).Visible = True) Then

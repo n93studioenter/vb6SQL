@@ -762,15 +762,6 @@ Begin VB.Form FrmTaikhoan
       _ExtentY        =   1296
       _StockProps     =   77
       BackColor       =   16777215
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "VK Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Rows            =   10
       Cols            =   5
       FixedRows       =   0
@@ -790,15 +781,6 @@ Begin VB.Form FrmTaikhoan
       _ExtentY        =   1296
       _StockProps     =   77
       BackColor       =   16777215
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "VK Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Rows            =   10
       Cols            =   4
       FixedRows       =   0
@@ -1443,12 +1425,11 @@ End Sub
 Private Sub lblClose_Click()
     Unload Me
 End Sub
-Private Sub txtName_Change()
-    txt(1).Text = UnicodeToVni(txtName.Text)
-End Sub
-Private Sub txtDiengiai_Change()
+
+Private Sub txtDienGiai_KeyUp(KeyCode As MSForms.ReturnInteger, Shift As Integer)
     txt(3).Text = UnicodeToVni(txtDiengiai.Text)
 End Sub
+
 Private Sub Form_Load()
 
     lblTitle(11).AutoSize = True
@@ -1995,3 +1976,6 @@ End Sub
 
 
 
+Private Sub txtName_KeyUp(KeyCode As MSForms.ReturnInteger, Shift As Integer)
+txt(1).Text = UnicodeToVni(txtName.Text)
+End Sub

@@ -146,6 +146,7 @@ Class=Class2; Class2.cls
 Class=clsQueryDefCollection; clsQueryDefCollection.cls
 Class=clsQueryDefItem; clsQueryDefItem.cls
 Class=clsIndex; clsIndex.cls
+Form=frmSqlconnection.frm
 ResFile32="custom.RES"
 IconForm="frmMain"
 Startup="Sub Main"

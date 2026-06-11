@@ -570,7 +570,7 @@ Private Sub TongTien()
     If CboKho.ListIndex >= 0 Then
         duno = SelectSQL("SELECT Sum(SoDuKhachHang.DuNo_0) As F1, Sum(SoDuKhachHang.DuCo_0) As F2" _
             & " FROM (SoDuKhachHang INNER JOIN KhachHang ON SoDuKhachHang.MaKhachHang=KhachHang.MaSo) INNER JOIN PhanLoaiKhachHang ON KhachHang.MaPhanLoai=PhanLoaiKhachHang.MaSo" _
-            & " WHERE PhanLoaiKhachHang.SoHieu LIKE '" + MaSo2SoHieu(CboKho.ItemData(CboKho.ListIndex), "PhanLoaiKhachHang") + "*'", duco)
+            & " WHERE PhanLoaiKhachHang.SoHieu LIKE '" + MaSo2SoHieu(CboKho.ItemData(CboKho.ListIndex), "PhanLoaiKhachHang") + "%'", duco)
     End If
     LbTien(0).Caption = Format(duno, Mask_0)
     LbTien(1).Caption = Format(duco, Mask_0)

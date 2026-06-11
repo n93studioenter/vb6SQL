@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{C932BA88-4374-101B-A56C-00AA003668DC}#1.1#0"; "MSMASK32.OCX"
+Object = "{C932BA88-4374-101B-A56C-00AA003668DC}#1.1#0"; "msmask32.ocx"
 Begin VB.Form FrmNhanVien 
    AutoRedraw      =   -1  'True
    BackColor       =   &H00FFFFC0&
@@ -622,7 +622,7 @@ Private Sub Form_Load()
     SetFont Me
 End Sub
 
-Private Sub Form_Unload(CANCEL As Integer)
+Private Sub Form_Unload(Cancel As Integer)
     Set onv = Nothing
 End Sub
 
@@ -656,7 +656,7 @@ End Sub
 '======================================================================================
 Public Function ChonNV(sh As String) As String
     Dim mpl As Long, shtk As String
-    Dim j As Integer, i As Integer, pos As Integer, Length As Integer
+    Dim j As Integer, i As Integer, pos As Integer, length As Integer
     
     If Len(sh) > 0 Then
         shtk = "SELECT DISTINCTROW TOP 1 MaPhanLoai AS F1 FROM NhanVien WHERE SoHieu LIKE '" + sh + "*' ORDER BY SoHieu"
@@ -667,13 +667,13 @@ Public Function ChonNV(sh As String) As String
          i = 0
          j = LstVt.ListCount - 1
          pos = 0
-         Length = Len(sh)
+         length = Len(sh)
          Do While i <= j - 1
                 pos = Fix(0.5 + (i + j) / 2)
-                shtk = Left(LstVt.List(pos), Length)
+                shtk = Left(LstVt.List(pos), length)
                 If sh = shtk Then
                     i = pos - 1
-                    Do While (sh = Left(LstVt.List(i), Length)) And (i > 0)
+                    Do While (sh = Left(LstVt.List(i), length)) And (i > 0)
                         i = i - 1
                     Loop
                     pos = i + 1
@@ -770,9 +770,9 @@ Private Sub SSCmdF_Click()
     
     Me.MousePointer = 11
     sql = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM NhanVien WHERE MaSo>" + CStr(MaDaTim)
-    If SSOpt(0).Value Then sql = sql + " AND SoHieu LIKE '" + txtF.Text + "*'"
+    If SSOpt(0).Value Then sql = sql + " AND SoHieu LIKE '" + txtF.Text + "%'"
     If SSOpt(1).Value Then sql = sql + " AND InStr(Ten,'" + txtF.Text + "')>0"
-    If SSOpt(2).Value Then sql = sql + " AND CMND LIKE '" + txtF.Text + "*'"
+    If SSOpt(2).Value Then sql = sql + " AND CMND LIKE '" + txtF.Text + "%'"
     sql = CStr(SelectSQL(sql))
     If sql <> "0" Then
         ChonNV sql

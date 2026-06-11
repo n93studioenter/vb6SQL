@@ -515,8 +515,8 @@ Private Sub Form_Load()
     Caption = "Sè d­ ®Çu kú kh¸ch hµng"
     Caption = Caption + " - " + CStr(pNamTC)
     lblTitle(11).Caption = Caption
-    Int_RecsetToCbo "SELECT DISTINCTROW MaSo As F2,SoHieu + ' - '  + TenPhanLoai As F1 FROM PhanLoaiKhachHang WHERE PLCon=0 AND LEFT(SoHieu,1)<>'#' ORDER BY SoHieu", CboKho
-
+    '  Int_RecsetToCbo "SELECT DISTINCT MaSo As F2,SoHieu + ' - '  + TenPhanLoai As F1 FROM PhanLoaiKhachHang WHERE PLCon=0 AND LEFT(SoHieu,1)<>'#' ORDER BY SoHieu", CboKho
+    Int_RecsetToCbo "SELECT DISTINCT MaSo AS F2, CONCAT(CAST(SoHieu AS VARCHAR), ' - ', CAST(TenPhanLoai AS VARCHAR)) AS F1 FROM PhanLoaiKhachHang WHERE PLCon=0 AND LEFT(CAST(SoHieu AS VARCHAR),1) <> '#' ORDER BY F2", CboKho
     psw = GetSetting(IniPath, "Environment", "InvPsw")
 
     SetFont Me

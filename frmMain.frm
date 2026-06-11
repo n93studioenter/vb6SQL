@@ -31,9 +31,9 @@ Begin VB.Form frmMain
    WindowState     =   2  'Maximized
    Begin ComctlLib.Toolbar tbToolBar 
       Height          =   630
-      Left            =   120
+      Left            =   1560
       TabIndex        =   1
-      Top             =   720
+      Top             =   840
       Visible         =   0   'False
       Width           =   4095
       _ExtentX        =   7223
@@ -220,7 +220,7 @@ Begin VB.Form frmMain
          EndProperty
          BeginProperty Panel4 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
             Style           =   6
-            TextSave        =   "09/06/26"
+            TextSave        =   "11/06/26"
             Object.Tag             =   ""
          EndProperty
       EndProperty
@@ -664,24 +664,6 @@ Begin VB.Form frmMain
       WindowState     =   2
       PrintFileLinesPerPage=   60
    End
-   Begin VB.Label Label6 
-      BackStyle       =   0  'Transparent
-      Caption         =   "SQL"
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   14.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   495
-      Left            =   840
-      TabIndex        =   87
-      Top             =   960
-      Width           =   615
-   End
    Begin VB.Label lbCty 
       BackColor       =   &H00FFC0C0&
       BackStyle       =   0  'Transparent
@@ -1082,7 +1064,7 @@ Begin VB.Form frmMain
    Begin VB.Label Label3 
       BackColor       =   &H00FFC0C0&
       BackStyle       =   0  'Transparent
-      Caption         =   "Phaàn meàm keá toaùn vietstar"
+      Caption         =   "Phaàn meàm keá toaùn vietstar SQL"
       BeginProperty Font 
          Name            =   "VNI-Lithos"
          Size            =   20.25
@@ -3680,13 +3662,13 @@ Public Sub CheckAndCreateTBInvoice()
 End Sub
 Private Sub testsql()
     Dim rs As Object
-    Dim SQL As String
+    Dim sql As String
     Dim data As Variant
     Dim i As Integer
     
-    SQL = "SELECT Ten FROM KhachHang"
+    sql = "SELECT Ten FROM KhachHang"
     
-    Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
     
     ' Load toàn b? d? li?u vào m?ng (ch? 1 l?n qua m?ng)
     If Not rs.EOF Then
@@ -3702,57 +3684,22 @@ Private Sub testsql()
     Set rs = Nothing
 End Sub
 Private Sub Form_Load()
-    'testsql
-    'CheckAndCreateTBCpu
-
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbRegister ADD tk155 NVARCHAR(255)")
-
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbCpu ADD PcName text")
+'
     frmMain.sbStatusBar.Panels(4).ToolTipText = "Log On Time: " + Format(Time, "hh:mm:ss")
-    Label5.Caption = "  (" & ABCtoVNI("Phiªn b¶n dïng thö") & ")"
-    'PopMenu1.BindMenu Me.hwnd, Me.Menu
-    'MsgBox TypeName(PopMenu1)
-
-    'Call BackupSysFont
-    'Call SetMenuFont("Tahoma", 11, True)
-    'RestoreSysFont
-    'RestoreSysFont
-    ' Fake menu bar
-    ' picFakeMenu.Align = vbAlignTop
-    'picFakeMenu.Height = 360
-    'picFakeMenu.BackColor = CLR_MENU_NORMAL
-
-    'InitFakeMenu
-    'gCurrentMenu = -1
-    ExecuteSQL5_Themmoi ("ALTER TABLE license  ADD AuToNK NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbimport  ADD Khautruthue NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE ChungTu  ADD SoPSGoc NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbimportdetail  ADD SoPSGoc NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbimportdetail  ADD VAT NUMBER")
     Dim check162 As String
     check162 = SelectSQL("SELECT SoHieu AS F1 FROM HeThongTK where SoHieu = '621' ")
     If check162 = 0 Then
-
         mnTT.Caption = "TT-46/2025-BTC"
     Else
         mnTT.Caption = "TT-99/2025-BTC"
-        'mnTT.Visible = False
     End If
-
     LoadMenuform
-    Kiemtraphienbanht
-    'Taifilecapnhat
-
+    ' Kiemtraphienbanht
 
     Dim X1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer
-
-    'ResetSystemFontToDefault
-    'ChangeFont
-    ' L?y handle d?n menu c?a form
+ 
     If pVersion = 2 Then
         Label(19).Visible = False
-        '  img.Top = 3120
-        '  img.Left = 360
     End If
 
     If pVersion > 0 Then
@@ -3779,11 +3726,9 @@ Private Sub Form_Load()
             End If
         End If
     End If
-
-    HienThongBao pDataPath, 2
-    '  dlgCommonDialog.InitDir = pCurDir + "DATA"
-
-
+    Dim newDataPath As String
+    newDataPath = "Server: " & frmSplash.sqlIpServer & " | Database: " & frmSplash.sqlDatabasename
+    HienThongBao newDataPath, 2
     GetLicense
 
     LietKeTep
@@ -3809,8 +3754,6 @@ Private Sub Form_Load()
 
     'chutieng_viet
     ExecuteSQL5 "UPDATE HeThongTK set MaTC = MaSo where MaTC <> MaSo"
-    ExecuteSQL_them_bang "SoLoThuoc1"
-    ExecuteSQL_them_bang "SoLoThuoc"
 
     ExecuteSQL_them_query "VatTuNhap", "SELECT mavattu, solo, handung, sum(SoPS2No) AS soluong" _
                                      & " From chungtu " _
@@ -3857,9 +3800,9 @@ Private Sub Form_Load()
     End If
 
 End Sub
-Public Function ExecuteSQL_them_query(Ten As String, SQL As String, Optional msg As Boolean = True) As Integer
+Public Function ExecuteSQL_them_query(Ten As String, sql As String, Optional msg As Boolean = True) As Integer
       On Error GoTo ErrLock
-     DBKetoan.CreateQueryDef Ten, SQL
+     DBKetoan.CreateQueryDef Ten, sql
       On Error GoTo 0
       ExecuteSQL_them_query = 0
       Exit Function
@@ -3999,11 +3942,11 @@ Public Sub mnCn_Click(Index As Integer)
         If response = vbYes Then
             'Kiem tra cong no khach hang
 
-            Dim SQL As String
-            SQL = "Delete FROM KhachHang  WHERE MaSo NOT IN (SELECT MaKhachHang FROM HoaDon) AND MaSo NOT IN (SELECT MaKhachHang FROM SoDuKhachHang)"
-            ExecuteSQL5 SQL
+            Dim sql As String
+            sql = "Delete FROM KhachHang  WHERE MaSo NOT IN (SELECT MaKhachHang FROM HoaDon) AND MaSo NOT IN (SELECT MaKhachHang FROM SoDuKhachHang)"
+            ExecuteSQL5 sql
 
-            SQL = "DELETE FROM SoDuKhachHang " & _
+            sql = "DELETE FROM SoDuKhachHang " & _
                   "WHERE MaKhachHang IN (" & _
                 "    SELECT MaKhachHang " & _
                 "    FROM SoDuKhachHang sdk " & _
@@ -4028,12 +3971,12 @@ Public Sub mnCn_Click(Index As Integer)
                 "    AND NOT EXISTS (SELECT 1 FROM ChungTuLQ ctlq WHERE ctlq.MaKH = sdk.MaKhachHang) " & _
                   ")"
 
-            ExecuteSQL5 SQL
+            ExecuteSQL5 sql
             Dim ss As String
             ss = ChrW(88) & ChrW(111) & ChrW(225) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(224) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(99) & ChrW(244) & ChrW(110) & ChrW(103)
             MessageBoxW Me.hwnd, StrPtr(ss), StrPtr("Thông báo"), vbOKOnly
 
-            SQL = "DELETE FROM KhachHang " & _
+            sql = "DELETE FROM KhachHang " & _
                   "WHERE NOT EXISTS (SELECT 1 FROM HoaDon WHERE MaKhachHang = KhachHang.MaSo) " & _
                   "AND NOT EXISTS (SELECT 1 FROM ChungTu WHERE MaKH = KhachHang.MaSo) " & _
                   "AND NOT EXISTS (SELECT 1 FROM ChungTu WHERE MaKHC = KhachHang.MaSo) " & _
@@ -4056,7 +3999,7 @@ Public Sub mnCn_Click(Index As Integer)
                 "    GROUP BY MaKhachHang " & _
                 "    HAVING SUM(DuNo_12 + DuCo_12) = 0 " & _
                   ")"
-            ExecuteSQL5 SQL
+            ExecuteSQL5 sql
             'MsgBox "Xo¸ thµnh c«ng !"
             Dim s As String
             s = ChrW(88) & ChrW(111) & ChrW(225) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(224) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(99) & ChrW(244) & ChrW(110) & ChrW(103)
@@ -4107,7 +4050,7 @@ Private Sub mnDL_Click(Index As Integer)
     End If
 
 
-    Dim SQL As String
+    Dim sql As String
 
     If User_Right <> 0 Or (Me.tag Mod 10 = 0) Or (User_Right = 2) Then
         NoRight 0
@@ -4141,8 +4084,8 @@ Private Sub mnDL_Click(Index As Integer)
 
     Case 3:
         If FPsw.GetPswX() = "UCDIT" Then
-            SQL = FrmGetStr.GetString("LÖnh xö lý:", App.ProductName)
-            If Len(SQL) > 0 Then ExecuteSQL5 SQL
+            sql = FrmGetStr.GetString("LÖnh xö lý:", App.ProductName)
+            If Len(sql) > 0 Then ExecuteSQL5 sql
         End If
     Case 6:
         Dim rs_ktra As Object
@@ -4156,9 +4099,9 @@ Private Sub mnDL_Click(Index As Integer)
                 If rs_ktra!Type = 2 Then
                     Dim resultArray() As String
                     resultArray = Split(rs_ktra!year, "|")
-                    Dim chk As Integer
-                    chk = (CInt(resultArray(0)) - 1) + CInt(resultArray(1)) - pNamTC
-                    If chk <= 0 Then
+                    Dim Chk As Integer
+                    Chk = (CInt(resultArray(0)) - 1) + CInt(resultArray(1)) - pNamTC
+                    If Chk <= 0 Then
                         'MsgBox "Gãi d÷ liÖu theo n¨m ®· hÕt, vui lßng liªn hÖ ®Ó ®­îc chuyÓn sang n¨m míi"
                         Dim s As String
                         s = ChrW(71) & ChrW(243) & ChrW(105) & ChrW(32) & ChrW(100) & ChrW(7919) & ChrW(32) & ChrW(108) & ChrW(105) & ChrW(7879) & ChrW(117) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(101) & ChrW(111) & ChrW(32) & ChrW(110) & ChrW(259) & ChrW(109) & ChrW(32) & ChrW(273) & ChrW(227) & ChrW(32) & ChrW(104) & ChrW(7871) & ChrW(116) & ChrW(44) & ChrW(32) & ChrW(118) & ChrW(117) & ChrW(105) & ChrW(32) & ChrW(108) & ChrW(242) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(108) & ChrW(105) & ChrW(234) & ChrW(110) & ChrW(32) & ChrW(104) & ChrW(7879) & ChrW(32) & ChrW(273) & ChrW(7875) & ChrW(32) & ChrW(273) & ChrW(432) & ChrW(7907) & ChrW(99) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(117) & ChrW(121) & ChrW(7875) & ChrW(110) & ChrW(32) & ChrW(115) & ChrW(97) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(110) & ChrW(259) & ChrW(109) & ChrW(32) & ChrW(109) & ChrW(7899) & ChrW(105)
@@ -4239,20 +4182,20 @@ Private Sub mnDL_Click(Index As Integer)
         Form3.chuyen_so_du_dau_ky
         'Form3.Show vbModal ' FrmCTGS.Show vbModal
     Case 16:
-        SQL = GetSetting(IniPath, "LastYear", "IncTax" + CStr(pNamTC), 0)
-        SQL = InputBox("Sè ®iÒu chØnh", "ThuÕ thu nhËp doanh nghiÖp " + CStr(pNamTC - 1), SQL)
-        If IsNumeric(SQL) Then SaveSetting IniPath, "LastYear", "IncTax" + CStr(pNamTC), SQL
+        sql = GetSetting(IniPath, "LastYear", "IncTax" + CStr(pNamTC), 0)
+        sql = InputBox("Sè ®iÒu chØnh", "ThuÕ thu nhËp doanh nghiÖp " + CStr(pNamTC - 1), sql)
+        If IsNumeric(sql) Then SaveSetting IniPath, "LastYear", "IncTax" + CStr(pNamTC), sql
     Case 17:
-        SQL = ChonTenTep("Chän tÖp d÷ liÖu cña n¨m TC tr­íc (L­u ý cÇn ch¹y kiÓm tra sè liÖu cña n¨m cò)", &H4&, "*.MDB", 1)
-        If Len(SQL) = 0 Then GoTo KT
-        LaySoDauNam SQL
+        sql = ChonTenTep("Chän tÖp d÷ liÖu cña n¨m TC tr­íc (L­u ý cÇn ch¹y kiÓm tra sè liÖu cña n¨m cò)", &H4&, "*.MDB", 1)
+        If Len(sql) = 0 Then GoTo KT
+        LaySoDauNam sql
     Case 19: If KtraMKAdmin Then FrmE.Show 1
     Case 21:
         If KtraMKAdmin Then
-            SQL = FrmDB.ChonTepLuu(frmMain.lbCty(8).Caption, pNamTC)
-            If Len(SQL) > 0 Then
+            sql = FrmDB.ChonTepLuu(frmMain.lbCty(8).Caption, pNamTC)
+            If Len(sql) > 0 Then
                 CloseUp 1
-                OpenDB SQL
+                OpenDB sql
             End If
         End If
     End Select
@@ -4640,25 +4583,25 @@ Public Sub mnVT_Click(Index As Integer)
                                              ChrW(120) & ChrW(243) & ChrW(97)), _
                                              vbYesNo + vbQuestion)
         If response = vbYes Then
-            Dim SQL As String
-            SQL = "DELETE FROM Vattu WHERE MaSo NOT IN (SELECT MaVatTu FROM TonKho)"
-            ExecuteSQL5 SQL
+            Dim sql As String
+            sql = "DELETE FROM Vattu WHERE MaSo NOT IN (SELECT MaVatTu FROM TonKho)"
+            ExecuteSQL5 sql
 
 
-            SQL = "DELETE  FROM TonKho " & _
+            sql = "DELETE  FROM TonKho " & _
                   "WHERE Tien_1 = 0 AND Tien_2 = 0 AND Tien_3 = 0 AND Tien_4 = 0 AND Tien_5 = 0 AND Tien_6 = 0 AND Tien_7 = 0 AND Tien_8 = 0 AND Tien_9 = 0 AND Tien_10 = 0 AND Tien_11 = 0 AND Tien_12 = 0 " & _
                   "AND Tien_Nhap_1 = 0 AND Tien_Nhap_2 = 0 AND Tien_Nhap_3 = 0 AND Tien_Nhap_4 = 0 AND Tien_Nhap_5 = 0 AND Tien_Nhap_6 = 0 AND Tien_Nhap_7 = 0 AND Tien_Nhap_8 = 0 AND Tien_Nhap_9 = 0 AND Tien_Nhap_10 = 0 AND Tien_Nhap_11 = 0 AND Tien_Nhap_12 = 0 " & _
                   "AND Tien_Xuat_1 = 0 AND Tien_Xuat_2 = 0 AND Tien_Xuat_3 = 0 AND Tien_Xuat_4 = 0 AND Tien_Xuat_5 = 0 AND Tien_Xuat_6 = 0 AND Tien_Xuat_7 = 0 AND Tien_Xuat_8 = 0 AND Tien_Xuat_9 = 0 AND Tien_Xuat_10 = 0 AND Tien_Xuat_11 = 0 AND Tien_Xuat_12 = 0 " & _
                   "AND Luong_1 = 0 AND Luong_2 = 0 AND Luong_3 = 0 AND Luong_4 = 0 AND Luong_5 = 0 AND Luong_6 = 0 AND Luong_7 = 0 AND Luong_8 = 0 AND Luong_9 = 0 AND Luong_10 = 0 AND Luong_11 = 0 AND Luong_12 = 0"
-            ExecuteSQL5 SQL
+            ExecuteSQL5 sql
 
-            SQL = "DELETE FROM Vattu WHERE MaSo IN (" & _
+            sql = "DELETE FROM Vattu WHERE MaSo IN (" & _
                   "SELECT MaVatTu FROM TonKho " & _
                   "WHERE Tien_1 = 0 AND Tien_2 = 0 AND Tien_3 = 0 AND Tien_4 = 0 AND Tien_5 = 0 AND Tien_6 = 0 AND Tien_7 = 0 AND Tien_8 = 0 AND Tien_9 = 0 AND Tien_10 = 0 AND Tien_11 = 0 AND Tien_12 = 0 " & _
                   "AND Tien_Nhap_1 = 0 AND Tien_Nhap_2 = 0 AND Tien_Nhap_3 = 0 AND Tien_Nhap_4 = 0 AND Tien_Nhap_5 = 0 AND Tien_Nhap_6 = 0 AND Tien_Nhap_7 = 0 AND Tien_Nhap_8 = 0 AND Tien_Nhap_9 = 0 AND Tien_Nhap_10 = 0 AND Tien_Nhap_11 = 0 AND Tien_Nhap_12 = 0 " & _
                   "AND Tien_Xuat_1 = 0 AND Tien_Xuat_2 = 0 AND Tien_Xuat_3 = 0 AND Tien_Xuat_4 = 0 AND Tien_Xuat_5 = 0 AND Tien_Xuat_6 = 0 AND Tien_Xuat_7 = 0 AND Tien_Xuat_8 = 0 AND Tien_Xuat_9 = 0 AND Tien_Xuat_10 = 0 AND Tien_Xuat_11 = 0 AND Tien_Xuat_12 = 0 " & _
                   "AND Luong_1 = 0 AND Luong_2 = 0 AND Luong_3 = 0 AND Luong_4 = 0 AND Luong_5 = 0 AND Luong_6 = 0 AND Luong_7 = 0 AND Luong_8 = 0 AND Luong_9 = 0 AND Luong_10 = 0 AND Luong_11 = 0 AND Luong_12 = 0)"
-            ExecuteSQL5 SQL
+            ExecuteSQL5 sql
             'MsgBox "Xo¸ thµnh c«ng !"
             Dim s As String
              s = ChrW(88) & ChrW(243) & ChrW(97) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(224) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(99) & ChrW(244) & ChrW(110) & ChrW(103)
@@ -4780,7 +4723,7 @@ Public Sub mnVT_Click(Index As Integer)
             d1 = NgayDauThang(pNamTC, pThangDauKy)
             d2 = NgayCuoiNam
         Else
-            If Not GetDate2.GetDate("TÝnh gi¸ vèn b¸n hµng", d1, d2) Then Exit Sub
+            If Not GetDate2.getdate("TÝnh gi¸ vèn b¸n hµng", d1, d2) Then Exit Sub
         End If
         
         s = ChrW(76) & ChrW(7853) & ChrW(112) & ChrW(32) & ChrW(108) & ChrW(7841) & ChrW(105) & ChrW(32) & ChrW(99) & ChrW(225) & ChrW(99) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(7913) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(116) & ChrW(7915) & ChrW(32) & ChrW(103) & ChrW(105) & ChrW(225) & ChrW(32) & ChrW(118) & ChrW(7889) & ChrW(110) & ChrW(32) & ChrW(273) & ChrW(227) & ChrW(32) & ChrW(116) & ChrW(237) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(63) & ChrW(32) & ChrW(40)
@@ -4945,16 +4888,16 @@ Private Sub XKTheoNgay()
 
                         'Kiem tra sohieu nay da dc luu chua
                         Dim rs_check As Object
-                        Dim SQL As String
+                        Dim sql As String
                         Query = "SELECT * FROM tbNhapkhotpChitiet WHERE SoHieu = '" & getsh & "' AND ParentID = " & CInt(maxMact)
                         Set rs_check = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
                         If rs_check.EOF Then
-                            SQL = "INSERT INTO tbNhapkhotpChitiet (SoHieu, SoLuong, DonGia, ParentID) " & _
+                            sql = "INSERT INTO tbNhapkhotpChitiet (SoHieu, SoLuong, DonGia, ParentID) " & _
                                   "VALUES ('" & getsh & "', " & rs_chungtu!SoPS2Co & ", " & dongia & ", '" & CInt(maxMact) & "')"
-                            ExecuteSQL5 SQL
+                            ExecuteSQL5 sql
                         Else
-                            SQL = "UPDATE tbNhapkhotpChitiet SET SoLuong = SoLuong + " & rs_chungtu!SoPS2Co & " WHERE SoHieu = '" & getsh & "' AND ParentID = " & CInt(maxMact)
-                            ExecuteSQL5 SQL
+                            sql = "UPDATE tbNhapkhotpChitiet SET SoLuong = SoLuong + " & rs_chungtu!SoPS2Co & " WHERE SoHieu = '" & getsh & "' AND ParentID = " & CInt(maxMact)
+                            ExecuteSQL5 sql
                         End If
 
                         'Lay ra dong thanh pham vua luu
@@ -4993,9 +4936,9 @@ Private Sub XKTheoNgay()
                                     SoLuong = Round(TongTien / dg, 1)
                                 End If
 
-                                SQL = "INSERT INTO tbNhapkhonguyenlieu (ParentId, TTien, SL, SoHieu,SoHieuTP) " & _
+                                sql = "INSERT INTO tbNhapkhonguyenlieu (ParentId, TTien, SL, SoHieu,SoHieuTP) " & _
                                       "VALUES (" & CInt(maxMact) & "," & dg & ", " & SoLuong & ", '" & rs_check!SoHieuNguyenLieu & "', '" & rs_check!TPSoHieu & "')"
-                                ExecuteSQL5 SQL
+                                ExecuteSQL5 sql
 
                                 rs_check.MoveNext
                             Wend
@@ -5198,10 +5141,6 @@ Private Sub tbToolBar_ButtonClick(ByVal Button As ComctlLib.Button)
     HienThongBao "", 1
     Me.MousePointer = 0
 End Sub
-
-'======================================================================================
-' Function GetLicense : Thí tñc lÃy tËn càng ty v¡ chi nh¤nh
-'======================================================================================
 Private Sub GetLicense()
     Dim rs_license As Object, i As Integer, k As Integer, sh As String
 
@@ -5272,10 +5211,10 @@ Private Sub GetLicense()
         Lb(0).Caption = "10.1"
     End Select
     If pVersion <> 3 Then Lb(0).Caption = Lb(0).Caption    ' + IIf((rs_license!Flag1 Mod 100000000) \ 10000000 > 0, "1", "0") + IIf((rs_license!Flag1 Mod 10000000) \ 1000000 > 0, "1", "0") + IIf((rs_license!Flag1 Mod 1000000) \ 100000 > 0, "1", "0") + IIf((rs_license!Flag1 Mod 100000) \ 10000 > 0, "1", "0")
-    chk(0).Value = (rs_license!Flag1 Mod 100000000) \ 10000000
-    chk(1).Value = (rs_license!Flag1 Mod 10000000) \ 1000000
-    chk(2).Value = (rs_license!Flag1 Mod 1000000) \ 100000
-    chk(3).Value = (rs_license!Flag1 Mod 100000) \ 10000
+    Chk(0).Value = (rs_license!Flag1 Mod 100000000) \ 10000000
+    Chk(1).Value = (rs_license!Flag1 Mod 10000000) \ 1000000
+    Chk(2).Value = (rs_license!Flag1 Mod 1000000) \ 100000
+    Chk(3).Value = (rs_license!Flag1 Mod 100000) \ 10000
 
     Command(6).Visible = ((rs_license!Flag1 Mod 1000000) \ 100000 > 0)
 
@@ -5327,7 +5266,7 @@ Private Sub GetLicense()
     lbCty(10).Caption = rs_license!Quan
     lbCty(11).Caption = rs_license!ThanhPho
     frmMain.lbCty(9).Caption = rs_license!email
-    pSoKT = rs_license!SoKT
+    pSoKT = rs_license!sokt
     mnDL(13).Visible = (pSoKT Mod 100 >= 10)
     '    mnDL(14).Visible = (pSoKT Mod 100 >= 10)
     tbToolBar.Buttons("ThanhPham").Visible = (rs_license!RptOrder Mod 10000 >= 1000)
@@ -5459,7 +5398,6 @@ Private Sub GetLicense()
 
     On Error GoTo 0
 End Sub
-
 Private Sub NoRight(id As Integer)
     Select Case id
         Case 0: HienThongBao "Kh«ng cã quyÒn truy cËp!", 1
@@ -5548,9 +5486,9 @@ Private Sub DatTKCN()
         Me.MousePointer = 0
         GoTo KT
     End If
-    If TK.tk_id = TKCNKH_ID Or TK.tk_id = TKCNPT_ID Then ExecuteSQL5 "DELETE SoDuKhachHang.* FROM SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + TK.sohieu + "*'"
-    If TK.loai < 3 Then ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + IIf(TK.tk_id = TKCNKH_ID, "0", CStr(TKCNKH_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "*'"
-    If TK.loai > 2 Then ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + IIf(TK.tk_id = TKCNPT_ID, "0", CStr(TKCNPT_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "*'"
+    If TK.tk_id = TKCNKH_ID Or TK.tk_id = TKCNPT_ID Then ExecuteSQL5 "DELETE SoDuKhachHang.* FROM SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + TK.sohieu + "%'"
+    If TK.loai < 3 Then ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + IIf(TK.tk_id = TKCNKH_ID, "0", CStr(TKCNKH_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "%'"
+    If TK.loai > 2 Then ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + IIf(TK.tk_id = TKCNPT_ID, "0", CStr(TKCNPT_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "%'"
 KT:
     Set TK = Nothing
 End Sub
@@ -5568,8 +5506,8 @@ Private Sub DatTKVT()
         MsgBox "Tµi kho¶n cã ph¸t sinh hoÆc ®Çu kú, kh«ng chuyÓn ®æi ®­îc!", vbCritical, App.ProductName
         GoTo KT
     End If
-    If TK.tk_id = TKVT_ID Then ExecuteSQL5 "DELETE TonKho.* FROM TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + TK.sohieu + "*'"
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + IIf(TK.tk_id = TKVT_ID, "0", CStr(TKVT_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "*'"
+    If TK.tk_id = TKVT_ID Then ExecuteSQL5 "DELETE TonKho.* FROM TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + TK.sohieu + "%'"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + IIf(TK.tk_id = TKVT_ID, "0", CStr(TKVT_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "%'"
 KT:
     Set TK = Nothing
 End Sub
@@ -5586,7 +5524,7 @@ Private Sub DatTKDTTP()
         MsgBox "Tµi kho¶n cã ph¸t sinh, kh«ng chuyÓn ®æi ®­îc!", vbCritical, App.ProductName
         GoTo KT
     End If
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID2=" + IIf(TK.tk_id2 = TKDT_ID, "0", CStr(TKDT_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "*'"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID2=" + IIf(TK.tk_id2 = TKDT_ID, "0", CStr(TKDT_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "%'"
 KT:
     Set TK = Nothing
 End Sub
@@ -5599,7 +5537,7 @@ Private Sub DatTKTS()
     If Len(shtk) = 0 Then Exit Sub
     TK.InitTaikhoanSohieu shtk
     If TK.MaSo = 0 Then GoTo KT
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID2=" + IIf(TK.tk_id2 = TKCPSX_ID, "0", CStr(TKCPSX_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "*'"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID2=" + IIf(TK.tk_id2 = TKCPSX_ID, "0", CStr(TKCPSX_ID)) + " WHERE SoHieu LIKE '" + TK.sohieu + "%'"
 KT:
     Set TK = Nothing
 End Sub
@@ -5653,7 +5591,7 @@ Private Function StationList() As Integer
     ReDim msString(1) As String
 ' The array is 1-based rather than 0-based, regardless if Option Base 1
 ' is specified in the declarations section.
-    Dim miLoop As Integer, i As Integer, LDBName As String, SQL As String, U As String, X As String
+    Dim miLoop As Integer, i As Integer, LDBName As String, sql As String, U As String, X As String
  
     LDBName = Left(pDataPath, Len(pDataPath) - 3) + "LDB"
 '    miLoop = LDBUser_GetUsers(msString, LDBName, OptLDBLoggedUsers)
@@ -5663,13 +5601,13 @@ Private Function StationList() As Integer
         If i >= LBound(msString, 1) And i <= UBound(msString, 1) Then
             U = SelectSQL("SELECT TenNSD AS F1 FROM Users WHERE WS='" + msString(i) + "' AND TenNSD<>'" + X + "'")
             If U <> "0" Then
-                SQL = SQL + Chr(13) + msString(i) + " : " + U
+                sql = sql + Chr(13) + msString(i) + " : " + U
                 X = U
             End If
         End If
     Next
     If miLoop > 1 Then
-        lbCty(12).Caption = "C¸c m¸y tr¹m: " + SQL
+        lbCty(12).Caption = "C¸c m¸y tr¹m: " + sql
     Else
         lbCty(12).Caption = ""
     End If

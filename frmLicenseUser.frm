@@ -1000,7 +1000,7 @@ Private Sub Kichhoatma()
     If FrmOptions.KiemTraKey2(seleecttext) = True Then
         Dim mac As String
         mac = GetCPUSerialFast()
-        Dim rsCount As DAO.Recordset
+        Dim rsCount As Object
 
         Set rsCount = DBKetoan.OpenRecordset( _
                       "SELECT COUNT(*) AS Tong FROM Users ", dbOpenSnapshot)

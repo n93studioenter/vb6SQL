@@ -2427,7 +2427,7 @@ Private Sub Command3_Click()
     ' T?o truy v?n v?i di?u ki?n LIKE
     Query = "SELECT * FROM Vattu " & _
             "WHERE TenVattu LIKE '*" & UnicodeToVni(txtSearch.Text) & "*' " & _
-            "OR SoHieu LIKE '*" & UnicodeToVni(txtSearch.Text) & "*'"
+            "OR SoHieu LIKE '*" & UnicodeToVni(txtSearch.Text) & "%'"
 
     ' M? Recordset
     Set rs_KH = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
@@ -2498,16 +2498,13 @@ End Sub
 ' Khoi tao form
 '======================================================================================
 
-Private Sub txtTen_Change()
-    txtVT(1).Text = UnicodeToVni(txtTen.Text)
-End Sub
-Private Sub txtDVT_Change()
-    txtVT(2).Text = UnicodeToVni(txtDVT.Text)
-End Sub
-Private Sub txtGhichu_Change()
+Private Sub txtGhiChu_KeyUp(KeyCode As MSForms.ReturnInteger, Shift As Integer)
     txtVT(6).Text = UnicodeToVni(txtGhiChu.Text)
 End Sub
 
+Private Sub txtDVT_Change()
+    txtVT(2).Text = UnicodeToVni(txtDVT.Text)
+End Sub
 Private Sub Form_Load()
     Dim countinvoiceinfo As Integer
     countinvoiceinfo = SelectSQL("select count(*) AS f1 from  tbInvoiceInfo")
@@ -2891,7 +2888,7 @@ Private Sub Pic_DblClick()
 End Sub
 
 Private Sub SSCmdF_Click()
-    Dim SQL As String
+    Dim sql As String
     
     If Len(txtF.Text) = 0 Then
         RFocus txtSearch
@@ -2899,10 +2896,10 @@ Private Sub SSCmdF_Click()
     End If
     
     Me.MousePointer = 11
-    SQL = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM Vattu WHERE MaSo>" + CStr(MaDaTim) + IIf(SSOpt(0).Value, " AND SoHieu LIKE '" + txtF.Text + "'", " AND InStr(TenVattu,'" + txtF.Text + "')>0")
-    SQL = CStr(SelectSQL(SQL))
-    If SQL <> "0" Then
-        ChonVattu SQL
+    sql = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM Vattu WHERE MaSo>" + CStr(MaDaTim) + IIf(SSOpt(0).Value, " AND SoHieu LIKE '" + txtF.Text + "'", " AND InStr(TenVattu,'" + txtF.Text + "')>0")
+    sql = CStr(SelectSQL(sql))
+    If sql <> "0" Then
+        ChonVattu sql
         MaDaTim = vattu.MaSo
     Else
         MaDaTim = 0
@@ -2942,6 +2939,10 @@ End Sub
 Private Sub txtsoluong_LostFocus()
 txtsoluong.SelStart = 0
 txtsoluong.SelLength = Len(txthandung.Text)
+End Sub
+
+Private Sub txtTen_KeyUp(KeyCode As MSForms.ReturnInteger, Shift As Integer)
+    txtVT(1).Text = UnicodeToVni(txtTen.Text)
 End Sub
 
 Private Sub TxtVT_Change(Index As Integer)

@@ -154,7 +154,7 @@ Public Function CapNhatTk() As Integer
     ' Neu co thay doi so hieu thi thay doi so hieu cac tai khoan con
     If sohieu <> taikhoan.sohieu And taikhoan.tkcon <> 0 Then
         ExecuteSQL5 "UPDATE HethongTK SET SoHieu='" + sohieu + "' + Right(HethongTK.SoHieu, Len(HethongTK.SoHieu) - " + CStr(Len(taikhoan.sohieu)) + ")" _
-                + " WHERE SoHieu LIKE '" + taikhoan.sohieu + "*'"
+                + " WHERE SoHieu LIKE '" + taikhoan.sohieu + "%'"
     End If
     CapNhatTk = 0
     
@@ -281,16 +281,16 @@ Public Function TkCoPS(tdau As Integer, tcuoi As Integer) As Boolean
     Dim sql1 As String, sql2 As String, sqlw As String
     
     If tcuoi > 0 Then sqlw = " AND " + WThang("ThangCT", tdau, tcuoi)
-    sql1 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "*'" + sqlw
-    sql2 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "*'" + sqlw
+    sql1 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + sqlw
+    sql2 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + sqlw
     TkCoPS = (SelectSQL(sql1) > 0 Or SelectSQL(sql2) > 0)
 End Function
 '======================================================================================
 Public Function TkCoPSN(ndau As Date, ncuoi As Date) As Boolean
     Dim sql1 As String, sql2 As String
     
-    sql1 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "*'" + " AND " + WNgay("NgayGS", ndau, ncuoi)
-    sql2 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "*'" + " AND " + WNgay("NgayGS", ndau, ncuoi)
+    sql1 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + " AND " + WNgay("NgayGS", ndau, ncuoi)
+    sql2 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + " AND " + WNgay("NgayGS", ndau, ncuoi)
     TkCoPSN = (SelectSQL(sql1) > 0 Or SelectSQL(sql2) > 0)
 End Function
 
@@ -737,7 +737,7 @@ Public Sub LayMaNT(mnt As Long)
 End Sub
 
 Public Function MaxCap() As Integer
-    MaxCap = SelectSQL("SELECT Max(Cap) AS F1 FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "*'")
+    MaxCap = SelectSQL("SELECT Max(Cap) AS F1 FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "%'")
 End Function
 
 Public Function ChuyenChiTietSangDoiTuong() As Boolean
@@ -747,15 +747,15 @@ Public Function ChuyenChiTietSangDoiTuong() As Boolean
     If tkcon = 0 Or MaxCap <> cap + 1 Or loai > 4 Or tk_id <> 0 Or MaTC = 0 Then Exit Function
     If MsgBox("ChuyÓn c¸c tµi kho¶n chi tiÕt thµnh ®èi t­îng c«ng nî ?", vbYesNo + vbExclamation) = vbNo Then Exit Function
     
-    If SelectSQL("SELECT Max(MaNT) AS F1 FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "*'") > 0 Then Exit Function
-    If SelectSQL("SELECT TOP 1 MaSo AS F1 FROM KhachHang WHERE SoHieu LIKE '" + sohieu + "*'") > 0 Then Exit Function
+    If SelectSQL("SELECT Max(MaNT) AS F1 FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "%'") > 0 Then Exit Function
+    If SelectSQL("SELECT TOP 1 MaSo AS F1 FROM KhachHang WHERE SoHieu LIKE '" + sohieu + "%'") > 0 Then Exit Function
     
     ExecuteSQL5 "INSERT INTO PhanLoaiKhachHang (MaSo,SoHieu,TenPhanLoai,Cap) VALUES (" + CStr(Lng_MaxValue("MaSo", "PhanLoaiKhachHang") + 1) + ",'" + sohieu + "','" + Ten + "',1)"
     ExecuteSQL5 "INSERT INTO KhachHang (MaSo,MaPhanLoai,SoHieu,Ten,GhiChu,MaNT) SELECT " + CStr(Lng_MaxValue("MaSo", "KhachHang") + 1) + "," + CStr(SoHieu2MaSo(sohieu, "PhanLoaiKhachHang")) + " AS MPL, SoHieu, Ten, GhiChu,MaNT FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "*' AND Cap=" + CStr(cap + 1)
     ExecuteSQL5 "INSERT INTO SoDuKhachHang (MaSo,MaTaiKhoan, MaKhachHang, DuNo_0, DuCo_0, DuNT_0) SELECT " + CStr(Lng_MaxValue("MaSo", "SoDuKhachHang") + 1) + ",TKCha0, KhachHang.MaSo, DuNo_0, DuCo_0, DuNT_0 FROM HethongTK INNER JOIN KhachHang ON HethongTK.SoHieu=KhachHang.SoHieu WHERE HethongTK.SoHieu LIKE '" + sohieu + "*' AND Cap=" + CStr(cap + 1) + " AND (DuNo_0<>0 OR DuCo_0<>0 OR DuNT_0<>0)"
     
-    ExecuteSQL5 "UPDATE (" + ChungTu2TKNC(-1) + ") INNER JOIN KhachHang ON HethongTK.SoHieu=KhachHang.SoHieu SET MaKH=KhachHang.MaSo, MaTKNo=" + CStr(MaSo) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "*'"
-    ExecuteSQL5 "UPDATE (" + ChungTu2TKNC(1) + ") INNER JOIN KhachHang ON HethongTK.SoHieu=KhachHang.SoHieu SET MaKHC=KhachHang.MaSo, MaTKCo=" + CStr(MaSo) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "*'"
+    ExecuteSQL5 "UPDATE (" + ChungTu2TKNC(-1) + ") INNER JOIN KhachHang ON HethongTK.SoHieu=KhachHang.SoHieu SET MaKH=KhachHang.MaSo, MaTKNo=" + CStr(MaSo) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'"
+    ExecuteSQL5 "UPDATE (" + ChungTu2TKNC(1) + ") INNER JOIN KhachHang ON HethongTK.SoHieu=KhachHang.SoHieu SET MaKHC=KhachHang.MaSo, MaTKCo=" + CStr(MaSo) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'"
     
     ExecuteSQL5 "UPDATE HethongTK SET TKCon=0, TK_ID=" + IIf(loai < 3, CStr(TKCNKH_ID), CStr(TKCNPT_ID)) + " WHERE MaSo=" + CStr(MaSo)
     ExecuteSQL5 "DELETE * FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "*' AND Cap>" + CStr(cap)
@@ -815,7 +815,7 @@ Public Function GhepCanh(tkc As ClsTaikhoan) As Integer
         For j = i - tkc.cap + 1 To max_level - 1
             sql = sql + ",TKCha" + CStr(j) + "=" + CStr(tkcha(j - (i - tkc.cap + 1)))
         Next
-        ExecuteSQL5 "UPDATE HethongTK SET " + sql + ",Cap=" + CStr(cap + 1 + i - tkc.cap) + " WHERE Cap=" + CStr(i) + " AND SoHieu LIKE '" + tkc.sohieu + "*'"
+        ExecuteSQL5 "UPDATE HethongTK SET " + sql + ",Cap=" + CStr(cap + 1 + i - tkc.cap) + " WHERE Cap=" + CStr(i) + " AND SoHieu LIKE '" + tkc.sohieu + "%'"
         If DBKetoan.RecordsAffected = 0 Then Exit For
     Next
     
@@ -825,7 +825,7 @@ Public Function GhepCanh(tkc As ClsTaikhoan) As Integer
         If SelectSQL("SELECT MaSo AS F1 FROM HethongTK WHERE TKCha0=" + CStr(MaSo) + " AND Right(SoHieu," + CStr(Len(sql)) + ")='" + sql + "'") > 0 Then X = "X"
     End If
     i = Len(MaSo2SoHieu(tkc.TkCha0, "HethongTK"))
-    ExecuteSQL5 "UPDATE HethongTK SET Loai=" + CStr(loai) + ",Kieu=" + CStr(kieu) + ",MaTC=" + CStr(MaTC) + ",SoHieu='" + sohieu + IIf(Len(X) > 0, X, "") + "'+Right(SoHieu,Len(SoHieu)-" + CStr(i) + ") WHERE SoHieu LIKE '" + tkc.sohieu + "*'"
+    ExecuteSQL5 "UPDATE HethongTK SET Loai=" + CStr(loai) + ",Kieu=" + CStr(kieu) + ",MaTC=" + CStr(MaTC) + ",SoHieu='" + sohieu + IIf(Len(X) > 0, X, "") + "'+Right(SoHieu,Len(SoHieu)-" + CStr(i) + ") WHERE SoHieu LIKE '" + tkc.sohieu + "%'"
         
     KiemTraTaiKhoan
     GhepCanh = 0

@@ -1223,14 +1223,25 @@ Private Sub Form_Load()
     If urlname = "seller-v2.tendoo.vn" Then
 
     End If
+
+    Dim d As Date
+
+    d = CDate(FrmChungtu.MedNgay(0).Text)
+    Dim SQL As String
+    SQL = "select IdNhap AS f1, HoaDon.MaSo,HoaDon.TendoHDid,HoaDon.ThanhTien " & _
+          "FROM HoaDon " & _
+          "inner join ChungTu on HoaDon.MaSo = ChungTu.MaSo " & _
+          "where ChungTu.SoHieu = '" & FrmChungtu.txt(0).Text & "' " & _
+          "and HoaDon.KyHieu = '" & FrmChungtu.txtVT(1).Text & "' " & _
+          "and CONVERT(date, ChungTu.NgayCT) = '" & _
+          Format$(d, "yyyy-mm-dd") & "'"
+
     Dim rsports As Object
-    Set rsports = DBKetoan.OpenRecordset("select IdNhap AS f1, HoaDon.MaSo,HoaDon.TendoHDid,HoaDon.ThanhTien FROM HoaDon " & _
-                                         "inner join ChungTu on HoaDon.MaSo = ChungTu.MaSo " & _
-                                         "where ChungTu.SoHieu = '" & FrmChungtu.txt(0).Text & "' " & _
-                                         "and HoaDon.KyHieu = '" & FrmChungtu.txtVT(1).Text & "' " & _
-                                         "and ChungTu.NgayCT = #" & Format(FrmChungtu.MedNgay(0).Text, "yyyy-mm-dd") & "#", dbOpenSnapshot)
+    Set rsports = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     If Not rsports.EOF Then
         ' L?y giá tr? IdNhap
+
+
 
         MaSoHd = rsports!MaSo
         If Not IsNull(rsports!TendoHDid) And rsports!TendoHDid <> "..." Then

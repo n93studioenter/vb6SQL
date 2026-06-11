@@ -930,7 +930,7 @@ Private Sub Command1_Click()
     End If
 
     ' T?o truy v?n v?i di?u ki?n LIKE
-    Query = "SELECT * FROM KhachHang WHERE Ten LIKE '*" & txtF.Text & "*'"
+    Query = "SELECT * FROM KhachHang WHERE Ten LIKE '*" & txtF.Text & "%'"
 
     ' M? Recordset
     Set rs_KH = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
@@ -1006,6 +1006,11 @@ End Sub
 Private Sub lblClose_Click()
     Unload Me
 End Sub
+
+Private Sub txtDiaChi_KeyUp(KeyCode As MSForms.ReturnInteger, Shift As Integer)
+    txtVT(2).Text = UnicodeToVni(txtDiaChi.Text)
+End Sub
+
 Private Sub txtName_GotFocus()
     With txtName
         .SelStart = 0
@@ -1019,18 +1024,17 @@ Private Sub txtDiaChi_GotFocus()
     End With
 End Sub
 
-Private Sub txtName_Change()
-    txtVT(1).Text = UnicodeToVni(txtName.Text)
-End Sub
-Private Sub txtDiaChi_Change()
-    txtVT(2).Text = UnicodeToVni(txtDiaChi.Text)
-End Sub
 Private Sub txtGhichu_Change()
     txtVT(9).Text = UnicodeToVni(txtGhiChu.Text)
 End Sub
 Private Sub txtDaiDien_Change()
     txtVT(7).Text = UnicodeToVni(txtDaiDien.Text)
 End Sub
+
+Private Sub txtName_KeyUp(KeyCode As MSForms.ReturnInteger, Shift As Integer)
+    txtVT(1).Text = UnicodeToVni(txtName.Text)
+End Sub
+
 Private Sub txtTK_Change()
     txtVT(8).Text = UnicodeToVni(txtTK.Text)
 End Sub
@@ -1231,9 +1235,9 @@ Private Sub SSCmdF_Click()
     
     Me.MousePointer = 11
     sql = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM KhachHang WHERE MaSo>" + CStr(MaDaTim)
-    If SSOpt(0).Value Then sql = sql + " AND SoHieu LIKE '" + txtF.Text + "*'"
+    If SSOpt(0).Value Then sql = sql + " AND SoHieu LIKE '" + txtF.Text + "%'"
     If SSOpt(1).Value Then sql = sql + " AND InStr(Ten,'" + txtF.Text + "')>0"
-    If SSOpt(2).Value Then sql = sql + " AND MST LIKE '" + txtF.Text + "*'"
+    If SSOpt(2).Value Then sql = sql + " AND MST LIKE '" + txtF.Text + "%'"
     sql = CStr(SelectSQL(sql))
     If sql <> "0" Then
         ChonKhachHang sql

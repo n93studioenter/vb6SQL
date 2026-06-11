@@ -351,36 +351,36 @@ End Sub
 '======================================================================================
 Public Function Int_RecsetToCbo(pstr_sql As String, Cbo As Object, Optional id As Integer = 0) As Integer
     Dim recset As Object
-    Dim SQL As String
+    Dim sql As String
     
     If DBKetoan Is Nothing Then
         Exit Function
     End If
     
-    SQL = pstr_sql
+    sql = pstr_sql
     
     ' ========== CHUY?N Ð?I SQL T? ACCESS SANG SQL SERVER ==========
     
     ' 1. DISTINCTROW -> DISTINCT
-    SQL = Replace(SQL, "DISTINCTROW", "DISTINCT")
-    SQL = Replace(SQL, "distinctrow", "DISTINCT")
+    sql = Replace(sql, "DISTINCTROW", "DISTINCT")
+    sql = Replace(sql, "distinctrow", "DISTINCT")
     
     ' 2. Chr(9) -> CHAR(9)
-    SQL = Replace(SQL, "Chr(9)", "CHAR(9)")
-    SQL = Replace(SQL, "chr(9)", "CHAR(9)")
+    sql = Replace(sql, "Chr(9)", "CHAR(9)")
+    sql = Replace(sql, "chr(9)", "CHAR(9)")
     
     ' 3. Chuy?n n?i chu?i: field1 + 'text' + field2 -> CONCAT
-    SQL = ConvertConcat(SQL)
+    sql = ConvertConcat(sql)
     
     ' 4. X? lý ORDER BY v?i DISTINCT
-    If InStr(1, SQL, "SELECT DISTINCT", vbTextCompare) > 0 Then
-        If InStr(1, SQL, "ORDER BY", vbTextCompare) > 0 Then
+    If InStr(1, sql, "SELECT DISTINCT", vbTextCompare) > 0 Then
+        If InStr(1, sql, "ORDER BY", vbTextCompare) > 0 Then
             ' Thêm c?t SoHieu vào SELECT n?u c?n
         End If
     End If
     
     ' Th?c thi
-    Set recset = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
+    Set recset = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
     
     Cbo.Clear
     
@@ -401,9 +401,9 @@ Public Function Int_RecsetToCbo(pstr_sql As String, Cbo As Object, Optional id A
 End Function
 
 ' Hàm chuy?n d?i n?i chu?i
-Private Function ConvertConcat(ByVal SQL As String) As String
+Private Function ConvertConcat(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     
     ' Tìm pattern: field + 'text' + field
     ' Ví d?: SoHieu + Chr(9) + TenVattu
@@ -447,9 +447,9 @@ Private Function ConvertConcat(ByVal SQL As String) As String
     
     ConvertConcat = result
 End Function
-Private Function ConvertStringConcat(ByVal SQL As String) As String
+Private Function ConvertStringConcat(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     
     ' Tìm và thay th? pattern: field1 + 'text' + field2
     ' Ví d?: SoHieu + ' - ' + DienGiai -> CONCAT(SoHieu, ' - ', ISNULL(DienGiai, ''))
@@ -603,9 +603,9 @@ Public Sub SetRptInfo()
 
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -617,7 +617,7 @@ Public Sub SetRptInfo()
     
     ' Ch? dùng Connect
     'frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=pc43\SQLEXPRESS;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
-    frmMain.Rpt.Connect = "DSN=THB;UID=sa;PWD=123456"
+    frmMain.Rpt.Connect = "DSN=THDNS;UID=thanhhuongbd;PWD=123"
 
     frmMain.Rpt.WindowShowPrintSetupBtn = True
 End Sub
@@ -2169,7 +2169,7 @@ End Function
 
 
 Public Function ThemTruong(tbl As String, fld As String, tp As Integer, Optional s As Integer = 0, Optional dv As Integer = 0, Optional gt As String = "...") As Boolean
-    Dim tdf As TableDef, SQL As String
+    Dim tdf As TableDef, sql As String
 
     ThemTruong = False
     If Not BangDaCo(tbl) Then GoTo KT
@@ -2187,15 +2187,15 @@ Public Function ThemTruong(tbl As String, fld As String, tp As Integer, Optional
     Select Case tp
     Case dbInteger, dbLong, dbDouble, dbSingle:
         tdf.Fields(fld).DefaultValue = dv
-        SQL = "UPDATE " + tbl + " SET " + fld + "=" + CStr(dv)
+        sql = "UPDATE " + tbl + " SET " + fld + "=" + CStr(dv)
     Case dbText:
         tdf.Fields(fld).DefaultValue = "..."
-        SQL = "UPDATE " + tbl + " SET " + fld + "='" + gt + "'"
+        sql = "UPDATE " + tbl + " SET " + fld + "='" + gt + "'"
     Case dbDate
         tdf.Fields(fld).DefaultValue = CVDate("1/1/80")
-        SQL = "UPDATE " + tbl + " SET " + fld + "=#1/1/80#"
+        sql = "UPDATE " + tbl + " SET " + fld + "=#1/1/80#"
     End Select
-    If Len(SQL) > 0 Then ExecuteSQL5 SQL
+    If Len(sql) > 0 Then ExecuteSQL5 sql
     ThemTruong = True
 KT:
     Set tdf = Nothing
@@ -2580,10 +2580,10 @@ Public Function QueryDaCo(qname As String) As Boolean
     On Error GoTo 0
 End Function
 
-Public Sub AddQuery(qname As String, Optional SQL As String = "SELECT * FROM License")
+Public Sub AddQuery(qname As String, Optional sql As String = "SELECT * FROM License")
     If QueryDaCo(qname) Then Exit Sub
     On Error Resume Next
-    DBKetoan.QueryDefs.Append DBKetoan.CreateQueryDef(qname, SQL)
+    DBKetoan.QueryDefs.Append DBKetoan.CreateQueryDef(qname, sql)
     On Error GoTo 0
 End Sub
 

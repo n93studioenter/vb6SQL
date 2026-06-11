@@ -33,18 +33,18 @@ Public Function Connect(Server As String, db As String, uID As String, PWD As St
     Connect = (Err.number = 0)
 End Function
 
-Public Sub ExecuteSQL(SQL As String, Optional Options As Variant = dbFailOnError)
-    Debug.Print "Mientru " & SQL
+Public Sub ExecuteSQL(sql As String, Optional Options As Variant = dbFailOnError)
+    Debug.Print "Mientru " & sql
     On Error GoTo Loi
-    Conn.Execute SQL, RecordsAffected
+    Conn.Execute sql, RecordsAffected
     Exit Sub
 Loi:
     Debug.Print Err.number, "clsDatabase.ExecuteSQL", Err.Description
 End Sub
 
-Private Function ConvertSQL(ByVal SQL As String) As String
+Private Function ConvertSQL(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     result = FixConvertError(result)
     result = FixPlusConcat(result)
     result = FixElseEndConcat(result)
@@ -61,9 +61,9 @@ Private Function ConvertSQL(ByVal SQL As String) As String
     ConvertSQL = result
 End Function
 
-Private Function FixFormatDate(ByVal SQL As String) As String
+Private Function FixFormatDate(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     Dim regex As Object
     Set regex = CreateObject("VBScript.RegExp")
     regex.Global = True
@@ -72,32 +72,32 @@ Private Function FixFormatDate(ByVal SQL As String) As String
     Dim matches As Object
     Set matches = regex.Execute(result)
     Dim match As Object
-    Dim FieldName As String
+    Dim fieldName As String
     Dim dateFormat As String
     Dim sqlCode As String
     For Each match In matches
-        FieldName = match.SubMatches(0)
+        fieldName = match.SubMatches(0)
         dateFormat = LCase(match.SubMatches(1))
         Select Case dateFormat
             Case "dd/mm/yy", "dd/mm/yyyy", "dd\/mm\/yy", "dd\/mm\/yyyy"
-                sqlCode = "CONVERT(varchar, " & FieldName & ", 3)"
+                sqlCode = "CONVERT(varchar, " & fieldName & ", 3)"
             Case "mm/dd/yy", "mm/dd/yyyy"
-                sqlCode = "CONVERT(varchar, " & FieldName & ", 1)"
+                sqlCode = "CONVERT(varchar, " & fieldName & ", 1)"
             Case "yyyymmdd"
-                sqlCode = "CONVERT(varchar, " & FieldName & ", 112)"
+                sqlCode = "CONVERT(varchar, " & fieldName & ", 112)"
             Case "dd/mm/yyyy hh:nn:ss", "dd/mm/yy hh:nn:ss"
-                sqlCode = "CONVERT(varchar, " & FieldName & ", 103)"
+                sqlCode = "CONVERT(varchar, " & fieldName & ", 103)"
             Case Else
-                sqlCode = "CONVERT(varchar, " & FieldName & ", 103)"
+                sqlCode = "CONVERT(varchar, " & fieldName & ", 103)"
         End Select
         result = Replace(result, match.Value, sqlCode)
     Next
     FixFormatDate = result
 End Function
 
-Private Function FixConvertError(ByVal SQL As String) As String
+Private Function FixConvertError(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     Dim regex As Object
     Set regex = CreateObject("VBScript.RegExp")
     regex.Global = True
@@ -106,11 +106,11 @@ Private Function FixConvertError(ByVal SQL As String) As String
     Dim matches As Object
     Set matches = regex.Execute(result)
     Dim match As Object
-    Dim FieldName As String
+    Dim fieldName As String
     Dim dateFormat As String
     Dim formatCode As String
     For Each match In matches
-        FieldName = match.SubMatches(0)
+        fieldName = match.SubMatches(0)
         dateFormat = LCase(match.SubMatches(1))
         Select Case dateFormat
         Case "dd/mm/yy", "dd/mm/yyyy", "dd\/mm\/yy", "dd\/mm\/yyyy"
@@ -122,14 +122,14 @@ Private Function FixConvertError(ByVal SQL As String) As String
         Case Else
             formatCode = "3"
         End Select
-        result = Replace(result, match.Value, "CONVERT(varchar, " & FieldName & ", " & formatCode & ")")
+        result = Replace(result, match.Value, "CONVERT(varchar, " & fieldName & ", " & formatCode & ")")
     Next
     FixConvertError = result
 End Function
 
-Private Function FixElseEndConcat(ByVal SQL As String) As String
+Private Function FixElseEndConcat(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     Dim pos As Integer
     pos = InStr(1, result, "ELSE '' END+", vbTextCompare)
     Do While pos > 0
@@ -140,19 +140,19 @@ Private Function FixElseEndConcat(ByVal SQL As String) As String
         Do While endField <= Len(result) And (Mid(result, endField, 1) Like "[A-Za-z0-9_.]")
             endField = endField + 1
         Loop
-        Dim FieldName As String
-        FieldName = Mid(result, startField, endField - startField)
+        Dim fieldName As String
+        fieldName = Mid(result, startField, endField - startField)
         Dim newText As String
-        newText = "ELSE ISNULL(" & FieldName & ", '') END"
+        newText = "ELSE ISNULL(" & fieldName & ", '') END"
         result = Left(result, pos - 1) & newText & Mid(result, endField)
         pos = InStr(pos + 1, result, "ELSE '' END+", vbTextCompare)
     Loop
     FixElseEndConcat = result
 End Function
 
-Private Function FixPlusConcat(ByVal SQL As String) As String
+Private Function FixPlusConcat(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     Dim pos As Integer
     pos = InStr(1, result, "+ '", vbTextCompare)
     If pos > 0 Then
@@ -195,14 +195,14 @@ Private Function FixPlusConcat(ByVal SQL As String) As String
     FixPlusConcat = result
 End Function
 
-Private Function ConvertDateDelimiters(ByVal SQL As String) As String
+Private Function ConvertDateDelimiters(ByVal sql As String) As String
     Dim result As String
     Dim i As Integer
     Dim inString As Boolean
     Dim startPos As Integer
     Dim dateStr As String
     Dim ch As String
-    result = SQL
+    result = sql
     i = 1
     inString = False
     Do While i <= Len(result)
@@ -272,7 +272,7 @@ Private Function ConvertDateFormat(ByVal dateStr As String) As String
     ConvertDateFormat = dateStr
 End Function
 
-Private Function ConvertIIFToCase(ByVal SQL As String) As String
+Private Function ConvertIIFToCase(ByVal sql As String) As String
     Dim result As String
     Dim pos As Integer
     Dim i As Integer
@@ -284,7 +284,7 @@ Private Function ConvertIIFToCase(ByVal SQL As String) As String
     Dim condition As String
     Dim truePart As String
     Dim falsePart As String
-    result = SQL
+    result = sql
     pos = InStr(1, result, "IIF(", vbTextCompare)
     Do While pos > 0
         startPos = pos
@@ -340,7 +340,7 @@ Private Function ConvertIIFToCase(ByVal SQL As String) As String
     ConvertIIFToCase = result
 End Function
 
-Private Function ConvertWildcards(ByVal SQL As String) As String
+Private Function ConvertWildcards(ByVal sql As String) As String
     Dim result As String
     Dim i As Long
     Dim inString As Boolean
@@ -352,7 +352,7 @@ Private Function ConvertWildcards(ByVal SQL As String) As String
     Dim j As Long
     Dim inBracket As Boolean
     Dim bracketContent As String
-    result = SQL
+    result = sql
     i = 1
     inString = False
     inLike = False
@@ -421,10 +421,10 @@ NextIteration:
     Loop
     ConvertWildcards = result
 End Function
-Public Function FixSQL(ByVal SQL As String) As String
+Public Function FixSQL(ByVal sql As String) As String
 
     Dim s As String
-    s = SQL
+    s = sql
 
     ' DISTINCTROW -> DISTINCT
     s = Replace(s, "DISTINCTROW", "DISTINCT", , , vbTextCompare)
@@ -460,16 +460,16 @@ Public Function FixSQL(ByVal SQL As String) As String
 End Function
 Public Function OpenRecordset(Source As String, Optional Typ As Variant = 2, Optional Typ2 As Variant = 2) As Object
     Dim rs As Object
-    Dim SQL As String
-    SQL = Source
-    SQL = FixSQL(SQL)
-    SQL = FixSpecialSQL(SQL)
-    SQL = ConvertSQL(SQL)
-    SQL = Replace(SQL, "DISTINCTROW", "DISTINCT")
-    SQL = Replace(SQL, "distinctrow", "DISTINCT")
-    SQL = Trim(SQL)
+    Dim sql As String
+    sql = Source
+    sql = FixSQL(sql)
+    sql = FixSpecialSQL(sql)
+    sql = ConvertSQL(sql)
+    sql = Replace(sql, "DISTINCTROW", "DISTINCT")
+    sql = Replace(sql, "distinctrow", "DISTINCT")
+    sql = Trim(sql)
     On Error Resume Next
-    SQL = m_QueryDefs(Source)
+    sql = m_QueryDefs(Source)
     On Error GoTo 0
     Set rs = CreateObject("ADODB.Recordset")
     rs.CursorLocation = 3
@@ -482,14 +482,14 @@ Public Function OpenRecordset(Source As String, Optional Typ As Variant = 2, Opt
     Case Else:
         rsType = 3
     End Select
-    Debug.Print SQL
-    rs.Open SQL, Conn, rsType, 3
+    Debug.Print sql
+    rs.Open sql, Conn, rsType, 3
     Set OpenRecordset = rs
 End Function
 
-Public Function FixSpecialSQL(ByVal SQL As String) As String
+Public Function FixSpecialSQL(ByVal sql As String) As String
     Dim result As String
-    result = SQL
+    result = sql
     
     ' 1. S?a CONVERT(varchar, NgayKy,'dd/mm/yy') -> CONVERT(varchar, NgayKy, 103)
     Dim pos As Integer
@@ -502,10 +502,10 @@ Public Function FixSpecialSQL(ByVal SQL As String) As String
             If comma2 > 0 Then
                 endPos = InStr(comma2 + 1, result, ")")
                 If endPos > 0 Then
-                    Dim FieldName As String
-                    FieldName = Trim(Mid(result, pos + 16, comma1 - pos - 16))
+                    Dim fieldName As String
+                    fieldName = Trim(Mid(result, pos + 16, comma1 - pos - 16))
                     Dim newConvert As String
-                    newConvert = "CONVERT(varchar, " & FieldName & ", 103)"
+                    newConvert = "CONVERT(varchar, " & fieldName & ", 103)"
                     result = Left(result, pos - 1) & newConvert & Mid(result, endPos + 1)
                 End If
             End If
@@ -603,17 +603,17 @@ End Property
 Public Sub LoadTableDefs()
     Dim rs As Object
     Dim tdf As clsTableDef
-    Dim SQL As String
+    Dim sql As String
     
     On Error GoTo Loi  ' Thêm dòng này d? b?t l?i
     
     Set m_TableDefs = New Collection
     
     ' Dùng tr?c ti?p, không qua OpenRecordset d? tránh ConvertSQL
-    SQL = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME"
+    sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME"
     
     Set rs = CreateObject("ADODB.Recordset")
-    rs.Open SQL, Conn, 3, 1  ' adOpenStatic, adLockReadOnly
+    rs.Open sql, Conn, 3, 1  ' adOpenStatic, adLockReadOnly
     
     Do While Not rs.EOF
         Set tdf = New clsTableDef
@@ -699,27 +699,27 @@ Public Function CreateTableDef(Name As String) As Object
     Set CreateTableDef = tdf
 End Function
 
-Public Function GetTableDef(tableName As String) As Object
+Public Function GetTableDef(TableName As String) As Object
     On Error Resume Next
     Dim tdf As Object
     If m_TableDefs.count = 0 Then
         LoadTableDefs
     End If
-    Set tdf = m_TableDefs(tableName)
+    Set tdf = m_TableDefs(TableName)
     If tdf Is Nothing Then
         Set tdf = CreateObject("clsTableDef")
-        tdf.Init tableName, Conn
-        m_TableDefs.Add tdf, tableName
+        tdf.Init TableName, Conn
+        m_TableDefs.Add tdf, TableName
     End If
     Set GetTableDef = tdf
 End Function
 
-Public Function CreateQueryDef(Name As String, SQL As String) As Object
+Public Function CreateQueryDef(Name As String, sql As String) As Object
     Dim qdf As New clsQueryDef
     On Error Resume Next
     m_QueryDefs.Remove Name
     On Error GoTo 0
-    qdf.Init Name, SQL, Conn
+    qdf.Init Name, sql, Conn
     m_QueryDefs.Add qdf, Name
     Set CreateQueryDef = qdf
 End Function
@@ -743,11 +743,11 @@ Public Property Get QueryDefs() As Object
     QueryDefs.Init m_QueryDefs, Conn
 End Property
 
-Public Sub AddQuery(Name As String, SQL As String)
+Public Sub AddQuery(Name As String, sql As String)
     On Error Resume Next
     m_QueryDefs.Remove Name
     On Error GoTo 0
-    m_QueryDefs.Add SQL, Name
+    m_QueryDefs.Add sql, Name
 End Sub
 
 Public Function GetLastRow(q As String, f As String) As Variant
@@ -763,19 +763,19 @@ Public Function GetLastRow(q As String, f As String) As Variant
     Set rs = Nothing
 End Function
 
-Public Sub CreateIndex(tableName As String, IndexName As String, ColumnName As String, Optional IsUnique As Boolean = False, Optional IsClustered As Boolean = False)
-    Dim SQL As String
+Public Sub CreateIndex(TableName As String, IndexName As String, ColumnName As String, Optional IsUnique As Boolean = False, Optional IsClustered As Boolean = False)
+    Dim sql As String
     Dim uniqueStr As String
     Dim clusteredStr As String
-    SQL = "IF EXISTS (SELECT * FROM sys.indexes WHERE name = '" & IndexName & "' AND object_id = OBJECT_ID('" & tableName & "')) " & _
-          "DROP INDEX " & IndexName & " ON " & tableName & "; "
+    sql = "IF EXISTS (SELECT * FROM sys.indexes WHERE name = '" & IndexName & "' AND object_id = OBJECT_ID('" & TableName & "')) " & _
+          "DROP INDEX " & IndexName & " ON " & TableName & "; "
     If IsUnique Then
         uniqueStr = "UNIQUE "
     End If
     If IsClustered Then
         clusteredStr = "CLUSTERED "
     End If
-    SQL = SQL & "CREATE " & uniqueStr & clusteredStr & "INDEX " & IndexName & " ON " & tableName & " (" & ColumnName & ")"
-    Me.ExecuteSQL SQL
+    sql = sql & "CREATE " & uniqueStr & clusteredStr & "INDEX " & IndexName & " ON " & TableName & " (" & ColumnName & ")"
+    Me.ExecuteSQL sql
 End Sub
 

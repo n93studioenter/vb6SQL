@@ -831,7 +831,7 @@ Private Sub lblClose_Click()
 End Sub
 Private Sub picFakeTitle_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     ReleaseCapture
-    SendMessage Me.hWnd, WM_NCLBUTTONDOWN, HTCAPTION, 0
+    SendMessage Me.hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0
 End Sub
 Private Sub lblTitle_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
     picFakeTitle_MouseDown Button, Shift, X, Y
@@ -861,8 +861,8 @@ Private Sub Form_Load()
     Caption = "HÖ thèng danh ®iÓm c«ng tr×nh, s¶n phÈm"
     Caption = Caption + " - " + CStr(pNamTC)
     lblTitle(11).Caption = Caption
-    Int_RecsetToCbo "SELECT DISTINCTROW MaSo As F2, SoHieu + ' - '  + TenPhanLoai As F1 FROM PhanLoai154 WHERE PLCon=0 ORDER BY SoHieu", CboLoai
-
+    'Int_RecsetToCbo "SELECT DISTINCTROW MaSo As F2, SoHieu + ' - '  + TenPhanLoai As F1 FROM PhanLoai154 WHERE PLCon=0 ORDER BY SoHieu", CboLoai
+Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, CONCAT(CAST(SoHieu AS VARCHAR), ' - ', CAST(TenPhanLoai AS VARCHAR)) AS F1 FROM PhanLoai154 WHERE PLCon=0 ORDER BY F1", CboLoai
     AddMonthToCbo CboThang
     CboThang.AddItem "TB", 0
     CboThang.ListIndex = 0
@@ -911,7 +911,7 @@ End Sub
 '======================================================================================
 Public Function ChonTP(sh As String) As String
     Dim mpl As Long, shtk As String
-    Dim j As Integer, i As Integer, pos As Integer, Length As Integer
+    Dim j As Integer, i As Integer, pos As Integer, length As Integer
     
     If Len(sh) > 0 Then
         shtk = "SELECT DISTINCTROW TOP 1 MaPhanLoai AS F1 FROM TP154 WHERE SoHieu LIKE '" + sh + "*' ORDER BY SoHieu"
@@ -922,13 +922,13 @@ Public Function ChonTP(sh As String) As String
          i = 0
          j = LstVt.ListCount - 1
          pos = 0
-         Length = Len(sh)
+         length = Len(sh)
          Do While i <= j - 1
                 pos = Fix(0.5 + (i + j) / 2)
-                shtk = Left(LstVt.List(pos), Length)
+                shtk = Left(LstVt.List(pos), length)
                 If sh = shtk Then
                     i = pos - 1
-                    Do While (sh = Left(LstVt.List(i), Length)) And (i > 0)
+                    Do While (sh = Left(LstVt.List(i), length)) And (i > 0)
                         i = i - 1
                     Loop
                     pos = i + 1
@@ -1007,7 +1007,7 @@ End With
 End Function
 
 Private Sub SSCmdF_Click()
-    Dim sql As String
+    Dim SQL As String
     
     If Len(txtF.Text) = 0 Then
         RFocus txtF
@@ -1015,10 +1015,10 @@ Private Sub SSCmdF_Click()
     End If
     
     Me.MousePointer = 11
-    sql = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM TP154 WHERE MaSo>" + CStr(MaDaTim) + IIf(SSOpt(0).Value, " AND SoHieu LIKE '" + txtF.Text + "'", " AND InStr(TenVattu,'" + txtF.Text + "')>0")
-    sql = CStr(SelectSQL(sql))
-    If sql <> "0" Then
-        ChonTP sql
+    SQL = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM TP154 WHERE MaSo>" + CStr(MaDaTim) + IIf(SSOpt(0).Value, " AND SoHieu LIKE '" + txtF.Text + "'", " AND InStr(TenVattu,'" + txtF.Text + "')>0")
+    SQL = CStr(SelectSQL(SQL))
+    If SQL <> "0" Then
+        ChonTP SQL
         MaDaTim = tp.MaSo
     Else
         MaDaTim = 0

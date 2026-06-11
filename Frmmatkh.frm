@@ -243,14 +243,14 @@ Public Sub CheckAndCreateTableThongTinToKhai()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbThongTinToKhai"    ' Thay d?i tên b?ng c?a b?n ? dây
+    TableName = "tbThongTinToKhai"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -258,7 +258,7 @@ Public Sub CheckAndCreateTableThongTinToKhai()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         Set fld = tdf.CreateField("ID", dbLong)
         fld.Attributes = dbAutoIncrField    ' Thi?t l?p thu?c tính t? d?ng tang
@@ -293,14 +293,14 @@ Public Sub CheckAndCreateTableDinhDanh()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbDinhdanhtaikhoan"    ' Thay d?i tên b?ng c?a b?n ? dây
+    TableName = "tbDinhdanhtaikhoan"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -308,7 +308,7 @@ Public Sub CheckAndCreateTableDinhDanh()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         Set fld = tdf.CreateField("ID", dbLong)
         fld.Attributes = dbAutoIncrField    ' Thi?t l?p thu?c tính t? d?ng tang
@@ -334,13 +334,13 @@ Public Sub CheckAndCreateTableFontSize()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
-    tableName = "tbFontsize"    ' Thay d?i tên b?ng c?a b?n ? dây
+    Dim TableName As String
+    TableName = "tbFontsize"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -348,7 +348,7 @@ Public Sub CheckAndCreateTableFontSize()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         Set fld = tdf.CreateField("ID", dbLong)
         fld.Attributes = dbAutoIncrField    ' Thi?t l?p thu?c tính t? d?ng tang
@@ -378,14 +378,14 @@ Public Sub CheckAndCreateTablePL1()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbPL1"    ' Thay d?i tên b?ng c?a b?n ? dây
+    TableName = "tbPL1"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -393,7 +393,7 @@ Public Sub CheckAndCreateTablePL1()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         Set fld = tdf.CreateField("ID", dbLong)
         fld.Attributes = dbAutoIncrField    ' Thi?t l?p thu?c tính t? d?ng tang
@@ -415,14 +415,14 @@ Public Sub CheckAndCreateTablePL2()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbPL2"    ' Thay d?i tên b?ng c?a b?n ? dây
+    TableName = "tbPL2"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -430,7 +430,7 @@ Public Sub CheckAndCreateTablePL2()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         Set fld = tdf.CreateField("ID", dbLong)
         fld.Attributes = dbAutoIncrField    ' Thi?t l?p thu?c tính t? d?ng tang
@@ -452,14 +452,14 @@ Public Sub CheckAndCreateTableImport()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbimport"    ' Thay d?i tên b?ng c?a b?n ? dây
+    TableName = "tbimport"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -467,7 +467,7 @@ Public Sub CheckAndCreateTableImport()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         Set fld = tdf.CreateField("ID", dbLong)
         fld.Attributes = dbAutoIncrField    ' Thi?t l?p thu?c tính t? d?ng tang
@@ -513,14 +513,14 @@ Public Sub CheckAndCreateTableImportDetail()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbimportdetail"    ' Thay d?i tên b?ng c?a b?n ? dây
+    TableName = "tbimportdetail"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -528,7 +528,7 @@ Public Sub CheckAndCreateTableImportDetail()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         Set fld = tdf.CreateField("ID", dbLong)
         fld.Attributes = dbAutoIncrField    ' Thi?t l?p thu?c tính t? d?ng tang
@@ -560,14 +560,14 @@ Public Sub CreateLicense()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbLicensekey"
+    TableName = "tbLicensekey"
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -576,7 +576,7 @@ Public Sub CreateLicense()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         ' T?o tru?ng Name
         Set fld = tdf.CreateField("Type", dbText, 255)
@@ -596,14 +596,14 @@ Public Sub CheckAndCreateToKhaiThueTable()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "ToKhaiThue"    ' Tên b?ng
+    TableName = "ToKhaiThue"    ' Tên b?ng
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -611,7 +611,7 @@ Public Sub CheckAndCreateToKhaiThueTable()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         ' T?o các tru?ng s? t? N11 d?n N43
         Dim i As Integer
@@ -647,15 +647,15 @@ Public Sub CheckAndCreateTBLogin()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbLogin"
+    TableName = "tbLogin"
     tableExists = False
 
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -663,7 +663,7 @@ Public Sub CheckAndCreateTBLogin()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         ' Username
         Set fld = tdf.CreateField("Username", dbText, 255)
@@ -685,14 +685,14 @@ Public Sub CheckAndCreateTable()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbRegister"    ' Thay d?i tên b?ng c?a b?n ? dây
+    TableName = "tbRegister"    ' Thay d?i tên b?ng c?a b?n ? dây
     tableExists = False
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -700,7 +700,7 @@ Public Sub CheckAndCreateTable()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         ' T?o tru?ng Name
         Set fld = tdf.CreateField("Name", dbText, 255)
@@ -1200,56 +1200,18 @@ Private Sub AddDataLCTT()
     ExecuteSQL5 "Update LCTT set  TKNo=413, TKCo=11,Dau=-1 where MaSo=61 "
 End Sub
 Private Sub Form_Activate()
-   ' CheckAndCreateTBCpu
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbCpu ADD PcName text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Users ADD IsReister NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Users  ADD MacAddress text")
-    AddDataLCTT
+   
+    'AddDataLCTT
     Left = frmMain.ScaleWidth * 30 / 100
     Top = frmMain.ScaleHeight * 40 / 100
-
-    'CheckAndCreateTBLogin
-    'CheckAndCreateTable
-    'CheckAndCreateToKhaiThueTable
-    'CreateLicense
-    'Kiem tra neu chua co dong nao thi insert dong mac dinh
+ 
     Dim countrow As Integer
 
     countrow = SelectSQL("select count(*) AS f1 from  tbLicensekey")
     If countrow = 0 Then
         ExecuteSQL5 ("insert into tbLicensekey(Type,Year,Totals) values(0,0,0)")
     End If
-    'CheckAndCreateTableFontSize
-    'CheckAndCreateTableThongTinToKhai
-    'CheckAndCreateTablePL1
-    'CheckAndCreateTablePL2
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k1 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k2 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k3 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k4 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k5 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k6 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k7 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k8 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k9 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k10 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k11 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD k12 text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml1 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml2 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml3 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml4 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml5 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml6 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml7 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml8 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml9 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml10 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml11 MEMO")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbThongTinToKhai ADD xml12 MEMO")
-    'CheckAndCreateTableDinhDanh
-    'CheckAndCreateTableImport
-    'CheckAndCreateTableImportDetail
+      
     importRegister
     scecretpws = ""
     If Counter < 0 Then
@@ -1494,15 +1456,15 @@ Public Sub CheckAndCreateTBCpu()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbCpu"
+    TableName = "tbCpu"
     tableExists = False
 
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -1510,7 +1472,7 @@ Public Sub CheckAndCreateTBCpu()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         ' Username
         Set fld = tdf.CreateField("Name", dbText, 255)
@@ -1526,15 +1488,15 @@ Public Sub CheckAndCreateTBResponse()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbResponse"
+    TableName = "tbResponse"
     tableExists = False
 
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -1542,7 +1504,7 @@ Public Sub CheckAndCreateTBResponse()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
 
         ' Username
         Set fld = tdf.CreateField("Status", dbText, 255)
@@ -1560,15 +1522,15 @@ Public Sub CheckAndCreateTBGetPhieu()
     Dim tdf As DAO.TableDef
     Dim fld As DAO.Field
     Dim tableExists As Boolean
-    Dim tableName As String
+    Dim TableName As String
 
-    tableName = "tbGetphieu"
+    TableName = "tbGetphieu"
     tableExists = False
 
 
     ' Ki?m tra t?n t?i b?ng
     For Each tdf In DBKetoan.TableDefs
-        If tdf.Name = tableName Then
+        If tdf.Name = TableName Then
             tableExists = True
             Exit For
         End If
@@ -1576,7 +1538,7 @@ Public Sub CheckAndCreateTBGetPhieu()
 
     If Not tableExists Then
         ' T?o b?ng n?u chua t?n t?i
-        Set tdf = DBKetoan.CreateTableDef(tableName)
+        Set tdf = DBKetoan.CreateTableDef(TableName)
  
 
         Set fld = tdf.CreateField("ID", dbLong)
@@ -1624,33 +1586,7 @@ Public Sub CheckAndCreateTBGetPhieu()
 End Sub
 
 Private Sub Form_Load()
-    'CheckAndCreateTBResponse
-    'frmMain.CheckAndCreateTBInvoiceTemplate
-    'frmMain.CheckAndCreateTBInvoice
-    'CheckAndCreateTBCpu
-    'CheckAndCreateTBGetPhieu
-
-    
-    'Hoa don tendo
-     ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD TendoHDid text")
-      ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD has_e_invoice number")
-      ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD TendoHDState text")
-    
-    ExecuteSQL5_Themmoi ("ALTER TABLE KhachHang ADD contact_id text")
-    'Them moi tendo vattu
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendoName text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendoSku text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendoUom text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendoId text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendoPrice NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendokhoInventory NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendoQuality NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Vattu ADD TendoSkuId text")
-
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbCpu ADD PcName text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Users ADD IsReister NUMBER")
-    ExecuteSQL5_Themmoi ("ALTER TABLE Users  ADD MacAddress text")
-
+   
     Counter = -1
     Int_RecsetToCbo "SELECT MaSo As F2, TenNSD As F1 FROM Users ORDER BY TenNSD", CboUser
     SetFont Me

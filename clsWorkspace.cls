@@ -16,7 +16,9 @@ Private m_DB As clsDatabase
 
 Public Function OpenDatabase(FileName As String, Exclusive As Boolean, ReadOnly As Boolean, Optional Connect As String = "") As clsDatabase
     Set m_DB = New clsDatabase
-    m_DB.Connect "pc43\SQLEXPRESS", "thanhhuongbendinh", "sa", "123456"
+     'm_DB.Connect "pc43\SQLEXPRESS", "thanhhuongbendinh", "sa", "123456"
+    m_DB.Connect frmSplash.sqlIpServer, frmSplash.sqlDatabasename, frmSplash.sqlUsername, frmSplash.sqlPassword
+
     Set OpenDatabase = m_DB
 End Function
 

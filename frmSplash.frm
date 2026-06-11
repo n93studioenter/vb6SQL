@@ -194,13 +194,16 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 Option Explicit
-
-
+Public sqlIpServer As String
+Public sqlDatabasename As String
+Public sqlUsername As String
+Public sqlPassword As String
 
 Public Sub StartSAS()
-
-
-'SaveSetting "MyApp", "Settings", "FirstRun", "True"
+    Me.MousePointer = vbDefault
+    frmSqlconnection.Show vbModal
+    Me.MousePointer = vbDefault
+    'SaveSetting "MyApp", "Settings", "FirstRun", "True"
     pDataPath = GetSetting(IniPath, "Environment", "Path", pCurDir + "DATA\KETOAN.MDB")
     ' §Æt c¸c format
     'pDataPath = "C:\Tao moi\DATA\KT.MDB"
