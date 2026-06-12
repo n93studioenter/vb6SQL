@@ -2185,7 +2185,7 @@ KT:
     Me.MousePointer = 0
 End Sub
 
-
+ 
 Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long, shd As String)
     Dim SQL As String, loaict As String, i As Integer, mct As Long, uID As Long, mct1 As Long, mloai As Integer
     Dim rs_chungtu As Object, st As Double, ovr As Integer, sh As String
@@ -2348,7 +2348,7 @@ Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long
 
     ' Câu 1: Gi? nguyên c?u trúc, ch? d?i TRY_CAST thành CONVERT
     ' Câu 1
-    SQL = "SELECT TOP 500 a.* FROM (SELECT tong.* FROM (" & SQL & ") tong) a ORDER BY a.NgayGS DESC, " & _
+    SQL = "SELECT TOP 100 a.* FROM (SELECT tong.* FROM (" & SQL & ") tong) a ORDER BY a.NgayGS DESC, " & _
           "CASE WHEN ISNUMERIC(a.sohieu) = 1 THEN CONVERT(INT, CONVERT(FLOAT, a.sohieu)) ELSE 0 END DESC"
 
     ' Câu 2
@@ -2474,6 +2474,17 @@ Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long
 KT:
     Me.MousePointer = 0
 End Sub
+
+' ========== HÀM CHUY?N Ð?I NGÀY THÁNG CHO SQL SERVER ==========
+
+Private Function WNgay_SQL(ByVal fieldName As String, ByVal ngay1 As Date, ByVal ngay2 As Date) As String
+    WNgay_SQL = fieldName & " BETWEEN '" & year(ngay1) & "-" & Right("0" & month(ngay1), 2) & "-" & Right("0" & day(ngay1), 2) & "'" & _
+                " AND '" & year(ngay2) & "-" & Right("0" & month(ngay2), 2) & "-" & Right("0" & day(ngay2), 2) & "'"
+End Function
+
+Private Function WThang_SQL(ByVal fieldName As String, ByVal thang1 As Integer, ByVal thang2 As Integer) As String
+    WThang_SQL = fieldName & " BETWEEN " & thang1 & " AND " & thang2
+End Function
 
 '======================================================================================
 ' Hµm hiÖn cöa sæ danh s¸ch vµ tr¶ vÒ m· sè CT ®­îc chän
