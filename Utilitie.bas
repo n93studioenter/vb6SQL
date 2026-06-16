@@ -351,36 +351,36 @@ End Sub
 '======================================================================================
 Public Function Int_RecsetToCbo(pstr_sql As String, Cbo As Object, Optional id As Integer = 0) As Integer
     Dim recset As Object
-    Dim sql As String
+    Dim SQL As String
     
     If DBKetoan Is Nothing Then
         Exit Function
     End If
     
-    sql = pstr_sql
+    SQL = pstr_sql
     
     ' ========== CHUY?N Ð?I SQL T? ACCESS SANG SQL SERVER ==========
     
     ' 1. DISTINCTROW -> DISTINCT
-    sql = Replace(sql, "DISTINCTROW", "DISTINCT")
-    sql = Replace(sql, "distinctrow", "DISTINCT")
+    SQL = Replace(SQL, "DISTINCTROW", "DISTINCT")
+    SQL = Replace(SQL, "distinctrow", "DISTINCT")
     
     ' 2. Chr(9) -> CHAR(9)
-    sql = Replace(sql, "Chr(9)", "CHAR(9)")
-    sql = Replace(sql, "chr(9)", "CHAR(9)")
+    SQL = Replace(SQL, "Chr(9)", "CHAR(9)")
+    SQL = Replace(SQL, "chr(9)", "CHAR(9)")
     
     ' 3. Chuy?n n?i chu?i: field1 + 'text' + field2 -> CONCAT
-    sql = ConvertConcat(sql)
+    SQL = ConvertConcat(SQL)
     
     ' 4. X? lý ORDER BY v?i DISTINCT
-    If InStr(1, sql, "SELECT DISTINCT", vbTextCompare) > 0 Then
-        If InStr(1, sql, "ORDER BY", vbTextCompare) > 0 Then
+    If InStr(1, SQL, "SELECT DISTINCT", vbTextCompare) > 0 Then
+        If InStr(1, SQL, "ORDER BY", vbTextCompare) > 0 Then
             ' Thêm c?t SoHieu vào SELECT n?u c?n
         End If
     End If
     
     ' Th?c thi
-    Set recset = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    Set recset = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     
     Cbo.Clear
     
@@ -401,9 +401,9 @@ Public Function Int_RecsetToCbo(pstr_sql As String, Cbo As Object, Optional id A
 End Function
 
 ' Hàm chuy?n d?i n?i chu?i
-Private Function ConvertConcat(ByVal sql As String) As String
+Private Function ConvertConcat(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     
     ' Tìm pattern: field + 'text' + field
     ' Ví d?: SoHieu + Chr(9) + TenVattu
@@ -447,9 +447,9 @@ Private Function ConvertConcat(ByVal sql As String) As String
     
     ConvertConcat = result
 End Function
-Private Function ConvertStringConcat(ByVal sql As String) As String
+Private Function ConvertStringConcat(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     
     ' Tìm và thay th? pattern: field1 + 'text' + field2
     ' Ví d?: SoHieu + ' - ' + DienGiai -> CONCAT(SoHieu, ' - ', ISNULL(DienGiai, ''))
@@ -598,26 +598,84 @@ End Sub
 '======================================================================================
 ' Thu tuc dat thong tin license tren bao cao
 '======================================================================================
-Public Sub SetRptInfo()
+Public Sub SetRptInfonew()
     Dim i As Integer
+    Dim crxTable As CRAXDRT.DatabaseTable
+    Dim sServer As String, sDatabase As String
 
+    ' --- Xác d?nh công ty hi?n t?i (c?n có bi?n pCompanyCode) ---
+    Dim TableCount As Integer
+    On Error Resume Next    ' Dùng d? tránh l?i n?u không l?y du?c s? lu?ng
+    TableCount = frmMain.Rpt.Database.Tables.count
+    On Error GoTo 0    ' T?t ch? d? b? qua l?i
+    ' --- QUAN TR?NG: Xóa location c?ng ---
+    For Each crxTable In frmMain.Rpt.Database.Tables
+        crxTable.Location = crxTable.Name
+    Next crxTable
+
+    ' --- Formulas (gi? nguyên) ---
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
         frmMain.Rpt.Formulas(i) = ""
     Next
-    
+
+    ' --- Connect d?ng theo công ty ---
+    frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=" & sServer & _
+                          ";Initial Catalog=" & sDatabase & _
+                          ";User ID=sa;Password=123456"
+
+    ' --- Xóa d? li?u cu d? load l?i ---
+    frmMain.Rpt.DiscardSavedData = True
+
+    frmMain.Rpt.WindowShowPrintSetupBtn = True
+End Sub
+Public Sub SetRptInfo()
+    Dim i As Integer
+    Dim pDatabaseName As String
+    pDatabaseName = "Truongthinh26"
+    ' Connection string không c?n DSN
+    frmMain.Rpt.connect = "DRIVER={SQL Server};SERVER=pc43\SQLEXPRESS;DATABASE=" & pDatabaseName & ";UID=sa;PWD=123456"
+
+    ' Formulas...
+    frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
+    If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
+    Else
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
+    End If
+    frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
+    For i = 3 To 128
+        frmMain.Rpt.Formulas(i) = ""
+    Next
+
+    frmMain.Rpt.WindowShowPrintSetupBtn = True
+End Sub
+Public Sub SetRptInfoold()
+    Dim i As Integer
+
+    frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
+    If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
+    Else
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
+    End If
+    frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
+    For i = 3 To 128
+        frmMain.Rpt.Formulas(i) = ""
+    Next
+
     ' KHÔNG dùng DataFiles n?a - comment ho?c xóa dòng này
     ' frmMain.Rpt.DataFiles(0) = pDataPath
-    
+
     ' Ch? dùng Connect
-    'frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=pc43\SQLEXPRESS;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
-    frmMain.Rpt.Connect = "DSN=THDNS;UID=thanhhuongbd;PWD=123"
+    frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=pc43\SQLEXPRESS;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
+    'frmMain.Rpt.connect = "DSN=Saovietdns;UID=sa;PWD=123456"
 
     frmMain.Rpt.WindowShowPrintSetupBtn = True
 End Sub
@@ -2169,7 +2227,7 @@ End Function
 
 
 Public Function ThemTruong(tbl As String, fld As String, tp As Integer, Optional s As Integer = 0, Optional dv As Integer = 0, Optional gt As String = "...") As Boolean
-    Dim tdf As TableDef, sql As String
+    Dim tdf As TableDef, SQL As String
 
     ThemTruong = False
     If Not BangDaCo(tbl) Then GoTo KT
@@ -2187,15 +2245,15 @@ Public Function ThemTruong(tbl As String, fld As String, tp As Integer, Optional
     Select Case tp
     Case dbInteger, dbLong, dbDouble, dbSingle:
         tdf.Fields(fld).DefaultValue = dv
-        sql = "UPDATE " + tbl + " SET " + fld + "=" + CStr(dv)
+        SQL = "UPDATE " + tbl + " SET " + fld + "=" + CStr(dv)
     Case dbText:
         tdf.Fields(fld).DefaultValue = "..."
-        sql = "UPDATE " + tbl + " SET " + fld + "='" + gt + "'"
+        SQL = "UPDATE " + tbl + " SET " + fld + "='" + gt + "'"
     Case dbDate
         tdf.Fields(fld).DefaultValue = CVDate("1/1/80")
-        sql = "UPDATE " + tbl + " SET " + fld + "=#1/1/80#"
+        SQL = "UPDATE " + tbl + " SET " + fld + "=#1/1/80#"
     End Select
-    If Len(sql) > 0 Then ExecuteSQL5 sql
+    If Len(SQL) > 0 Then ExecuteSQL5 SQL
     ThemTruong = True
 KT:
     Set tdf = Nothing
@@ -2580,10 +2638,10 @@ Public Function QueryDaCo(qname As String) As Boolean
     On Error GoTo 0
 End Function
 
-Public Sub AddQuery(qname As String, Optional sql As String = "SELECT * FROM License")
+Public Sub AddQuery(qname As String, Optional SQL As String = "SELECT * FROM License")
     If QueryDaCo(qname) Then Exit Sub
     On Error Resume Next
-    DBKetoan.QueryDefs.Append DBKetoan.CreateQueryDef(qname, sql)
+    DBKetoan.QueryDefs.Append DBKetoan.CreateQueryDef(qname, SQL)
     On Error GoTo 0
 End Sub
 

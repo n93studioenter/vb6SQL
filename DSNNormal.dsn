@@ -1,0 +1,7 @@
+[ODBC]
+DRIVER=SQL Server
+UID=sa
+DATABASE=thanhhuongbendinh
+WSID=PC43
+APP=Crystal Reports
+SERVER=pc43\SQLEXPRESS

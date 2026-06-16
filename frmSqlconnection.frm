@@ -43,7 +43,7 @@ Begin VB.Form frmSqlconnection
          Left            =   1440
          PasswordChar    =   "*"
          TabIndex        =   9
-         Text            =   "123"
+         Text            =   "123456"
          Top             =   2520
          Width           =   3255
       End
@@ -51,7 +51,7 @@ Begin VB.Form frmSqlconnection
          Height          =   375
          Left            =   1440
          TabIndex        =   7
-         Text            =   "thanhhuongbd"
+         Text            =   "sa"
          Top             =   1920
          Width           =   3255
       End
@@ -59,7 +59,7 @@ Begin VB.Form frmSqlconnection
          Height          =   405
          Left            =   1440
          TabIndex        =   5
-         Text            =   "thanhhuongbendinh"
+         Text            =   "Truongthinh26"
          Top             =   1200
          Width           =   3255
       End
@@ -67,7 +67,7 @@ Begin VB.Form frmSqlconnection
          Height          =   375
          Left            =   1440
          TabIndex        =   2
-         Text            =   "14.161.175.85,1433"
+         Text            =   "pc43\SQLEXPRESS"
          Top             =   600
          Width           =   3255
       End

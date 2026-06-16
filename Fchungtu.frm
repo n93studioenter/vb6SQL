@@ -5805,7 +5805,7 @@ Private Sub AddTTinTKhaiThue(xmlDoc As MSXML2.DOMDocument, parentElement As IXML
     childElement.appendChild subElement
 
     AddElement xmlDoc, subElement, "mst", "3500779171"
-    AddElement xmlDoc, subElement, "tenNNT", VniToUnicode(frmMain.lbCty(0).Caption)
+    AddElement xmlDoc, subElement, "tenNNT", VniToUnicode(frmMain.LbCty(0).Caption)
 
     AddElement xmlDoc, subElement, "dchiNNT", "31 Ð?i C?n"
     AddElement xmlDoc, subElement, "phuongXa", ""
@@ -7129,7 +7129,7 @@ Private Sub OpenXMl()
     ' Ðóng file
     Close #fileNumber
     Dim rs As Object
-    Dim sql As String
+    Dim SQL As String
     Dim hoadonPathValue As String
     hoadonPathValue = App.path & "\Hoadon"    ' Ðu?ng d?n m?i cho hoadonpath
 
@@ -7828,7 +7828,7 @@ Public Sub CmdChitiet_chon()
         CmdPhieu(0).Visible = True
     End If
 
-    If (Left(taikhoan.sohieu, Len(NH)) = NH) And KiemTraMaSoThue(frmMain.lbCty(8).Caption, "04") Then
+    If (Left(taikhoan.sohieu, Len(NH)) = NH) And KiemTraMaSoThue(frmMain.LbCty(8).Caption, "04") Then
         If co > 0 Then FThuChi.tag = 1
         If MaSoCT = 0 And hdcount >= 0 And TenTC = "..." Then
             TenTC = HD(0).TenKH
@@ -8436,8 +8436,8 @@ B:
         frmMain.Rpt.Formulas(3) = "SoPhieu='" + LaySH(txt(0).Text, 1) + "'"
         frmMain.Rpt.Formulas(4) = "DiaChi='" + DiachiTC + "'"
         frmMain.Rpt.Formulas(5) = "CTGoc='" + ctgoc + "'"
-        frmMain.Rpt.Formulas(41) = "DiaChiDN='" + frmMain.lbCty(2).Caption + "'"
-        frmMain.Rpt.Formulas(42) = "TelDN='" + frmMain.lbCty(3).Caption + "'"
+        frmMain.Rpt.Formulas(41) = "DiaChiDN='" + frmMain.LbCty(2).Caption + "'"
+        frmMain.Rpt.Formulas(42) = "TelDN='" + frmMain.LbCty(3).Caption + "'"
         frmMain.Rpt.Formulas(44) = "Ngay='Ngµy " + Format(ngay(1), Mask_DR) + "'"
         frmMain.Rpt.Formulas(45) = "BangChu='" + sotien + "'"
         frmMain.Rpt.Formulas(46) = "TenNV='" + TenTC + "'"
@@ -8955,9 +8955,9 @@ Sub In_hoa_don2(sotien As String, i As Integer, k As Integer, xxx As String, sod
         End If
         '     frmMain.Rpt.ReportFileName = IIf(Chk.Value = 0, "HOADON" + IIf(pGiaUSD > 0, "X", "") + IIf(somh > 10, "2", "") + ".RPT", "BAOGIA" + IIf(pGiaUSD > 0, "X", "") + ".RPT")
         frmMain.Rpt.ReportFileName = IIf(Chk.Value = 0, "BANGKE" + IIf(pGiaUSD > 0, "X", "") + IIf(somh > 10, "", "") + ".RPT", "BAOGIA" + IIf(pGiaUSD > 0, "X", "") + ".RPT")
-        frmMain.Rpt.Formulas(3) = "DC1='" + frmMain.lbCty(2).Caption + "'"
+        frmMain.Rpt.Formulas(3) = "DC1='" + frmMain.LbCty(2).Caption + "'"
         frmMain.Rpt.Formulas(4) = "DiaChi='" + DiaChiBH + "'"
-        frmMain.Rpt.Formulas(6) = "MS1='" + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(6) = "MS1='" + frmMain.LbCty(8).Caption + "'"
         frmMain.Rpt.Formulas(7) = "MS2='" + MSTBH + "'"
         frmMain.Rpt.Formulas(8) = "TenNN='" + txtVT(1).Text + "'"
         frmMain.Rpt.Formulas(10) = "HTTT='" + HTTT + "'"
@@ -8989,10 +8989,10 @@ Sub In_hoa_don2(sotien As String, i As Integer, k As Integer, xxx As String, sod
 End Sub
 
 Sub In_hoa_don1(sotien As String, i As Integer, k As Integer, xxx As String, sodu As Integer, v As Double, lp As Integer, ms As Long, mv As String, tien As Double, ttien As Double, luong As Double, tkno As String, TkCo As String, TK As ClsTaikhoan, tiennt As Double, ts As clsTaiSan, HTTT As String, tl As Integer, thue As Double, v338 As Double, v521 As Double, X As Double, shtk As String, vt As ClsVattu, dn As Double, DC As Double, dnt As Double, CK As Double, somh As Integer, tp As Cls154, lanin As Integer, stt As Integer, loaitien As String)
-    Dim sql As String
-    sql = "select * from license"
+    Dim SQL As String
+    SQL = "select * from license"
     Dim lisen
-    Set lisen = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    Set lisen = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     If lisen.recordCount > 0 Then
         frmMain.Rpt.Formulas(1) = "TenCty='" + lisen!tencty + "'"    ' 'lisen!Tenhoadon
         frmMain.Rpt.Formulas(2) = "TenCn='" + lisen!tencn + "'"
@@ -9092,9 +9092,9 @@ Sub In_hoa_don1(sotien As String, i As Integer, k As Integer, xxx As String, sod
     frmMain.Rpt.Formulas(610) = "dong11= '" + " " + "'"
     frmMain.Rpt.Formulas(611) = "dong12= '" + " " + "'"
 
-    sql = "select * from PhieuNX order by ThanhTien asc "
+    SQL = "select * from PhieuNX order by ThanhTien asc "
     Dim chitiet_sp
-    Set chitiet_sp = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    Set chitiet_sp = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     If chitiet_sp.recordCount > 0 Then
         Dim dem, dem1 As Integer
         Dim stt_dem As String
@@ -9458,10 +9458,10 @@ Private Function chuyenso(st As String) As String
 End Function
 Sub tinhkyhieu()
     If OptLoai(8).Value = True Then
-        Dim sql As String
-        sql = "SELECT kyhieu as F1 from hoadon where maso in (select max(maso) from hoadon where maso in (select maso from chungtu where maloai = 8))"
+        Dim SQL As String
+        SQL = "SELECT kyhieu as F1 from hoadon where maso in (select max(maso) from hoadon where maso in (select maso from chungtu where maloai = 8))"
         Dim rs_chungtu As Object
-        Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+        Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
         If rs_chungtu.recordCount > 0 Then txtVT(1).Text = rs_chungtu!f1
         rs_chungtu.Close
 
@@ -9534,7 +9534,7 @@ Public Sub TuDongXuatkhonguyenlieu(ByVal lastMact As Double, ByVal idtp As Integ
             newsops = sops * rs_ct!TiLe / 100
             'Tim gia nhap trong ky
             Dim gianhap As Double
-            Dim sql As String
+            Dim SQL As String
             Dim rs_fct As Object
             Dim sopsno As Double
             Query = "SELECT TOP 1 * FROM ChungTu WHERE MaVattu = " & rs_ct!IDNguyenLieu & " AND SoPS2No <> 0 ORDER BY MaCT DESC"
@@ -9544,102 +9544,102 @@ Public Sub TuDongXuatkhonguyenlieu(ByVal lastMact As Double, ByVal idtp As Integ
                 sopsno = newsops / gianhap
             End If
 
-            sql = "INSERT INTO Chungtu (MaCT, MaLoai, SoHieu, ThangCT, NgayCT, NgayGS, MaNguon, MaKho, DienGiai, MaTkNo, MaTkCo, SoPS, SoPS2No, SoPS2Co, MaTkTCNo, MaTkTCCo, MaVattu, GhiChu, CT_ID, MaDT, MaDT1, MaDT2, MaDT3, MaKH, CTGS, MaKHC, MaTP, DVT, User_ID, MaNV, HanTT, SH1, T1, TLCK, CK, MAUSOHD, LOAIHoaDon, SoLo, HanDung, phantramchietkhau, sotienchietkhau) " & _
+            SQL = "INSERT INTO Chungtu (MaCT, MaLoai, SoHieu, ThangCT, NgayCT, NgayGS, MaNguon, MaKho, DienGiai, MaTkNo, MaTkCo, SoPS, SoPS2No, SoPS2Co, MaTkTCNo, MaTkTCCo, MaVattu, GhiChu, CT_ID, MaDT, MaDT1, MaDT2, MaDT3, MaKH, CTGS, MaKHC, MaTP, DVT, User_ID, MaNV, HanTT, SH1, T1, TLCK, CK, MAUSOHD, LOAIHoaDon, SoLo, HanDung, phantramchietkhau, sotienchietkhau) " & _
                   "VALUES (" & lastMact & ",2, '" & sohieuxk & "', " & ThangCT & ", #" & Format(NgayCT, "MM/DD/YYYY") & "#, #" & Format(NgayCT, "MM/DD/YYYY") & "#, 8, 2, '" & noidungxk & "', 37, 32, " & newsops & ",0," & sopsno & ", 37, 32,'" & rs_ct!IDNguyenLieu & "', '...', 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, '...', 0, 0, 0, '0', '01GTKT', '', #" & Format(NgayCT, "MM/DD/YYYY") & "#, '0', '0')"
-            ExecuteSQL5 sql
+            ExecuteSQL5 SQL
 
 
             Dim currentMonth As Integer
             currentMonth = 12
             Dim months As Integer
             months = ThangCT
-            sql = "UPDATE HethongTK SET "
+            SQL = "UPDATE HethongTK SET "
             Dim sotien As Double
             sotien = newsops
             Dim soTienTru As Double
             soTienTru = -newsops
-            sql = sql & "No_" & months & " = No_" & months & " + " & sotien & ", " & _
+            SQL = SQL & "No_" & months & " = No_" & months & " + " & sotien & ", " & _
                   "DuNo_" & months & " = DuNo_" & months & " + " & sotien & ", " & _
                   "DuCo_" & months & " = DuCo_" & months & " + 0, "
             For months = ThangCT + 1 To 12
                 If months <= currentMonth Then
-                    sql = sql & "DuNo_" & months & " = DuNo_" & months & " + " & sotien & ", " & _
+                    SQL = SQL & "DuNo_" & months & " = DuNo_" & months & " + " & sotien & ", " & _
                           "DuCo_" & months & " = DuCo_" & months & " + 0, "
                 End If
             Next months
 
-            sql = Left(sql, Len(sql) - 2)
+            SQL = Left(SQL, Len(SQL) - 2)
 
-            sql = sql & " WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-            Debug.Print sql
-            ExecuteSQL5 sql
+            SQL = SQL & " WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+            Debug.Print SQL
+            ExecuteSQL5 SQL
 
             months = ThangCT
             ' Câu l?nh th? hai
-            sql = "UPDATE HethongTK SET "
+            SQL = "UPDATE HethongTK SET "
 
             For months = 1 To 12
-                sql = sql & "DuNo_" & months & "=IIF(DuNo_" & months & ">=DuCo_" & months & ",DuNo_" & months & "-DuCo_" & months & ",0), " & _
+                SQL = SQL & "DuNo_" & months & "=IIF(DuNo_" & months & ">=DuCo_" & months & ",DuNo_" & months & "-DuCo_" & months & ",0), " & _
                       "DuCo_" & months & "=IIF(DuNo_" & months & "<DuCo_" & months & ",DuCo_" & months & "-DuNo_" & months & ",0), "
             Next months
 
             ' Lo?i b? d?u ph?y cu?i cùng
-            sql = Left(sql, Len(sql) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
+            SQL = Left(SQL, Len(SQL) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
 
-            sql = sql & "WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-            Debug.Print sql
-            ExecuteSQL5 sql
+            SQL = SQL & "WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+            Debug.Print SQL
+            ExecuteSQL5 SQL
 
             months = ThangCT
             ' Câu l?nh th? ba
-            sql = "UPDATE HethongTK SET "
+            SQL = "UPDATE HethongTK SET "
 
-            sql = sql & "Co_" & months & " = Co_" & months & " + " & sotien & ", " & _
+            SQL = SQL & "Co_" & months & " = Co_" & months & " + " & sotien & ", " & _
                   "DuNo_" & months & " = DuNo_" & months & " + " & soTienTru & ", " & _
                   "DuCo_" & months & " = DuCo_" & months & " + 0, "
             For months = ThangCT + 1 To 12
                 If months <= 12 Then
-                    sql = sql & "DuNo_" & months & " = DuNo_" & months & " + " & soTienTru & ", " & _
+                    SQL = SQL & "DuNo_" & months & " = DuNo_" & months & " + " & soTienTru & ", " & _
                           "DuCo_" & months & " = DuCo_" & months & " + 0, "
                 End If
             Next months
 
-            sql = Left(sql, Len(sql) - 2)
-            sql = sql & " WHERE MaSo = 32 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-            ExecuteSQL5 sql
+            SQL = Left(SQL, Len(SQL) - 2)
+            SQL = SQL & " WHERE MaSo = 32 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+            ExecuteSQL5 SQL
 
             months = ThangCT
             ' Câu l?nh th? 4
-            sql = "UPDATE HethongTK SET "
+            SQL = "UPDATE HethongTK SET "
 
             For months = 1 To 12
-                sql = sql & "DuNo_" & months & "=IIF(DuNo_" & months & ">=DuCo_" & months & ",DuNo_" & months & "-DuCo_" & months & ",0), " & _
+                SQL = SQL & "DuNo_" & months & "=IIF(DuNo_" & months & ">=DuCo_" & months & ",DuNo_" & months & "-DuCo_" & months & ",0), " & _
                       "DuCo_" & months & "=IIF(DuNo_" & months & "<DuCo_" & months & ",DuCo_" & months & "-DuNo_" & months & ",0), "
             Next months
 
-            sql = Left(sql, Len(sql) - 2)
-            sql = sql & "WHERE MaSo = 32 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-            ExecuteSQL5 sql
+            SQL = Left(SQL, Len(SQL) - 2)
+            SQL = SQL & "WHERE MaSo = 32 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+            ExecuteSQL5 SQL
 
             ' Câu l?nh th? 5
-            sql = "UPDATE TonKho SET "
+            SQL = "UPDATE TonKho SET "
             months = ThangCT
-            sql = sql & "Luong_Nhap_" & months & " = Luong_Nhap_" & months & " + " & sopsno & ", " & _
+            SQL = SQL & "Luong_Nhap_" & months & " = Luong_Nhap_" & months & " + " & sopsno & ", " & _
                   "Tien_Nhap_" & months & " = Tien_Nhap_" & months & " + " & sotien & ", " & _
                   "Luong_" & months & " = Luong_" & months & " + " & sopsno & ", " & _
                   "Tien_" & months & " = Tien_" & months & " + " & sotien & ", "
             For months = ThangCT + 1 To 12
                 If months <= currentMonth Then
-                    sql = sql & "Luong_" & months & " = Luong_" & months & " + " & sopsno & ", " & _
+                    SQL = SQL & "Luong_" & months & " = Luong_" & months & " + " & sopsno & ", " & _
                           "Tien_" & months & " = Tien_" & months & " + " & sotien & ", "
                 End If
             Next months
 
             ' Lo?i b? d?u ph?y cu?i cùng
-            sql = Left(sql, Len(sql) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
+            SQL = Left(SQL, Len(SQL) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
 
-            sql = sql & " WHERE MaSoKho=2 AND MaTaiKhoan=32 AND MaVatTu= " & rs_ct!IDNguyenLieu & ""
-            ExecuteSQL5 sql
+            SQL = SQL & " WHERE MaSoKho=2 AND MaTaiKhoan=32 AND MaVatTu= " & rs_ct!IDNguyenLieu & ""
+            ExecuteSQL5 SQL
             rs_ct.MoveNext
         Loop
     End If
@@ -9683,7 +9683,7 @@ Public Sub TuDongNhapKho()
                 NgayCT = CDate(rs_ct!NgayCT)
                 Dim newMaCT As Double
                 newMaCT = lastMact + 1  ' Tính toán tru?c giá tr?
-                Dim sql As String
+                Dim SQL As String
 
                 Dim sops As Double
 
@@ -9692,9 +9692,9 @@ Public Sub TuDongNhapKho()
                 Dim sopsno As Double
                 sopsno = rs_ct!SoPS2Co
                 bakThangTinhGiavon = rs_ct!ThangCT
-                sql = "INSERT INTO Chungtu (MaCT, MaLoai, SoHieu, ThangCT, NgayCT, NgayGS, MaNguon, MaKho, DienGiai, MaTkNo, MaTkCo, SoPS, SoPS2No, SoPS2Co, MaTkTCNo, MaTkTCCo, MaVattu, GhiChu, CT_ID, MaDT, MaDT1, MaDT2, MaDT3, MaKH, CTGS, MaKHC, MaTP, DVT, User_ID, MaNV, HanTT, SH1, T1, TLCK, CK, MAUSOHD, LOAIHoaDon, SoLo, HanDung, phantramchietkhau, sotienchietkhau) " & _
+                SQL = "INSERT INTO Chungtu (MaCT, MaLoai, SoHieu, ThangCT, NgayCT, NgayGS, MaNguon, MaKho, DienGiai, MaTkNo, MaTkCo, SoPS, SoPS2No, SoPS2Co, MaTkTCNo, MaTkTCCo, MaVattu, GhiChu, CT_ID, MaDT, MaDT1, MaDT2, MaDT3, MaKH, CTGS, MaKHC, MaTP, DVT, User_ID, MaNV, HanTT, SH1, T1, TLCK, CK, MAUSOHD, LOAIHoaDon, SoLo, HanDung, phantramchietkhau, sotienchietkhau) " & _
                       "VALUES (" & newMaCT & ", 1, '" & sohieunk & "', " & rs_ct!ThangCT & ", #" & Format(NgayCT, "MM/DD/YYYY") & "#, #" & Format(NgayCT, "MM/DD/YYYY") & "#, 8, 2, '" & noidungnk & "', 38, 37, " & sops & "," & sopsno & ", 0, 38, 37,'" & rs_ct!MaVattu & "', '...', 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, '...', 0, 0, 0, '0', '01GTKT', '', #" & Format(NgayCT, "MM/DD/YYYY") & "#, '0', '0')"
-                ExecuteSQL5 sql
+                ExecuteSQL5 SQL
 
                 Dim sotien As Double
                 sotien = sops    ' Giá tr? c?n c?p nh?t
@@ -9713,89 +9713,89 @@ Public Sub TuDongNhapKho()
 
                 currentMonth = 12
                 month = rs_ct!ThangCT
-                sql = "UPDATE HethongTK SET "
-                sql = sql & "No_" & month & " = No_" & month & " + " & sotien & ", " & _
+                SQL = "UPDATE HethongTK SET "
+                SQL = SQL & "No_" & month & " = No_" & month & " + " & sotien & ", " & _
                       "DuNo_" & month & " = DuNo_" & month & " + " & sotien & ", " & _
                       "DuCo_" & month & " = DuCo_" & month & " + 0, "
                 For month = rs_ct!ThangCT + 1 To 12
                     If month <= currentMonth Then
-                        sql = sql & "DuNo_" & month & " = DuNo_" & month & " + " & sotien & ", " & _
+                        SQL = SQL & "DuNo_" & month & " = DuNo_" & month & " + " & sotien & ", " & _
                               "DuCo_" & month & " = DuCo_" & month & " + 0, "
                     End If
                 Next month
 
-                sql = Left(sql, Len(sql) - 2)
+                SQL = Left(SQL, Len(SQL) - 2)
 
-                sql = sql & " WHERE MaSo = 38 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-                Debug.Print sql
-                ExecuteSQL5 sql
+                SQL = SQL & " WHERE MaSo = 38 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+                Debug.Print SQL
+                ExecuteSQL5 SQL
 
                 month = rs_ct!ThangCT
                 ' Câu l?nh th? hai
-                sql = "UPDATE HethongTK SET "
+                SQL = "UPDATE HethongTK SET "
 
                 For month = 1 To 12
-                    sql = sql & "DuNo_" & month & "=IIF(DuNo_" & month & ">=DuCo_" & month & ",DuNo_" & month & "-DuCo_" & month & ",0), " & _
+                    SQL = SQL & "DuNo_" & month & "=IIF(DuNo_" & month & ">=DuCo_" & month & ",DuNo_" & month & "-DuCo_" & month & ",0), " & _
                           "DuCo_" & month & "=IIF(DuNo_" & month & "<DuCo_" & month & ",DuCo_" & month & "-DuNo_" & month & ",0), "
                 Next month
 
                 ' Lo?i b? d?u ph?y cu?i cùng
-                sql = Left(sql, Len(sql) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
+                SQL = Left(SQL, Len(SQL) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
 
-                sql = sql & "WHERE MaSo = 38 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-                Debug.Print sql
-                ExecuteSQL5 sql
+                SQL = SQL & "WHERE MaSo = 38 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+                Debug.Print SQL
+                ExecuteSQL5 SQL
 
                 month = rs_ct!ThangCT
                 ' Câu l?nh th? ba
-                sql = "UPDATE HethongTK SET "
+                SQL = "UPDATE HethongTK SET "
 
-                sql = sql & "Co_" & month & " = Co_" & month & " + " & sotien & ", " & _
+                SQL = SQL & "Co_" & month & " = Co_" & month & " + " & sotien & ", " & _
                       "DuNo_" & month & " = DuNo_" & month & " + " & soTienTru & ", " & _
                       "DuCo_" & month & " = DuCo_" & month & " + 0, "
                 For month = rs_ct!ThangCT + 1 To 12
                     If month <= 12 Then
-                        sql = sql & "DuNo_" & month & " = DuNo_" & month & " + " & soTienTru & ", " & _
+                        SQL = SQL & "DuNo_" & month & " = DuNo_" & month & " + " & soTienTru & ", " & _
                               "DuCo_" & month & " = DuCo_" & month & " + 0, "
                     End If
                 Next month
 
-                sql = Left(sql, Len(sql) - 2)
-                sql = sql & " WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-                ExecuteSQL5 sql
+                SQL = Left(SQL, Len(SQL) - 2)
+                SQL = SQL & " WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+                ExecuteSQL5 SQL
 
                 month = rs_ct!ThangCT
                 ' Câu l?nh th? 4
-                sql = "UPDATE HethongTK SET "
+                SQL = "UPDATE HethongTK SET "
 
                 For month = 1 To 12
-                    sql = sql & "DuNo_" & month & "=IIF(DuNo_" & month & ">=DuCo_" & month & ",DuNo_" & month & "-DuCo_" & month & ",0), " & _
+                    SQL = SQL & "DuNo_" & month & "=IIF(DuNo_" & month & ">=DuCo_" & month & ",DuNo_" & month & "-DuCo_" & month & ",0), " & _
                           "DuCo_" & month & "=IIF(DuNo_" & month & "<DuCo_" & month & ",DuCo_" & month & "-DuNo_" & month & ",0), "
                 Next month
 
-                sql = Left(sql, Len(sql) - 2)
-                sql = sql & "WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
-                ExecuteSQL5 sql
+                SQL = Left(SQL, Len(SQL) - 2)
+                SQL = SQL & "WHERE MaSo = 37 OR MaSo = 1 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0 OR MaSo = 0"
+                ExecuteSQL5 SQL
 
                 ' Câu l?nh th? 5
-                sql = "UPDATE TonKho SET "
+                SQL = "UPDATE TonKho SET "
                 month = rs_ct!ThangCT
-                sql = sql & "Luong_Nhap_" & month & " = Luong_Nhap_" & month & " + " & sopsno & ", " & _
+                SQL = SQL & "Luong_Nhap_" & month & " = Luong_Nhap_" & month & " + " & sopsno & ", " & _
                       "Tien_Nhap_" & month & " = Tien_Nhap_" & month & " + " & sotien & ", " & _
                       "Luong_" & month & " = Luong_" & month & " + " & sopsno & ", " & _
                       "Tien_" & month & " = Tien_" & month & " + " & sotien & ", "
                 For month = rs_ct!ThangCT + 1 To 12
                     If month <= currentMonth Then
-                        sql = sql & "Luong_" & month & " = Luong_" & month & " + " & sopsno & ", " & _
+                        SQL = SQL & "Luong_" & month & " = Luong_" & month & " + " & sopsno & ", " & _
                               "Tien_" & month & " = Tien_" & month & " + " & sotien & ", "
                     End If
                 Next month
 
                 ' Lo?i b? d?u ph?y cu?i cùng
-                sql = Left(sql, Len(sql) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
+                SQL = Left(SQL, Len(SQL) - 2)    ' Xóa d?u ph?y và kho?ng tr?ng cu?i cùng
 
-                sql = sql & " WHERE MaSoKho=2 AND MaTaiKhoan=38 AND MaVatTu= " & rs_ct!MaVattu & ""
-                ExecuteSQL5 sql
+                SQL = SQL & " WHERE MaSoKho=2 AND MaTaiKhoan=38 AND MaVatTu= " & rs_ct!MaVattu & ""
+                ExecuteSQL5 SQL
             End If
 
             'Xuat kho nguyen lieu
@@ -9885,7 +9885,7 @@ Public Sub Command_Click(Index As Integer)
 
     Dim chungtu As New ClsChungtu, mtk As Long, mvt As Long, mtk2 As Long, sops As Double, psnt As Double, psnt2 As Double, mtc As Long, mtc2 As Long
     Dim MaCT As Long, GhiChu As String, loai As Integer, mhdx As Integer, MaTP As Long, j As Integer, sh As String, bg As Boolean
-    Dim rs_chungtu As Object, i As Integer, mn As Long, mk As Long, sql As String, X As New ClsTaikhoan, ctdx As Long, m As Long
+    Dim rs_chungtu As Object, i As Integer, mn As Long, mk As Long, SQL As String, X As New ClsTaikhoan, ctdx As Long, m As Long
     Dim so_kiem_tra
     Dim SoLoNhap As String, handung As String
     SoLoNhap = ""
@@ -9984,7 +9984,7 @@ Public Sub Command_Click(Index As Integer)
             For i = 0 To .Rows - 1
                 .Row = i
                 .col = 1
-                sql = .Text
+                SQL = .Text
                 .col = 8
                 If Len(.Text) = 0 Then Exit For
                 mtk = CLng5(.Text)
@@ -9994,7 +9994,7 @@ Public Sub Command_Click(Index As Integer)
                 mn = CLng5(.Text)
                 .col = 14
 
-                If Len(.Text) > 0 Or ((pHachToan = 0 Or mn > 0 Or bg) And Not xddu) Or (((Left(sql, 4) = "3331") Or (Left(sql, Len(pVATV)) = pVATV)) And (Len(.Text) > 0 Or loaict = 8)) Then
+                If Len(.Text) > 0 Or ((pHachToan = 0 Or mn > 0 Or bg) And Not xddu) Or (((Left(SQL, 4) = "3331") Or (Left(SQL, Len(pVATV)) = pVATV)) And (Len(.Text) > 0 Or loaict = 8)) Then
                     .col = 11
                     mtc = CLng5(.Text)
                     .col = 9
@@ -10012,7 +10012,7 @@ Public Sub Command_Click(Index As Integer)
                         .col = 7
                         sops = Cdbl5(.Text)
                         If sops = 0 Then
-                            If ((Left(sql, Len(pVATV)) = pVATV Or (Left(sql, 2) = "15") And loaict = 1)) Then loai = -1
+                            If ((Left(SQL, Len(pVATV)) = pVATV Or (Left(SQL, 2) = "15") And loaict = 1)) Then loai = -1
                         End If
                     Else
                         loai = -1
@@ -10103,7 +10103,7 @@ Public Sub Command_Click(Index As Integer)
                     .col = 23
                     m = CLng5(.Text)
                     If mvt > 0 And m > 0 Then
-                        If KtraDVT(mvt, m, sql) Then
+                        If KtraDVT(mvt, m, SQL) Then
                             If chungtu.tkno.tk_id = TKVT_ID And loaict = 1 Then
                                 chungtu.SoPS2No = QuyDoiTheoDVT1(mvt, m, chungtu.SoPS2No)
                             End If
@@ -10492,7 +10492,7 @@ Public Sub Command_Click(Index As Integer)
         End If
         ExecuteSQL5 "DELETE * FROM BaoCaoCP"
         With GrdChungtu
-            sql = ""
+            SQL = ""
             For i = 0 To .Rows - 1
                 .Row = i
                 .col = 1
@@ -10509,8 +10509,8 @@ Public Sub Command_Click(Index As Integer)
                     mk = 1
                 End If
                 If sops <> 0 Then
-                    sql = "INSERT INTO BaoCaoCP (MaSo,SoHieu,Ten,Cap, Kq1) VALUES (" + CStr(i) + ",'" + CStr(i) + "','" + X.sohieu + "'+' - '+'" + X.Ten + "'," + CStr(mk) + "," + DoiDau(sops) + ")"
-                    ExecuteSQL5 sql
+                    SQL = "INSERT INTO BaoCaoCP (MaSo,SoHieu,Ten,Cap, Kq1) VALUES (" + CStr(i) + ",'" + CStr(i) + "','" + X.sohieu + "'+' - '+'" + X.Ten + "'," + CStr(mk) + "," + DoiDau(sops) + ")"
+                    ExecuteSQL5 SQL
                 End If
             Next
         End With
@@ -10694,7 +10694,7 @@ Private Sub Command3_Click()
         FBcTC.OptVAT(3).Value = OptVAT(3).Value
         FBcTC.CboThang(0).Text = CboThang1(1).Text
         FBcTC.CboThang(1).Text = CboThang1(2).Text
-        ' FBcTC.OptTG(0).Value = True
+        'FBcTC.OptTG(0).Value = True
 
         FBcTC.Command_Click (0)
     Else
@@ -12222,10 +12222,10 @@ Public Sub OptLoai_Click(Index As Integer)
     txtchungtu(0).SelLength = Len(txtchungtu(0).Text)
     If Index = 8 Then
         hdmoi = True
-        Dim sql As String
-        sql = "SELECT kyhieu as F1 from hoadon where maso in (select max(maso) from hoadon where maso in (select maso from chungtu where maloai = 8))"
+        Dim SQL As String
+        SQL = "SELECT kyhieu as F1 from hoadon where maso in (select max(maso) from hoadon where maso in (select maso from chungtu where maloai = 8))"
         Dim rs_chungtu As Object
-        Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+        Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
         If rs_chungtu.recordCount > 0 Then txtVT(1).Text = rs_chungtu!f1
         Enable_thong_tin
         ' da bo txtVT(2).Text = SelectSQL("SELECT MauSoHD AS F1 FROM chungtu WHERE  maso in (select max(maso) from chungtu where maloai = 8)")
@@ -12767,10 +12767,10 @@ Private Sub txt_LostFocus(Index As Integer)
         If MaSoCT = 0 Then
             If OptLoai(8).Value = True Then
                 Dim rs_chungtu As Object
-                Dim sql As String
-                sql = "SELECT kyhieu as F1 from hoadon where maso in (select max(maso) from hoadon where maso in (select maso from chungtu where maloai = 8))"
+                Dim SQL As String
+                SQL = "SELECT kyhieu as F1 from hoadon where maso in (select max(maso) from hoadon where maso in (select maso from chungtu where maloai = 8))"
 
-                Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+                Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
                 If rs_chungtu.recordCount > 0 Then txtVT(1).Text = rs_chungtu!f1
                 rs_chungtu.Close
                 'rs_chungtu = Null
@@ -13322,10 +13322,10 @@ Private Sub xuly_ham_enter_chungtu(Index As Integer)
     End Select
 End Sub
 Private Function Kiemtrataikhoanchitiet(taikhoan As String) As Boolean
-    Dim sql As String
+    Dim SQL As String
     Dim rs_chungtu
-    sql = " select * from hethongtk where SoHieu = '" + Trim(taikhoan) + "' and tkcon = 0 "
-    Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    SQL = " select * from hethongtk where SoHieu = '" + Trim(taikhoan) + "' and tkcon = 0 "
+    Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     If rs_chungtu.recordCount = 0 Then
         Kiemtrataikhoanchitiet = False
     Else
@@ -14382,11 +14382,11 @@ Public Function HienPhieuTrenManHinh(p As Integer) As Integer
     ma = MaSoCT
     diengiai = ""
     sh = IIf(p > 0, "P", "")
-    Dim sql As String
+    Dim SQL As String
 
     'sql = "SELECT ChungTu" + sh + ".*,HoaDon" + sh + ".MaKhachHang,HoaDon" + sh + ".Loai AS LoaiHD,KyHieu,HoaDon" + sh + ".SoHD AS SHD,NgayPH,MatHang,Soluong,Thanhtien,Tyle,HD,KCT,NK,TS,HoaDon" + sh + ".DC,HTTT,MauSo,KhachHang.Ten,KhachHang.DiaChi,KhachHang.MST,khachhang.sohieu as sohieukhachhang,HDBL,HoaDon" + sh + ".TyGia AS TG FROM (ChungTu" + sh + " LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN KhachHang ON ChungTu" + sh + ".MaKH=KhachHang.MaSo WHERE Chungtu" + sh + ".MaCT=" + CStr(MaSoCT) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " ORDER BY Chungtu" + sh + ".MaSo DESC"
     'sql = "SELECT ChungTu" + sh + ".*,HoaDon" + sh + ".MaKhachHang,HoaDon" + sh + ".KyHieu as kyhieuhoadon ,HoaDon" + sh + ".Loai AS LoaiHD,KyHieu,HoaDon" + sh + ".SoHD AS SHD,NgayPH,MatHang,Soluong,Thanhtien,Tyle,HD,KCT,NK,TS,HoaDon" + sh + ".DC,HTTT,MauSo,KhachHang.Ten,KhachHang.DiaChi,KhachHang.MST,khachhang.sohieu as sohieukhachhang,HDBL,HoaDon" + sh + ".TyGia AS TG FROM (ChungTu" + sh + " LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN KhachHang ON ChungTu" + sh + ".MaKH =KhachHang.MaSo WHERE Chungtu" + sh + ".MaCT=" + CStr(MaSoCT) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " ORDER BY Chungtu" + sh + ".MaSo DESC"
-    sql = "SELECT DISTINCT ChungTu" + sh + ".*,HoaDon" + sh + ".MaKhachHang,HoaDon" + sh + ".KyHieu as kyhieuhoadon,HoaDon" + sh + ".Loai AS LoaiHD,KyHieu,HoaDon" + sh + ".SoHD AS SHD,NgayPH,MatHang,Soluong,Thanhtien,Tyle,HD,KCT,NK,TS,HoaDon" + sh + ".DC,HTTT,MauSo,KhachHang.Ten,KhachHang.DiaChi,KhachHang.MST,khachhang.sohieu as sohieukhachhang,HDBL,HoaDon" + sh + ".TyGia AS TG " & _
+    SQL = "SELECT DISTINCT ChungTu" + sh + ".*,HoaDon" + sh + ".MaKhachHang,HoaDon" + sh + ".KyHieu as kyhieuhoadon,HoaDon" + sh + ".Loai AS LoaiHD,KyHieu,HoaDon" + sh + ".SoHD AS SHD,NgayPH,MatHang,Soluong,Thanhtien,Tyle,HD,KCT,NK,TS,HoaDon" + sh + ".DC,HTTT,MauSo,KhachHang.Ten,KhachHang.DiaChi,KhachHang.MST,khachhang.sohieu as sohieukhachhang,HDBL,HoaDon" + sh + ".TyGia AS TG " & _
           "FROM (ChungTu" + sh + " LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) " & _
           "LEFT JOIN KhachHang ON KhachHang.MaSo=ChungTu" + sh + ".MaKHC " & _
           "WHERE Chungtu" + sh + ".MaCT=" + CStr(MaSoCT) + " AND ChungTu" + sh + ".MaKHC<>0 " & IIf(pProcessMode = 1, " AND XuLy<2", "") & _
@@ -14401,8 +14401,8 @@ Public Function HienPhieuTrenManHinh(p As Integer) As Integer
           "LEFT JOIN KhachHang ON KhachHang.MaSo=HoaDon" + sh + ".MaKhachHang " & _
           "WHERE Chungtu" + sh + ".MaCT=" + CStr(MaSoCT) + " AND ChungTu" + sh + ".MaKHC=0 AND ChungTu" + sh + ".MaKH=0 " & IIf(pProcessMode = 1, " AND XuLy<2", "") & _
         " ORDER BY MaSo DESC"
-    Debug.Print "select chung tu la : " & sql
-    Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    Debug.Print "select chung tu la : " & SQL
+    Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     If rs_chungtu.recordCount = 0 Then
         MsgBox "PhiÕu ®· bÞ xo¸!", vbCritical, App.ProductName
         HienPhieuTrenManHinh = -1
@@ -14433,10 +14433,10 @@ Public Function HienPhieuTrenManHinh(p As Integer) As Integer
     mang3 = " LEFT JOIN KhachHang ON hoadon" + sh + ".MaKhachhang = KhachHang.maso WHERE hoadon.makhachhang > 0 and Chungtu" + sh + ".MaCT=" + CStr(MaSoCT) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " ORDER BY Chungtu" + sh + ".MaSo DESC"
 
     'sql = "SELECT ChungTu" + sh + ".sohieu as sh,HoaDon" + sh + ".MaKhachHang,HoaDon" + sh + ".KyHieu as kyhieuhoadon ,khachhang.sohieu,khachhang.tel,khachhang.fax,KhachHang.Ten,KhachHang.DiaChi,KhachHang.MST,khachhang.sohieu as sohieukhachhang,HDBL,HoaDon" + sh + ".TyGia AS TG FROM (ChungTu" + sh + " LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN KhachHang ON hoadon" + sh + ".MaKhachhang = KhachHang.maso WHERE hoadon.makhachhang > 0 and Chungtu" + sh + ".MaCT=" + CStr(MaSoCT) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " ORDER BY Chungtu" + sh + ".MaSo DESC"
-    sql = "SELECT ChungTu" + sh + ".sohieu as sh,HoaDon" + sh + ".MaKhachHang,HoaDon" + sh + ".KyHieu as kyhieuhoadon ,khachhang.sohieu,khachhang.tel,khachhang.fax,KhachHang.Ten,KhachHang.DiaChi,KhachHang.MST,khachhang.sohieu as sohieukhachhang,HDBL,HoaDon" + sh + ".TyGia AS TG FROM (ChungTu" + sh + " LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN KhachHang ON hoadon" + sh + ".MaKhachhang = KhachHang.maso WHERE hoadon.makhachhang > 0 and Chungtu" + sh + ".MaCT=" + CStr(ma) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " ORDER BY Chungtu" + sh + ".MaSo DESC"
+    SQL = "SELECT ChungTu" + sh + ".sohieu as sh,HoaDon" + sh + ".MaKhachHang,HoaDon" + sh + ".KyHieu as kyhieuhoadon ,khachhang.sohieu,khachhang.tel,khachhang.fax,KhachHang.Ten,KhachHang.DiaChi,KhachHang.MST,khachhang.sohieu as sohieukhachhang,HDBL,HoaDon" + sh + ".TyGia AS TG FROM (ChungTu" + sh + " LEFT JOIN HoaDon" + sh + " ON ChungTu" + sh + ".MaSo=HoaDon" + sh + ".MaSo) LEFT JOIN KhachHang ON hoadon" + sh + ".MaKhachhang = KhachHang.maso WHERE hoadon.makhachhang > 0 and Chungtu" + sh + ".MaCT=" + CStr(ma) + IIf(pProcessMode = 1, " AND XuLy<2", "") + " ORDER BY Chungtu" + sh + ".MaSo DESC"
     Dim rs
 
-    Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     If rs.recordCount > 0 Then
         Mo_thong_tin
         txtVT(1).Text = rs!kyhieuhoadon
@@ -14553,7 +14553,7 @@ Public Function HienPhieuTrenManHinh(p As Integer) As Integer
             If rs_chungtu!sops <> 0 Or taikhoan.tk_id = GTGTKT_ID Or taikhoan.tk_id = GTGTPN_ID Or taikhoan.tk_id = TTDB_ID Or taikhoan.tk_id = TKVT_ID Or ((taikhoan.tk_id = TKCNKH_ID Or taikhoan.tk_id = TKCNPT_ID) And rs_chungtu!MaKHC > 0) Then
                 If Not CmdPhieu(0).Visible Then CmdPhieu(0).Visible = (Left(taikhoan.sohieu, Len(TM)) = TM)
                 If Not CmdPhieu(1).Visible Then CmdPhieu(1).Visible = (taikhoan.tk_id = TKVT_ID Or taikhoan.tk_id = TKDT_ID Or taikhoan.tk_id = TSCD_ID)
-                If Not CmdPhieu(3).Visible Then CmdPhieu(3).Visible = (Left(taikhoan.sohieu, Len(NH)) = NH And KiemTraMaSoThue(frmMain.lbCty(8).Caption, "04"))
+                If Not CmdPhieu(3).Visible Then CmdPhieu(3).Visible = (Left(taikhoan.sohieu, Len(NH)) = NH And KiemTraMaSoThue(frmMain.LbCty(8).Caption, "04"))
 
                 If (((taikhoan.tk_id <> TKVT_ID) Or (Not STDetail)) And (taikhoan.tk_id <> GTGTKT_ID) And (taikhoan.tk_id <> TKDT_ID) And (taikhoan.tk_id <> TKGT_ID) And (taikhoan.tk_id <> TSCD_ID)) And (rs_chungtu!MaTP = 0 Or taikhoan.tk_id = TKCNKH_ID Or taikhoan.tk_id = TKCNPT_ID) Then         ' And taikhoan.TK_ID <> TKCNKH_ID And taikhoan.TK_ID <> TKCNPT_ID
                     ThemDong = Not PSDaCo(taikhoan, -1, rs_chungtu!sops, rs_chungtu!SoPS2No, rs_chungtu!makh)
@@ -14736,7 +14736,7 @@ KT1:
                 If Not CmdPhieu(1).Visible Then CmdPhieu(1).Visible = (taikhoan.tk_id = TKVT_ID Or taikhoan.tk_id = TKDT_ID Or taikhoan.tk_id = TSCD_ID)
                 If Not CmdPhieu(2).Visible Then CmdPhieu(2).Visible = (Left(taikhoan.sohieu, Len(NH)) = NH Or taikhoan.tk_id2 = CLng(NH))
                 CmdPhieu(2).tag = taikhoan.sohieu
-                If Not CmdPhieu(3).Visible Then CmdPhieu(3).Visible = (Left(taikhoan.sohieu, Len(NH)) = NH And KiemTraMaSoThue(frmMain.lbCty(8).Caption, "04"))
+                If Not CmdPhieu(3).Visible Then CmdPhieu(3).Visible = (Left(taikhoan.sohieu, Len(NH)) = NH And KiemTraMaSoThue(frmMain.LbCty(8).Caption, "04"))
 
                 If ((taikhoan.tk_id <> TKVT_ID And taikhoan.tk_id <> TKDT_ID) Or (Not STDetail)) And (taikhoan.tk_id <> TKDT_ID) And (taikhoan.tk_id <> GTGTPN_ID) And (taikhoan.tk_id <> TTDB_ID) And (rs_chungtu!MaTP = 0 Or taikhoan.tk_id = TKCNKH_ID Or taikhoan.tk_id = TKCNPT_ID) Then       ' And taikhoan.TK_ID <> TKCNKH_ID And taikhoan.TK_ID <> TKCNPT_ID
                     ThemDong = Not PSDaCo(taikhoan, 1, rs_chungtu!sops, rs_chungtu!SoPS2Co, rs_chungtu!MaKHC)
@@ -15488,21 +15488,21 @@ Private Sub hienctts()
 End Sub
 
 Private Sub GhiChungtuTS(MaCTKT As Long)
-    Dim sql As String, i As Integer
+    Dim SQL As String, i As Integer
     Select Case pNghiepVu
     Case NV_TANG:
         For i = 0 To tscount
             TinhGiaTriTaiSan MaTS(i), pThangTacDong, KH_KHONG
-            sql = "INSERT INTO CTTaiSan (MaSo, SoHieu, Thang, VaoSo, NgayGhi, DienGiai, " _
+            SQL = "INSERT INTO CTTaiSan (MaSo, SoHieu, Thang, VaoSo, NgayGhi, DienGiai, " _
                 & "MaLoai, MaNhom, MaTS, NG_NS, NG_TBS, NG_CNK, NG_TD, " _
                 & "CL_NS, CL_TBS, CL_CNK, CL_TD, MaCTKT" + IIf(pSongNgu And Len(txt(2).Text) > 0, ",DienGiaiE", "") + ") VALUES (" + CStr(Lng_MaxValue("MaSo", "CTTaiSan") + 1) + ",'" + txt(0).Text + "'," + CStr(CboThang.ItemData(CboThang.ListIndex)) _
                 + ",#" + Format(ngay(0), Mask_DB) + "#,#" + Format(ngay(1), Mask_DB) + "#,'" _
                 + txt(1).Text + "'," + CStr(OptLoai(loaict).tag) + "," + CStr(CboNguon(0).ItemData(CboNguon(0).ListIndex)) + "," + CStr(MaTS(i)) + "," _
                 + DoiDau(GiaTri.NG_NS) + "," + DoiDau(GiaTri.NG_TBS) + "," + DoiDau(GiaTri.NG_CNK) + "," + DoiDau(GiaTri.NG_TD) + "," _
                 + DoiDau(GiaTri.CL_NS) + "," + DoiDau(GiaTri.CL_TBS) + "," + DoiDau(GiaTri.CL_CNK) + "," + DoiDau(GiaTri.CL_TD) + "," + CStr(MaCTKT) + IIf(pSongNgu And Len(txt(2).Text) > 0, ",'" + txt(2).Text + "'", "") + ")"
-            ExecuteSQL5 (sql)
-            sql = "UPDATE TaiSan SET SHCT='" + txt(0).Text + "',NCT=#" + Format(ngay(0), Mask_DB) + "# WHERE MaSo=" + CStr(MaTS(i))
-            ExecuteSQL5 (sql)
+            ExecuteSQL5 (SQL)
+            SQL = "UPDATE TaiSan SET SHCT='" + txt(0).Text + "',NCT=#" + Format(ngay(0), Mask_DB) + "# WHERE MaSo=" + CStr(MaTS(i))
+            ExecuteSQL5 (SQL)
         Next
     Case NV_GIAM:
         TacDongGiamTaiSan pMaTaiSan, CboThang.ItemData(CboThang.ListIndex), TD_GIAM
@@ -15511,14 +15511,14 @@ Private Sub GhiChungtuTS(MaCTKT As Long)
         XoaChungTuKhauHao CInt5(Me.tag), CboThang.ItemData(CboThang.ListIndex), CboNguon(0).ItemData(CboNguon(0).ListIndex), MaCTKT, CboNguon(0).tag
     End Select
     If pNghiepVu > 0 And pNghiepVu <> NV_TANG Then
-        sql = "INSERT INTO CTTaiSan (MaSo, SoHieu, Thang, VaoSo, NgayGhi, DienGiai, " _
+        SQL = "INSERT INTO CTTaiSan (MaSo, SoHieu, Thang, VaoSo, NgayGhi, DienGiai, " _
             & "MaLoai, MaNhom, MaTS, NG_NS, NG_TBS, NG_CNK, NG_TD, " _
             & "CL_NS, CL_TBS, CL_CNK, CL_TD, MaCTKT" + IIf(pSongNgu And Len(txt(2).Text) > 0, ",DienGiaiE", "") + ")VALUES (" + CStr(Lng_MaxValue("MaSo", "CTTaiSan") + 1) + ",'" + txt(0).Text + "'," + CStr(CboThang.ItemData(CboThang.ListIndex)) _
             + ",#" + Format(ngay(0), Mask_DB) + "#,#" + Format(ngay(1), Mask_DB) + "#,'" _
             + txt(1).Text + "'," + CStr(OptLoai(loaict).tag) + "," + CStr(CboNguon(0).ItemData(CboNguon(0).ListIndex)) + "," + CStr(pMaTaiSan) + "," _
             + DoiDau(GiaTri.NG_NS) + "," + DoiDau(GiaTri.NG_TBS) + "," + DoiDau(GiaTri.NG_CNK) + "," + DoiDau(GiaTri.NG_TD) + "," _
             + DoiDau(GiaTri.CL_NS) + "," + DoiDau(GiaTri.CL_TBS) + "," + DoiDau(GiaTri.CL_CNK) + "," + DoiDau(GiaTri.CL_TD) + "," + CStr(MaCTKT) + IIf(pSongNgu And Len(txt(2).Text) > 0, ",'" + txt(2).Text + "'", "") + ")"
-        ExecuteSQL5 (sql)
+        ExecuteSQL5 (SQL)
         If pNghiepVu = NV_DGLAI Then DieuChinhKH pMaTaiSan, CboThang.ItemData(CboThang.ListIndex)
     End If
     pGhichungtu = 0
@@ -15529,11 +15529,11 @@ Private Sub GhiChungtuTS(MaCTKT As Long)
 End Sub
 
 Private Sub SuaChungtuTS(MaCTKT As Long)
-    Dim sql As String
-    sql = "UPDATE CTTaiSan SET SoHieu = '" + txt(0).Text + "', Thang = " + CStr(CboThang.ItemData(CboThang.ListIndex)) + ", VaoSo = #" + Format(ngay(0), Mask_DB) _
+    Dim SQL As String
+    SQL = "UPDATE CTTaiSan SET SoHieu = '" + txt(0).Text + "', Thang = " + CStr(CboThang.ItemData(CboThang.ListIndex)) + ", VaoSo = #" + Format(ngay(0), Mask_DB) _
         + "#, NgayGhi = #" + Format(ngay(1), Mask_DB) + "#, DienGiai = '" + txt(1).Text + "', MaLoai = " + CStr(OptLoai(loaict).tag) _
         + ", MaNhom = " + CStr(CboNguon(0).ItemData(CboNguon(0).ListIndex)) + IIf(pSongNgu, ",DienGiaiE='" + txt(2).Text + "'", "") + " WHERE CTTaiSan.MaCTKT = " + CStr(MaCTKT)
-    ExecuteSQL5 (sql)
+    ExecuteSQL5 (SQL)
 End Sub
 '=====================================================================================================
 ' Ham tra ve dong va loai ps cua tai khoan trong grid chung tu
@@ -15686,7 +15686,7 @@ Private Sub KiemTraUser()
 End Sub
 
 Private Function PSTuDong(ps As Double) As Boolean
-    Dim sql As String, sh As String
+    Dim SQL As String, sh As String
 
     PSTuDong = False
     If ps > 0 Then
@@ -15697,8 +15697,8 @@ Private Function PSTuDong(ps As Double) As Boolean
         txtchungtu(5).Text = Format(-ps, Mask_2)
     End If
 
-    sql = "SELECT SHTK As F1 FROM SHChungTu WHERE SoHieu='" + Left(txt(0).Text, SHCT_Len) + "'"
-    sh = SelectSQL(sql)
+    SQL = "SELECT SHTK As F1 FROM SHChungTu WHERE SoHieu='" + Left(txt(0).Text, SHCT_Len) + "'"
+    sh = SelectSQL(SQL)
     If Len(sh) < 3 Then Exit Function
     txtchungtu(0).Text = sh
     txtChungtu_LostFocus 0
@@ -15707,12 +15707,12 @@ Private Function PSTuDong(ps As Double) As Boolean
 End Function
 
 Private Sub InDSCtu()
-    Dim d1 As Date, d2 As Date, sql As String
+    Dim d1 As Date, d2 As Date, SQL As String
 
-    If Not GetDate2.getdate("In danh s¸ch chøng tõ theo ngµy", d1, d2) Then Exit Sub
-    sql = "SELECT ChungTu.MaCT AS M, ChungTu.ThangCT AS T, ChungTu.SoHieu AS SH, ChungTu.NgayCT AS NCT, ChungTu.NgayGS AS NGS, ChungTu.DienGiai AS DG, HeThongTK.SoHieu AS TKNo,HethongTK.Ten AS TNo, HeThongTK_1.SoHieu AS TKCo,HethongTK_1.Ten AS TCo, ChungTu.SoPS AS PS" _
+    If Not GetDate2.GetDate("In danh s¸ch chøng tõ theo ngµy", d1, d2) Then Exit Sub
+    SQL = "SELECT ChungTu.MaCT AS M, ChungTu.ThangCT AS T, ChungTu.SoHieu AS SH, ChungTu.NgayCT AS NCT, ChungTu.NgayGS AS NGS, ChungTu.DienGiai AS DG, HeThongTK.SoHieu AS TKNo,HethongTK.Ten AS TNo, HeThongTK_1.SoHieu AS TKCo,HethongTK_1.Ten AS TCo, ChungTu.SoPS AS PS" _
         & " FROM (HeThongTK RIGHT JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTKNo) LEFT JOIN HeThongTK AS HeThongTK_1 ON ChungTu.MaTKCo = HeThongTK_1.MaSo WHERE " + WNgay("NgayGS", d1, d2)
-    SetSQL "QNhatKy", sql
+    SetSQL "QNhatKy", SQL
     frmMain.Rpt.ReportFileName = "CHUNGTU2.RPT"
     RptSetDate d2
     SetRptInfo
@@ -15722,7 +15722,7 @@ End Sub
 Private Sub InNhatKy1()
     Dim d1 As Date, d2 As Date
 
-    If Not GetDate2.getdate("Sæ nhËt ký theo ngµy", d1, d2) Then Exit Sub
+    If Not GetDate2.GetDate("Sæ nhËt ký theo ngµy", d1, d2) Then Exit Sub
     SetRptInfo
     If InNhatKy(0, 0, 0, 1, d1, d2, 0, pPhieu) Then InBaoCaoRPT
 End Sub
@@ -15795,14 +15795,14 @@ Private Function CTGiamGia() As Boolean
 End Function
 
 Private Sub InTC(loai As Integer)
-    Dim d1 As Date, d2 As Date, sql As String
+    Dim d1 As Date, d2 As Date, SQL As String
     Dim rs As Object
 
-    If Not GetDate2.getdate("In tõng phiÕu " + IIf(loai = 0, "thu", "chi") + " theo ngµy", d1, d2) Then Exit Sub
-    sql = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111*' GROUP BY MaCT"
+    If Not GetDate2.GetDate("In tõng phiÕu " + IIf(loai = 0, "thu", "chi") + " theo ngµy", d1, d2) Then Exit Sub
+    SQL = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111*' GROUP BY MaCT"
     frmMain.Rpt.Destination = crptToPrinter
     P_1 = 1
-    Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot, dbForwardOnly)
+    Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot, dbForwardOnly)
     Do While Not rs.EOF
         MaSoCT = rs!MaCT
         HienPhieuTrenManHinh 0
@@ -15817,7 +15817,7 @@ Private Sub InTC(loai As Integer)
 End Sub
 
 Private Sub InTC_in_toan_bo(loai As Integer)
-    Dim d1 As Date, d2 As Date, sql As String
+    Dim d1 As Date, d2 As Date, SQL As String
     Dim rs As Object
     Dim dieukien As String
     d1 = GetDate2.MedNgay(0).Text
@@ -15825,10 +15825,10 @@ Private Sub InTC_in_toan_bo(loai As Integer)
 
     ' If Not GetDate2.GetDate("In tõng phiÕu " + IIf(loai = 0, "thu", "chi") + " theo ngµy", d1, d2) Then Exit Sub
     ' dieukien = FrmDsCT
-    sql = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111*' GROUP BY MaCT"
+    SQL = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111*' GROUP BY MaCT"
     frmMain.Rpt.Destination = crptToPrinter
     P_1 = 1
-    Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot, dbForwardOnly)
+    Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot, dbForwardOnly)
     Do While Not rs.EOF
         MaSoCT = rs!MaCT
         HienPhieuTrenManHinh 0
@@ -15843,14 +15843,14 @@ Private Sub InTC_in_toan_bo(loai As Integer)
 End Sub
 
 Private Sub InNX(loai As Integer)
-    Dim d1 As Date, d2 As Date, sql As String
+    Dim d1 As Date, d2 As Date, SQL As String
     Dim rs As Object
 
-    If Not GetDate2.getdate("In tõng phiÕu " + IIf(loai = 1, "nhËp", "xuÊt") + " theo ngµy", d1, d2) Then Exit Sub
-    sql = "SELECT MaCT FROM ChungTu WHERE MaLoai=" + CStr(loai) + " AND " + WNgay("NgayGS", d1, d2) + " AND MaVattu>0 GROUP BY MaCT"
+    If Not GetDate2.GetDate("In tõng phiÕu " + IIf(loai = 1, "nhËp", "xuÊt") + " theo ngµy", d1, d2) Then Exit Sub
+    SQL = "SELECT MaCT FROM ChungTu WHERE MaLoai=" + CStr(loai) + " AND " + WNgay("NgayGS", d1, d2) + " AND MaVattu>0 GROUP BY MaCT"
     frmMain.Rpt.Destination = crptToPrinter
     P_1 = 1
-    Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot, dbForwardOnly)
+    Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot, dbForwardOnly)
     Do While Not rs.EOF
         MaSoCT = rs!MaCT
         HienPhieuTrenManHinh 0
@@ -15865,11 +15865,11 @@ Private Sub InNX(loai As Integer)
 End Sub
 
 Private Sub DonGiaNhap(mvt As Long)
-    Dim sql As String
+    Dim SQL As String
 
     SetSQL "MienTru", "SELECT NgayCT,MaVattu,SoPS,SoPS2No FROM ChungTu WHERE ChungTu.MaLoai=1 AND SoPS>0 AND SoPS2No>0 AND MaVattu" + IIf(mvt > 0, "=" + CStr(mvt), ">0") + " ORDER BY NgayCT DESC"
-    sql = "SELECT SoHieu,DonVi,TenVattu,First(NgayCT) AS Ngay,First(SoPS/SoPS2No) AS DonGia FROM MienTru INNER JOIN Vattu On MienTru.MaVattu=Vattu.MaSo GROUP BY SoHieu,DonVi,TenVattu"
-    SetSQL "QLuyKe", sql
+    SQL = "SELECT SoHieu,DonVi,TenVattu,First(NgayCT) AS Ngay,First(SoPS/SoPS2No) AS DonGia FROM MienTru INNER JOIN Vattu On MienTru.MaVattu=Vattu.MaSo GROUP BY SoHieu,DonVi,TenVattu"
+    SetSQL "QLuyKe", SQL
 
     SetRptInfo
 
@@ -15946,7 +15946,7 @@ Private Sub txtsh_LostFocus(Index As Integer)
         Set tkxt = New ClsTaikhoan
         tkxt.InitTaikhoanSohieu txtsh(0).Text
         txtsh(0).tag = IIf(tkxt.MaSo > 0 And tkxt.tkcon = 0, tkxt.MaSo, 0)
-        Lb(0).Caption = tkxt.Ten
+        lb(0).Caption = tkxt.Ten
         vis = (tkxt.tk_id = TKCNKH_ID Or tkxt.tk_id = TKCNPT_ID Or (tkxt.loai = 6 And pDTTP <> 0))
         If Left(txtsh(0).Text, 3) = "154" Then
             vis = True
@@ -15954,7 +15954,7 @@ Private Sub txtsh_LostFocus(Index As Integer)
 
         Label(19).Enabled = vis
         txtsh(1).Enabled = vis
-        Lb(1).Enabled = vis
+        lb(1).Enabled = vis
         cmd(1).Enabled = vis
         cmd(0).tag = IIf(tkxt.tk_id = TKCNKH_ID Or tkxt.tk_id = TKCNPT_ID, 1, IIf(tkxt.loai = 6 And pDTTP <> 0, 2, 0))
         Set tkxt = Nothing
@@ -15963,14 +15963,14 @@ Private Sub txtsh_LostFocus(Index As Integer)
             Set khxt = New ClsKhachHang
             khxt.InitKhachHangSohieu txtsh(1).Text
             txtsh(1).tag = khxt.MaSo
-            Lb(1).Caption = khxt.Ten
+            lb(1).Caption = khxt.Ten
             Set khxt = Nothing
         End If
         If cmd(0).tag = 2 Then
             Set tpxt = New Cls154
             tpxt.InitTPSohieu txtsh(1).Text
             txtsh(1).tag = tpxt.MaSo
-            Lb(1).Caption = tpxt.TenVattu
+            lb(1).Caption = tpxt.TenVattu
             Set tpxt = Nothing
         End If
 
@@ -15978,7 +15978,7 @@ Private Sub txtsh_LostFocus(Index As Integer)
             Set tpxt = New Cls154
             tpxt.InitTPSohieu txtsh(1).Text
             txtsh(1).tag = tpxt.MaSo
-            Lb(1).Caption = tpxt.TenVattu
+            lb(1).Caption = tpxt.TenVattu
             Set tpxt = Nothing
         End If
 
@@ -16295,10 +16295,10 @@ Private Sub TxtVT_Change(Index As Integer)
     txtVT(8).Text = Replace(txtVT(8).Text, "?", "")
 
     Dim rs As Object
-    Dim sql As String
+    Dim SQL As String
     Dim i
     i = 0
-    sql = ""
+    SQL = ""
     Dim qq
     qq = CStr(Replace(txtVT(0).Text, ".", ""))
     If (Trim(Replace(txtVT(0).Text, ".", "")) = "#") Then qq = qq + "@*"
@@ -16306,25 +16306,25 @@ Private Sub TxtVT_Change(Index As Integer)
     Select Case Index
     Case 0:    ' lay thong tin
 
-        sql = "SELECT top 1 * FROM KhachHang WHERE SoHieu = '" + qq + "' and left(sohieu,1) <> '#' order by maso desc"
-        Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+        SQL = "SELECT top 1 * FROM KhachHang WHERE SoHieu = '" + qq + "' and left(sohieu,1) <> '#' order by maso desc"
+        Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
         If rs.recordCount <= 0 Then
-            sql = "SELECT top 1 * FROM KhachHang WHERE SoHieu = '" + qq + "' order by maso desc"
+            SQL = "SELECT top 1 * FROM KhachHang WHERE SoHieu = '" + qq + "' order by maso desc"
 
         End If
 
     Case 9:
-        sql = "SELECT top 1 * FROM KhachHang WHERE MST = '" + CStr(Replace(txtVT(9).Text, ".", "")) + "' and left(sohieu,1) <> '#'  order by maso desc"
-        Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+        SQL = "SELECT top 1 * FROM KhachHang WHERE MST = '" + CStr(Replace(txtVT(9).Text, ".", "")) + "' and left(sohieu,1) <> '#'  order by maso desc"
+        Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
         If rs.recordCount <= 0 Then
-            sql = "SELECT top 1 * FROM KhachHang WHERE MST = '" + CStr(Replace(txtVT(9).Text, ".", "")) + "' order by maso desc"
+            SQL = "SELECT top 1 * FROM KhachHang WHERE MST = '" + CStr(Replace(txtVT(9).Text, ".", "")) + "' order by maso desc"
         End If
     End Select
 
 
-    If sql <> "" Then
+    If SQL <> "" Then
         Enable_thong_tin
-        Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
         If rs.recordCount > 0 Then
             txtVT(7).Text = rs!Ten
             Text1.Text = rs!Ten
@@ -16393,8 +16393,8 @@ Private Sub TxtVT_Change(Index As Integer)
 
     If Len(Replace(Trim(txtVT(1).Text), ".", "")) > 0 Then
         Mo_thong_tin
-        sql = "SELECT top 1 * FROM KhachHang WHERE SoHieu = '" + qq + "' order by maso desc"
-        Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+        SQL = "SELECT top 1 * FROM KhachHang WHERE SoHieu = '" + qq + "' order by maso desc"
+        Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
         '  If rs.RecordCount > 0 Then Disnable_thong_tin
     Else
         Dong_thong_tin
