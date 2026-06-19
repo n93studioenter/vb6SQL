@@ -59,12 +59,12 @@ Public PSCLK As Double
 ' Thu tuc dang ky tai khoan khong la tai khoan tai chinh
 ' Tra ve ma so tai khoan duoc dang ky
 Public Function ThemTk() As Integer
-    Dim i As Integer, sql As String
+    Dim i As Integer, SQL As String
     
     If MaNT = 0 Then
         Dim rs_taikhoan As Object
-        sql = "SELECT DISTINCTROW Count(MaSo) As F1 FROM HethongTK WHERE SoHieu='" + sohieu + "' AND MaNT<=0"
-        If SelectSQL(sql) > 0 Then
+        SQL = "SELECT DISTINCTROW Count(MaSo) As F1 FROM HethongTK WHERE SoHieu='" + sohieu + "' AND MaNT<=0"
+        If SelectSQL(SQL) > 0 Then
             ThemTk = -1
             Exit Function
         End If
@@ -119,7 +119,7 @@ End Function
 ' Tra ve true neu co cap nhat lai cac so hieu tai khoan con
 '======================================================================================
 Public Function CapNhatTk() As Integer
-    Dim sql As String
+    Dim SQL As String
     Dim taikhoan As New ClsTaikhoan
     Dim dn As Double, DC As Double
     
@@ -127,8 +127,8 @@ Public Function CapNhatTk() As Integer
     taikhoan.InitTaikhoanMaSo MaSo
     
     If MaNT = 0 And sohieu <> taikhoan.sohieu Then
-        sql = "SELECT DISTINCTROW Count(MaSo) AS F1 FROM HethongTK WHERE SoHieu='" + sohieu + "' AND MaNT=0"
-        If SelectSQL(sql) > 0 Then
+        SQL = "SELECT DISTINCTROW Count(MaSo) AS F1 FROM HethongTK WHERE SoHieu='" + sohieu + "' AND MaNT=0"
+        If SelectSQL(SQL) > 0 Then
             CapNhatTk = -1
             GoTo KT
         End If
@@ -136,20 +136,20 @@ Public Function CapNhatTk() As Integer
     If Len(TenE) = 0 Then TenE = "..."
     WSpace.BeginTrans
     ' Cap nhat thong tin tai khoan moi
-    sql = "UPDATE HethongTk SET SoHieu='" + sohieu + "',Ten='" + Ten + "',Kieu=" + CStr(kieu) _
+    SQL = "UPDATE HethongTk SET SoHieu='" + sohieu + "',Ten='" + Ten + "',Kieu=" + CStr(kieu) _
          + ", GhiChu = '" + GhiChu + "',TenDA='" + TenDA + "',NhomDA='" + NhomDA _
         + "',DiaDiem='" + DiaDiem + "',DuToan=" + CStr(DuToan) + ",Von1=" + CStr(Von1) + ",Von2=" + CStr(Von2) + ",Von3=" + CStr(Von3) + ",NgayKC=#" + Format(NgayKC, Mask_DB) _
         + "#,NgayHT=#" + Format(NgayHT, Mask_DB) + "#" + IIf(pSongNgu, ",TenE='" + TenE + "'", "") + " WHERE SoHieu = '" + taikhoan.sohieu + "'"
          
-    If ExecuteSQL5(sql) <> 0 Then
+    If ExecuteSQL5(SQL) <> 0 Then
         WSpace.Rollback
         CapNhatTk = -1
         GoTo KT
     End If
     
-    sql = "UPDATE HethongTk SET MaNT=" + CStr(MaNT) + ",SoDuMax=" + DoiDau(SoDuMax) + ",SoDuMin=" _
+    SQL = "UPDATE HethongTk SET MaNT=" + CStr(MaNT) + ",SoDuMax=" + DoiDau(SoDuMax) + ",SoDuMin=" _
         + DoiDau(SoDuMin) + ",TK_ID=" + CStr(tk_id) + " WHERE MaSo=" + CStr(MaSo)
-    ExecuteSQL5 sql
+    ExecuteSQL5 SQL
     
     ' Neu co thay doi so hieu thi thay doi so hieu cac tai khoan con
     If sohieu <> taikhoan.sohieu And taikhoan.tkcon <> 0 Then
@@ -169,7 +169,7 @@ End Function
 ' Thu tuc xoa tai khoan khong phai la tai khoan tai chinh
 '======================================================================================
 Public Function XoaTk() As Integer
-    Dim chuyenps As Boolean, sql As String, i As Integer
+    Dim chuyenps As Boolean, SQL As String, i As Integer
     
     If (MaTC = 0 Or MaTC = MaSo) And pXuLyTKTC = 0 Then
         If MsgBox("Bπn chæc chæn xo∏ tµi kho∂n chu»n?", vbCritical + vbYesNo, App.ProductName) = vbNo Then Exit Function
@@ -183,8 +183,8 @@ Public Function XoaTk() As Integer
     End If
     
     If TkCoPS(0, 0) Then
-        sql = "SELECT DISTINCTROW Count(MaSo) As F1 FROM HethongTK WHERE MaNT <=0 AND TKCha0 = " + CStr(TkCha0)
-        If SelectSQL(sql) > 1 Then
+        SQL = "SELECT DISTINCTROW Count(MaSo) As F1 FROM HethongTK WHERE MaNT <=0 AND TKCha0 = " + CStr(TkCha0)
+        If SelectSQL(SQL) > 1 Then
             
             XoaTk = -3
             Exit Function
@@ -193,10 +193,10 @@ Public Function XoaTk() As Integer
             chuyenps = True
         End If
     Else
-        sql = "SELECT DISTINCTROW Count(MaSo) As F1 FROM TP154 WHERE MaTK = " + CStr(MaSo)
-        If (sohieu Like ShTkSPDo + "*") And pDTTP <> 0 And SelectSQL(sql) > 0 Then
-            sql = "SELECT DISTINCTROW Count(MaSo) As F1 FROM HethongTK WHERE TKCha0 = " + CStr(TkCha0)
-            If SelectSQL(sql) > 1 Then
+        SQL = "SELECT DISTINCTROW Count(MaSo) As F1 FROM TP154 WHERE MaTK = " + CStr(MaSo)
+        If (sohieu Like ShTkSPDo + "*") And pDTTP <> 0 And SelectSQL(SQL) > 0 Then
+            SQL = "SELECT DISTINCTROW Count(MaSo) As F1 FROM HethongTK WHERE TKCha0 = " + CStr(TkCha0)
+            If SelectSQL(SQL) > 1 Then
                 XoaTk = -3
                 Exit Function
             Else
@@ -213,19 +213,19 @@ Public Function XoaTk() As Integer
     End If
     
     If tk_id = TKVT_ID Then
-        sql = "DELETE * FROM TonKho WHERE Luong_0=0 AND Tien_0=0 "
+        SQL = "DELETE * FROM TonKho WHERE Luong_0=0 AND Tien_0=0 "
         For i = 1 To 12
-            sql = sql + " AND Luong_Nhap_" + CStr(i) + "=0 AND Tien_Nhap_" + CStr(i) + "=0 "
+            SQL = SQL + " AND Luong_Nhap_" + CStr(i) + "=0 AND Tien_Nhap_" + CStr(i) + "=0 "
         Next
-        ExecuteSQL5 sql
+        ExecuteSQL5 SQL
     End If
     
     If tk_id = TKCNKH_ID Or tk_id = TKCNPT_ID Then
-        sql = "DELETE * FROM SoDuKhachHang WHERE DuNo_0=0 AND DuCo_0=0 AND DuNT_0=0 "
+        SQL = "DELETE * FROM SoDuKhachHang WHERE DuNo_0=0 AND DuCo_0=0 AND DuNT_0=0 "
         For i = 1 To 12
-            sql = sql + " AND No_" + CStr(i) + "=0 AND Co_" + CStr(i) + "=0"
+            SQL = SQL + " AND No_" + CStr(i) + "=0 AND Co_" + CStr(i) + "=0"
         Next
-        ExecuteSQL5 sql
+        ExecuteSQL5 SQL
     End If
     
     WSpace.BeginTrans
@@ -241,16 +241,16 @@ Public Function XoaTk() As Integer
         Exit Function
     End If
     If MaNT > 0 Then
-        sql = "SELECT DISTINCTROW Count(MaSo) AS F1 FROM HethongTK WHERE SoHieu='" + sohieu + "' AND MaNT>0"
-        If SelectSQL(sql) = 0 Then
+        SQL = "SELECT DISTINCTROW Count(MaSo) AS F1 FROM HethongTK WHERE SoHieu='" + sohieu + "' AND MaNT>0"
+        If SelectSQL(SQL) = 0 Then
             ExecuteSQL5 "UPDATE HethongTk SET MaNT = 0 WHERE SoHieu='" + sohieu + "' AND MaNT=-1"
         End If
     End If
     
     If MaNT = 0 Then
         ' Neu tai khoan cha khong con chi tiet thi cap nhat lai
-        sql = "SELECT DISTINCTROW Count(MaSo) AS F1 FROM HethongTK WHERE TkCha0 = " + CStr(TkCha0)
-        If SelectSQL(sql) = 0 Then
+        SQL = "SELECT DISTINCTROW Count(MaSo) AS F1 FROM HethongTK WHERE TkCha0 = " + CStr(TkCha0)
+        If SelectSQL(SQL) = 0 Then
             ExecuteSQL5 "UPDATE HethongTk SET TkCon = 0,MaTC=IIF(" + CStr(MaTC = MaSo) + ",MaSo,MaTC) WHERE MaSo=" + CStr(TkCha0)
             If chuyenps Then
                 ' Thay doi ma tai khoan trong chung tu
@@ -279,10 +279,11 @@ End Function
 '======================================================================================
 Public Function TkCoPS(tdau As Integer, tcuoi As Integer) As Boolean
     Dim sql1 As String, sql2 As String, sqlw As String
-    
+
     If tcuoi > 0 Then sqlw = " AND " + WThang("ThangCT", tdau, tcuoi)
-    sql1 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + sqlw
-    sql2 = "SELECT DISTINCTROW Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + sqlw
+    sql1 = "SELECT DISTINCT Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + sqlw
+    sql2 = "SELECT DISTINCT Count(ChungTu.MaSo) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '" + sohieu + "%'" + sqlw
+    Debug.Print sql1 & "   " & sql2
     TkCoPS = (SelectSQL(sql1) > 0 Or SelectSQL(sql2) > 0)
 End Function
 '======================================================================================
@@ -411,20 +412,20 @@ End Sub
 ' Tra ve:  Ten tai khoan neu tim thay
 '======================================================================================
 Public Function InitTaikhoanSohieu(sohieu As String, Optional shct As String = "") As String
-    Dim sql As String
+    Dim SQL As String
 
     'sql = "SELECT DISTINCTROW MaSo AS F1 FROM HethongTK WHERE " + IIf(Len(shct) > 0, " Left(SoHieu,Len('" + sohieu + "'))='" + sohieu + "' AND RIGHT(Sohieu," + CStr(Len(shct)) + ")='" + shct + "'", "SoHieu='" + sohieu + "'") + " ORDER BY MaNT DESC"
     If Len(shct) > 0 Then
-        sql = "SELECT TOP 1 MaSo AS F1 FROM HeThongTK " & _
+        SQL = "SELECT TOP 1 MaSo AS F1 FROM HeThongTK " & _
               "WHERE LEFT(SoHieu, " & Len(sohieu) & ") = '" & Replace(sohieu, "'", "''") & "' " & _
               "AND RIGHT(SoHieu, " & Len(shct) & ") = '" & Replace(shct, "'", "''") & "' " & _
               "ORDER BY MaNT DESC"
     Else
-        sql = "SELECT TOP 1 MaSo AS F1 FROM HeThongTK " & _
+        SQL = "SELECT TOP 1 MaSo AS F1 FROM HeThongTK " & _
               "WHERE SoHieu = '" & Replace(sohieu, "'", "''") & "' " & _
               "ORDER BY MaNT DESC"
 End If
-    InitTaikhoanMaSo SelectSQL(sql)
+    InitTaikhoanMaSo SelectSQL(SQL)
     InitTaikhoanSohieu = Ten
 End Function
 '======================================================================================
@@ -523,7 +524,7 @@ End Sub
 ' Thu tuc tra ve so phat sinh cua tai khoan
 '=========================================================================================================================================
 Public Sub SoPhatSinh(tdau As Integer, tcuoi As Integer, psn As Double, psc As Double)
-    Dim i As Integer, th As String, sqln As String, sqlc As String, sql As String
+    Dim i As Integer, th As String, sqln As String, sqlc As String, SQL As String
         
     For i = CThangDB(tdau) To CThangDB(tcuoi)
         th = CStr(i)
@@ -531,16 +532,16 @@ Public Sub SoPhatSinh(tdau As Integer, tcuoi As Integer, psn As Double, psc As D
         sqlc = sqlc + " + Co_" + th
     Next
     
-    sql = "SELECT DISTINCTROW SUM(" + sqln + ") AS F1,SUM(" + sqlc + ") AS F2 FROM HethongTK " _
+    SQL = "SELECT DISTINCTROW SUM(" + sqln + ") AS F1,SUM(" + sqlc + ") AS F2 FROM HethongTK " _
         & "WHERE " + IIf(tkcon > 0 Or MaNT <> 0, "(SoHieu LIKE '" + sohieu + "*' AND TKCon = 0)", "MaSo = " + CStr(MaSo))
     
-    psn = SelectSQL(sql, psc)
+    psn = SelectSQL(SQL, psc)
 End Sub
 '======================================================================================
 ' ThÒ tÙc t›nh lπi sË d≠ cÒa tµi kho∂n c p d≠Ìi cÔng
 '======================================================================================
 Public Sub TinhSoDu(thang As Integer, sops As Double, loaips As Integer, sopsnt As Double)
-    Dim i As Integer, rs_tk As Object, sql As String, sqlnt As String, j As Integer, k As Integer, st As String
+    Dim i As Integer, rs_tk As Object, SQL As String, sqlnt As String, j As Integer, k As Integer, st As String
     Dim dunocu(0 To 12) As Double, ducocu(0 To 12) As Double
     Dim duno(0 To 12) As Double, duco(0 To 12) As Double, dunt As Double, duntmoi As Double
     
@@ -550,13 +551,13 @@ Public Sub TinhSoDu(thang As Integer, sops As Double, loaips As Integer, sopsnt 
     If thang > 0 Then
         st = CStr(CThangDB(thang))
         If loaips < 0 Then
-            sql = "UPDATE HethongTK SET No_" + st + " = No_" + st + " + " + DoiDau(sops)
+            SQL = "UPDATE HethongTK SET No_" + st + " = No_" + st + " + " + DoiDau(sops)
         Else
-            sql = "UPDATE HethongTK SET Co_" + st + " = Co_" + st + " + " + DoiDau(sops)
+            SQL = "UPDATE HethongTK SET Co_" + st + " = Co_" + st + " + " + DoiDau(sops)
         End If
         j = CThangDB(ThangTruoc(thang))
     Else
-        sql = "UPDATE HethongTK SET DuNo_0 = DuNo_0 + " + DoiDau(NoDauKy - rs_tk!DuNo_0) + ", DuCo_0 = DuCo_0 + " + DoiDau(CoDauKy - rs_tk!DuCo_0)
+        SQL = "UPDATE HethongTK SET DuNo_0 = DuNo_0 + " + DoiDau(NoDauKy - rs_tk!DuNo_0) + ", DuCo_0 = DuCo_0 + " + DoiDau(CoDauKy - rs_tk!DuCo_0)
         j = 0
     End If
     
@@ -598,7 +599,7 @@ Public Sub TinhSoDu(thang As Integer, sops As Double, loaips As Integer, sopsnt 
     ' Ghi sË d≠ mÌi
     For i = j To 12
         st = CStr(i)
-        sql = sql + ", DuNo_" + st + " = DuNo_" + st + " + " + DoiDau(duno(i) - dunocu(i)) + ", DuCo_" + st + " = DuCo_" + st + " + " + DoiDau(duco(i) - ducocu(i))
+        SQL = SQL + ", DuNo_" + st + " = DuNo_" + st + " + " + DoiDau(duno(i) - dunocu(i)) + ", DuCo_" + st + " = DuCo_" + st + " + " + DoiDau(duco(i) - ducocu(i))
     Next
     
     If MaNT > 0 Then
@@ -620,13 +621,13 @@ Public Sub TinhSoDu(thang As Integer, sops As Double, loaips As Integer, sopsnt 
     End If
     rs_tk.Close
     
-    ExecuteSQL5 sql + " WHERE MaSo = " + CStr(MaSo) + " OR MaSo = " + CStr(TkCha0) + " OR MaSo = " + CStr(TkCha1) + " OR MaSo = " + CStr(TkCha2) + " OR MaSo = " + CStr(TkCha3) + " OR MaSo = " + CStr(TkCha4) + " OR MaSo = " + CStr(TkCha5)
+    ExecuteSQL5 SQL + " WHERE MaSo = " + CStr(MaSo) + " OR MaSo = " + CStr(TkCha0) + " OR MaSo = " + CStr(TkCha1) + " OR MaSo = " + CStr(TkCha2) + " OR MaSo = " + CStr(TkCha3) + " OR MaSo = " + CStr(TkCha4) + " OR MaSo = " + CStr(TkCha5)
     If tk_id2 <> TKLT_ID And cap > 0 Then
-        sql = "UPDATE HethongTK SET DuNo_1=IIF(DuNo_1>=DuCo_1,DuNo_1-DuCo_1,0),DuCo_1=IIF(DuNo_1<DuCo_1,DuCo_1-DuNo_1,0)"
+        SQL = "UPDATE HethongTK SET DuNo_1=IIF(DuNo_1>=DuCo_1,DuNo_1-DuCo_1,0),DuCo_1=IIF(DuNo_1<DuCo_1,DuCo_1-DuNo_1,0)"
         For i = 2 To 12
-            sql = sql + ",DuNo_" + CStr(i) + "=IIF(DuNo_" + CStr(i) + ">=DuCo_" + CStr(i) + ",DuNo_" + CStr(i) + "-DuCo_" + CStr(i) + ",0),DuCo_" + CStr(i) + "=IIF(DuNo_" + CStr(i) + "<DuCo_" + CStr(i) + ",DuCo_" + CStr(i) + "-DuNo_" + CStr(i) + ",0)"
+            SQL = SQL + ",DuNo_" + CStr(i) + "=IIF(DuNo_" + CStr(i) + ">=DuCo_" + CStr(i) + ",DuNo_" + CStr(i) + "-DuCo_" + CStr(i) + ",0),DuCo_" + CStr(i) + "=IIF(DuNo_" + CStr(i) + "<DuCo_" + CStr(i) + ",DuCo_" + CStr(i) + "-DuNo_" + CStr(i) + ",0)"
         Next
-        ExecuteSQL5 sql + " WHERE MaSo = " + CStr(MaSo) + " OR MaSo = " + CStr(TkCha0) + " OR MaSo = " + CStr(TkCha1) + " OR MaSo = " + CStr(TkCha2) + " OR MaSo = " + CStr(TkCha3) + " OR MaSo = " + CStr(TkCha4) + " OR MaSo = " + CStr(TkCha5)
+        ExecuteSQL5 SQL + " WHERE MaSo = " + CStr(MaSo) + " OR MaSo = " + CStr(TkCha0) + " OR MaSo = " + CStr(TkCha1) + " OR MaSo = " + CStr(TkCha2) + " OR MaSo = " + CStr(TkCha3) + " OR MaSo = " + CStr(TkCha4) + " OR MaSo = " + CStr(TkCha5)
     End If
     Set rs_tk = Nothing
 End Sub
@@ -670,7 +671,7 @@ Public Sub SoDuTK(thang As Integer, ckn As Double, ckc As Double, cknt As Double
     th = CThangDB(thang)
     ' Tinh tong so du dau nam cua cac tai khoan chi tiet
     Set rs_taikhoan = DBKetoan.OpenRecordset("SELECT DuNo_" + th + " As Dn, DuCo_" + th + " As Dc, DuNT_" + th + " As Dnt FROM HethongTk " _
-                                           & "WHERE " + IIf(tkcon > 0 Or (MaNT <= 0 And vnd = 0), "(SoHieu LIKE '" + sohieu + "*' AND TKCon = 0)", "MaSo = " + CStr(MaSo)), dbOpenSnapshot)
+                                           & "WHERE " + IIf(tkcon > 0 Or (MaNT <= 0 And vnd = 0), "(SoHieu LIKE '" + sohieu + "%' AND TKCon = 0)", "MaSo = " + CStr(MaSo)), dbOpenSnapshot)
     Do While Not rs_taikhoan.EOF
         ckn = ckn + rs_taikhoan!dn
         ckc = ckc + rs_taikhoan!DC
@@ -685,13 +686,13 @@ End Sub
 ' Thu tuc tra ve so phat sinh cua tai khoan
 '======================================================================================
 Public Sub SoPhatSinhN(ndau As Date, ncuoi As Date, psn As Double, ntno As Double, psc As Double, ntco As Double)
-Dim sql As String
-    sql = "SELECT DISTINCTROW Sum(SoPS) AS F1, Sum(SoPS2No) AS F2 FROM " + ChungTu2TKNC(-1) _
+Dim SQL As String
+    SQL = "SELECT DISTINCTROW Sum(SoPS) AS F1, Sum(SoPS2No) AS F2 FROM " + ChungTu2TKNC(-1) _
         & "WHERE HethongTK.SoHieu LIKE '" + sohieu + "*' AND " + WNgay("NgayGS", ndau, ncuoi)
-    psn = SelectSQL(sql, ntno)
-    sql = "SELECT DISTINCTROW Sum(SoPS) AS F1, Sum(SoPS2Co) AS F2 FROM " + ChungTu2TKNC(1) _
+    psn = SelectSQL(SQL, ntno)
+    SQL = "SELECT DISTINCTROW Sum(SoPS) AS F1, Sum(SoPS2Co) AS F2 FROM " + ChungTu2TKNC(1) _
         & "WHERE HethongTK.SoHieu LIKE '" + sohieu + "*' AND " + WNgay("NgayGS", ndau, ncuoi)
-    psc = SelectSQL(sql, ntco)
+    psc = SelectSQL(SQL, ntco)
 End Sub
 '======================================================================================
 ' Thu tuc tra ve so du cua tai khoan theo ngay
@@ -741,7 +742,7 @@ Public Function MaxCap() As Integer
 End Function
 
 Public Function ChuyenChiTietSangDoiTuong() As Boolean
-    Dim sql As String
+    Dim SQL As String
     
     ChuyenChiTietSangDoiTuong = False
     If tkcon = 0 Or MaxCap <> cap + 1 Or loai > 4 Or tk_id <> 0 Or MaTC = 0 Then Exit Function
@@ -796,7 +797,7 @@ Public Function ThemTKCon(shct As String, tenct As String, tenct2 As String, tki
 End Function
 
 Public Function GhepCanh(tkc As ClsTaikhoan) As Integer
-    Dim sql As String, X As String, i As Integer, j As Integer
+    Dim SQL As String, X As String, i As Integer, j As Integer
     Dim tkcha(0 To max_level - 1)
     
     GhepCanh = -1
@@ -811,18 +812,18 @@ Public Function GhepCanh(tkc As ClsTaikhoan) As Integer
     
     ' Dieu chinh ma so cha
     For i = tkc.cap To max_level
-        sql = "TKCha" + CStr(i - tkc.cap) + "=" + CStr(MaSo)
+        SQL = "TKCha" + CStr(i - tkc.cap) + "=" + CStr(MaSo)
         For j = i - tkc.cap + 1 To max_level - 1
-            sql = sql + ",TKCha" + CStr(j) + "=" + CStr(tkcha(j - (i - tkc.cap + 1)))
+            SQL = SQL + ",TKCha" + CStr(j) + "=" + CStr(tkcha(j - (i - tkc.cap + 1)))
         Next
-        ExecuteSQL5 "UPDATE HethongTK SET " + sql + ",Cap=" + CStr(cap + 1 + i - tkc.cap) + " WHERE Cap=" + CStr(i) + " AND SoHieu LIKE '" + tkc.sohieu + "%'"
+        ExecuteSQL5 "UPDATE HethongTK SET " + SQL + ",Cap=" + CStr(cap + 1 + i - tkc.cap) + " WHERE Cap=" + CStr(i) + " AND SoHieu LIKE '" + tkc.sohieu + "%'"
         If DBKetoan.RecordsAffected = 0 Then Exit For
     Next
     
     ' Dieu chinh so hieu
     If tkcon > 0 Then
-        sql = tkc.SHChiTiet(1)
-        If SelectSQL("SELECT MaSo AS F1 FROM HethongTK WHERE TKCha0=" + CStr(MaSo) + " AND Right(SoHieu," + CStr(Len(sql)) + ")='" + sql + "'") > 0 Then X = "X"
+        SQL = tkc.SHChiTiet(1)
+        If SelectSQL("SELECT MaSo AS F1 FROM HethongTK WHERE TKCha0=" + CStr(MaSo) + " AND Right(SoHieu," + CStr(Len(SQL)) + ")='" + SQL + "'") > 0 Then X = "X"
     End If
     i = Len(MaSo2SoHieu(tkc.TkCha0, "HethongTK"))
     ExecuteSQL5 "UPDATE HethongTK SET Loai=" + CStr(loai) + ",Kieu=" + CStr(kieu) + ",MaTC=" + CStr(MaTC) + ",SoHieu='" + sohieu + IIf(Len(X) > 0, X, "") + "'+Right(SoHieu,Len(SoHieu)-" + CStr(i) + ") WHERE SoHieu LIKE '" + tkc.sohieu + "%'"
@@ -865,12 +866,12 @@ Public Function ShCapDuoi(shx As String) As String
 End Function
 
 Public Function InitTaikhoanSohieuCT(sohieu As String, Optional shct As String = "", Optional cap As Integer = 0) As String
-    Dim sql As String
+    Dim SQL As String
     
-    sql = "SELECT DISTINCTROW MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "*' " _
+    SQL = "SELECT DISTINCTROW MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '" + sohieu + "*' " _
     + IIf(shct <> "", " AND RIGHT(Sohieu," + CStr(Len(shct)) + ")='" + shct + "'", "") + IIf(cap > 0, " AND Cap=" + CStr(cap), "") + " ORDER BY MaNT DESC"
         
-    InitTaikhoanMaSo SelectSQL(sql)
+    InitTaikhoanMaSo SelectSQL(SQL)
     InitTaikhoanSohieuCT = Ten
 End Function
 

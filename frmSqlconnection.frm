@@ -174,6 +174,7 @@ Private Sub Command1_Click()
     Screen.MousePointer = 11
     frmSplash.sqlIpServer = Text1.Text
     frmSplash.sqlDatabasename = Text2.Text
+    frmMain.sqlDatabasename = Text2.Text
     frmSplash.sqlUsername = Text3.Text
     frmSplash.sqlPassword = Text4.Text
     Me.MousePointer = vbDefault

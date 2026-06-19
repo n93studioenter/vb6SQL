@@ -2945,7 +2945,8 @@ a:
         DoEvents
 
         If frmMain.typeprint <> 2 Then
-           
+            
+
             Dim FilePath As String
             FilePath = App.path & "\\HoaDon\\invoice.txt"
             Dim content As String
@@ -7744,6 +7745,39 @@ Private Sub ToKhaiVAT(tdau As Integer, tcuoi As Integer, taikhoan As ClsTaikhoan
 
     ExecuteSQL5 QueryUpdate
 
+    ' =============================================
+    ' T?O VIEW - CH? L?Y C?T QUAN TR?NG
+    ' =============================================
+
+
+    ' Xóa View cu
+    ExecuteSQL5 "IF EXISTS (SELECT * FROM sys.views WHERE name = 'vw_ToKhaiVAT') DROP VIEW vw_ToKhaiVAT"
+
+    ' T?o View v?i s? c?t ít hon (kho?ng 15-20 c?t)
+    SQL = "CREATE VIEW vw_ToKhaiVAT AS " & _
+          "SELECT " & _
+        "  " & tdau & " AS Thang, " & _
+        "  " & tcuoi & " AS ThangCuoi, " & _
+        "  N'" & Replace(frmMain.LbCty(2).Caption, "'", "''") & "' AS DiaChi, " & _
+        "  N'" & Replace(frmMain.LbCty(8).Caption, "'", "''") & "' AS MSThue, " & _
+        "  N'" & vatr & "' AS SoHieuTK, " & _
+        "  N'" & Replace(frmMain.LbCty(10).Caption, "'", "''") & "' AS Quan, " & _
+        "  " & vr & " AS DTKCT, " & _
+        "  " & VV & " AS Vat0, " & _
+        "  " & Vat10DT & " AS Vat10DT, " & _
+        "  " & Vat10 & " AS Vat10, " & _
+        "  " & vvx & " AS TongVaoV, " & _
+        "  " & KT & " AS KyTruoc, " & _
+        "  " & NValues(12) & " AS TongVao, " & _
+        "  " & NValues(13) & " AS TongVATx, " & _
+        "  " & NValues(22) & " AS TongVATV, " & _
+        "  " & NValues(24) & " AS TongDoanhThu, " & _
+        "  " & NValues(25) & " AS TongVAT, " & _
+        "  GETDATE() AS CreatedDate"
+
+    ExecuteSQL5 SQL
+
+
     Dim result As String
     If tdau = tcuoi Then
         result = "T" & tdau
@@ -7764,8 +7798,8 @@ Private Sub ToKhaiVAT(tdau As Integer, tcuoi As Integer, taikhoan As ClsTaikhoan
     Dim url As String
 
     ' T?o URL
-    url = "http://localhost:8081/home/index?path=" & Replace(pDataPath, "\", "/")
-    url = url & "&ky=" & result
+    url = "http://localhost:8082/home/index"
+    url = url & "?ky=" & result
     ' M? URL trong trình duy?t
     Shell "explorer.exe """ & url & """", vbNormalFocus
 

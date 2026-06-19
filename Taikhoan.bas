@@ -129,6 +129,13 @@ Public Function InSocaiTk(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi As Int
             frmMain.Rpt.Formulas(4) = "NoDk=" + DoiDau(dkn - dkc)
             frmMain.Rpt.Formulas(5) = "Kieu=" + CStr(.kieu)
             frmMain.Rpt.Formulas(8) = "TenTk = IF PageNumber() = 1 THEN '" + .sohieu + " - " + IIf(nn > 0, .TenE, .Ten) + IIf(VV > 1, " - VV: " + TenVV(VV), "") + "'"
+            
+            
+            Dim sql As String
+
+            ' DROP VIEW cu
+
+
             If tcuoi > 0 Then
                 frmMain.Rpt.Formulas(6) = "ThoiGian='" + ThoiGian(tdau, tcuoi, nn) + "'"
                 RptSetDate NgayCuoiThang(pNamTC, tcuoi), nn
@@ -149,6 +156,23 @@ Public Function InSocaiTk(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi As Int
             End If
             frmMain.Rpt.Formulas(11) = "NoLK = " + DoiDau(psn)
             frmMain.Rpt.Formulas(12) = "CoLK = " + DoiDau(psc)
+
+            On Error Resume Next
+            DBKetoan.ExecuteSQL "DROP VIEW Socai"
+            On Error GoTo 0
+
+            ' T?o VIEW m?i - truy?n tr?c ti?p giá tr?
+            sql = "CREATE VIEW Socai AS " & _
+                  "SELECT " & _
+                "  N'" & Replace(.sohieu, "'", "''") & "' AS SoHieuTK, " & _
+                "  " & DoiDau(dkn - dkc) & " AS NoDk, " & _
+                "  " & .kieu & " AS Kieu, " & _
+                "  N'" & Replace(.sohieu & " - " & IIf(nn > 0, .TenE, .Ten) & IIf(VV > 1, " - VV: " & TenVV(VV), ""), "'", "''") & "' AS TenTk, " & _
+                "  " & DoiDau(psn) & " AS NoLK, " & _
+                "  " & DoiDau(psc) & " AS CoLK"
+
+            DBKetoan.ExecuteSQL sql
+
             InSocaiTk = True
             '        If loai = 0 Then
             '            If Left(taikhoan.SoHieu, 3) = "111" And tcuoi = 0 Then
@@ -165,7 +189,7 @@ Public Function InSocaiTk(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi As Int
             '           End If
             '      End If
             ' them theo cai tien
- 
+
 
             '===== 1. Ch?n report =====
             If loai = 0 Then
@@ -192,80 +216,97 @@ End Function
 Public Function InSocaiTk_them(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi As Integer, ndau As Date, ncuoi As Date, thongbao As Boolean, doiung As String, VV As Long, loai As Integer, Optional nn As Integer = 0, Optional mdt1 As Long = 0, Optional mdt2 As Long = 0, Optional mdt3 As Long = 0) As Boolean
     Dim dkn As Double, dkc As Double, dknt As Double, ps As Boolean, sqlw As String
     Dim psn As Double, psc As Double
-    
-With taikhoan
-    If tcuoi > 0 Then
-        ps = .TkCoPS(tdau, tcuoi)
-        .SoDuTK ThangTruoc(tdau), dkn, dkc, dknt
-        sqlw = WThang("ThangCT", tdau, tcuoi)
-    Else
-        ps = .TkCoPSN(ndau, ncuoi)
-        .SoDuNgay ndau - 1, dkn, dkc, dknt
-        sqlw = WNgay("NgayGS", ndau, ncuoi)
-    End If
-    
-    ' In bao cao
-    If dkn <> 0 Or dkc <> 0 Or ps Then
-        
-        If ps Then
-            SetSQL "QSocai", "SELECT DISTINCTROW ChungTu.MaCT, ChungTu.ThangCT, ChungTu.SoHieu, ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai" + IIf(nn > 0, "E", "") + ", ChungTu.SoPS, ChungTu.GhiChu, HeThongTK.SoHieu, HeThongTK_1.SoHieu, ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, " + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu AS SH1" _
-                & " FROM HeThongTK AS HeThongTK_3 RIGHT JOIN (HeThongTK AS HeThongTK_2 RIGHT JOIN (HeThongTK AS HeThongTK_1 RIGHT JOIN (HeThongTK RIGHT JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTKTCNo) ON HeThongTK_1.MaSo = ChungTu.MaTKTCCo) ON HeThongTK_2.MaSo = ChungTu.MaTKNo) ON HeThongTK_3.MaSo = ChungTu.MaTKCo" _
-                & " Where SoPS<>0 AND ((HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_3.SoHieu LIKE '" + doiung + "%'") _
-                + ") Or (HethongTK_1.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_2.SoHieu LIKE '" + doiung + "%'") _
-                + ")) And " + sqlw + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ThangCT,ChungTu.NgayGS," + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu"
-        Else
-            SetSQL "QSocai", "SELECT DISTINCTROW 0 AS MaCT,0 AS ThangCT, '' AS SoHieu, Null AS NgayCT, Null AS NgayGS, '' AS DienGiai, 0 AS SoPS, '' AS GhiChu, '' AS SoHieu1, '' AS SoHieu2, 0 AS MaTKTCNo, 0 AS MaTKTCCo" _
-                & " FROM ChungTu Where (chungtu.MaCT = 0)"
-            frmMain.Rpt.Formulas(9) = "DuCk=" + DoiDau(IIf(.kieu < 0, dkn - dkc, dkc - dkn))
-        End If
-        
-        frmMain.Rpt.Formulas(3) = "SoHieuTK='" + .sohieu + "'"
-        frmMain.Rpt.Formulas(4) = "NoDk=" + DoiDau(dkn - dkc)
-        frmMain.Rpt.Formulas(5) = "Kieu=" + CStr(.kieu)
-        frmMain.Rpt.Formulas(8) = "TenTk = IF PageNumber() = 1 THEN '" + .sohieu + " - " + IIf(nn > 0, .TenE, .Ten) + IIf(VV > 1, " - VV: " + TenVV(VV), "") + "'"
+
+    With taikhoan
         If tcuoi > 0 Then
-            frmMain.Rpt.Formulas(6) = "ThoiGian='" + ThoiGian(tdau, tcuoi, nn) + "'"
-            RptSetDate NgayCuoiThang(pNamTC, tcuoi), nn
-            psn = SoPSTK(taikhoan.sohieu, pThangDauKy, tcuoi, -1)
-            psc = SoPSTK(taikhoan.sohieu, pThangDauKy, tcuoi, 1)
-            If VV > 1 Then
-                taikhoan.SoDuTK tcuoi, dkn, dkc, dknt
-                frmMain.Rpt.Formulas(10) = "DuCk = " + DoiDau(IIf(taikhoan.kieu < 0, dkn - dkc, dkc - dkn))
-            End If
+            ps = .TkCoPS(tdau, tcuoi)
+            .SoDuTK ThangTruoc(tdau), dkn, dkc, dknt
+            sqlw = WThang("ThangCT", tdau, tcuoi)
         Else
-            frmMain.Rpt.Formulas(6) = "ThoiGian = '" + ThoiGianN(ndau, ncuoi, nn) + "'"
-            RptSetDate ncuoi, nn
-            taikhoan.SoPhatSinhN NgayDauThang(pNamTC, pThangDauKy), ncuoi, psn, dkn, psc, dkc
-            If VV > 1 Then
-                taikhoan.SoDuNgay ncuoi, dkn, dkc, dknt
-                frmMain.Rpt.Formulas(10) = "DuCk = " + DoiDau(IIf(taikhoan.kieu < 0, dkn - dkc, dkc - dkn))
-            End If
+            ps = .TkCoPSN(ndau, ncuoi)
+            .SoDuNgay ndau - 1, dkn, dkc, dknt
+            sqlw = WNgay("NgayGS", ndau, ncuoi)
         End If
-        frmMain.Rpt.Formulas(11) = "NoLK = " + DoiDau(psn)
-        frmMain.Rpt.Formulas(12) = "CoLK = " + DoiDau(psc)
-        InSocaiTk_them = True
-'        If loai = 0 Then
-'            If Left(taikhoan.SoHieu, 3) = "111" And tcuoi = 0 Then
-'                frmMain.Rpt.ReportFileName = "SOQUY.RPT"
-'            Else
-'                frmMain.Rpt.ReportFileName = "SOCAI.RPT"
-'                frmMain.Rpt.Formulas(13) = "LastRow=" + CStr(GetLastRow("QSocai", "MaCT"))
-'            End If
-'        Else
-'            If tdau = tcuoi Then
-'                frmMain.Rpt.ReportFileName = "SOCAI2.RPT"
-'            Else
-              '  frmMain.Rpt.ReportFileName = "SOCAI3.RPT"
- '           End If
-  '      End If
-  ' them theo cai tien
- 
-   frmMain.Rpt.ReportFileName = "SOQUY.RPT"
-   Else
-        If thongbao Then MsgBox "Kh«ng cã sè ®Çu kú hoÆc ph¸t sinh !", vbInformation, App.ProductName
-        InSocaiTk_them = False
-    End If
-End With
+
+        ' In bao cao
+        If dkn <> 0 Or dkc <> 0 Or ps Then
+
+            If ps Then
+                SetSQL "QSocai", "SELECT DISTINCTROW ChungTu.MaCT, ChungTu.ThangCT, ChungTu.SoHieu, ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai" + IIf(nn > 0, "E", "") + ", ChungTu.SoPS, ChungTu.GhiChu, HeThongTK.SoHieu as SoHieu1, HeThongTK_1.SoHieu as SoHieu2, ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, " + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu AS SH1" _
+                               & " FROM HeThongTK AS HeThongTK_3 RIGHT JOIN (HeThongTK AS HeThongTK_2 RIGHT JOIN (HeThongTK AS HeThongTK_1 RIGHT JOIN (HeThongTK RIGHT JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTKTCNo) ON HeThongTK_1.MaSo = ChungTu.MaTKTCCo) ON HeThongTK_2.MaSo = ChungTu.MaTKNo) ON HeThongTK_3.MaSo = ChungTu.MaTKCo" _
+                               & " Where SoPS<>0 AND ((HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_3.SoHieu LIKE '" + doiung + "%'") _
+                               + ") Or (HethongTK_1.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_2.SoHieu LIKE '" + doiung + "%'") _
+                               + ")) And " + sqlw + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ThangCT,ChungTu.NgayGS," + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu"
+            Else
+                SetSQL "QSocai", "SELECT DISTINCTROW 0 AS MaCT,0 AS ThangCT, '' AS SoHieu, Null AS NgayCT, Null AS NgayGS, '' AS DienGiai, 0 AS SoPS, '' AS GhiChu, '' AS SoHieu1, '' AS SoHieu2, 0 AS MaTKTCNo, 0 AS MaTKTCCo" _
+                               & " FROM ChungTu Where (chungtu.MaCT = 0)"
+                frmMain.Rpt.Formulas(9) = "DuCk=" + DoiDau(IIf(.kieu < 0, dkn - dkc, dkc - dkn))
+            End If
+
+            frmMain.Rpt.Formulas(3) = "SoHieuTK='" + .sohieu + "'"
+            frmMain.Rpt.Formulas(4) = "NoDk=" + DoiDau(dkn - dkc)
+            frmMain.Rpt.Formulas(5) = "Kieu=" + CStr(.kieu)
+            frmMain.Rpt.Formulas(8) = "TenTk = IF PageNumber() = 1 THEN '" + .sohieu + " - " + IIf(nn > 0, .TenE, .Ten) + IIf(VV > 1, " - VV: " + TenVV(VV), "") + "'"
+            If tcuoi > 0 Then
+                frmMain.Rpt.Formulas(6) = "ThoiGian='" + ThoiGian(tdau, tcuoi, nn) + "'"
+                RptSetDate NgayCuoiThang(pNamTC, tcuoi), nn
+                psn = SoPSTK(taikhoan.sohieu, pThangDauKy, tcuoi, -1)
+                psc = SoPSTK(taikhoan.sohieu, pThangDauKy, tcuoi, 1)
+                If VV > 1 Then
+                    taikhoan.SoDuTK tcuoi, dkn, dkc, dknt
+                    frmMain.Rpt.Formulas(10) = "DuCk = " + DoiDau(IIf(taikhoan.kieu < 0, dkn - dkc, dkc - dkn))
+                End If
+            Else
+                frmMain.Rpt.Formulas(6) = "ThoiGian = '" + ThoiGianN(ndau, ncuoi, nn) + "'"
+                RptSetDate ncuoi, nn
+                taikhoan.SoPhatSinhN NgayDauThang(pNamTC, pThangDauKy), ncuoi, psn, dkn, psc, dkc
+                If VV > 1 Then
+                    taikhoan.SoDuNgay ncuoi, dkn, dkc, dknt
+                    frmMain.Rpt.Formulas(10) = "DuCk = " + DoiDau(IIf(taikhoan.kieu < 0, dkn - dkc, dkc - dkn))
+                End If
+            End If
+            frmMain.Rpt.Formulas(11) = "NoLK = " + DoiDau(psn)
+            frmMain.Rpt.Formulas(12) = "CoLK = " + DoiDau(psc)
+            InSocaiTk_them = True
+
+            Dim sql As String
+            ' T?o View cho s? qu?
+            sql = "CREATE VIEW SoQuy AS " & _
+                  "SELECT " & _
+                "  N'" & Replace(.sohieu, "'", "''") & "' AS SoHieuTK, " & _
+                "  " & DoiDau(dkn - dkc) & " AS NoDk, " & _
+                "  " & DoiDau(dkc - dkn) & " AS CoDk, " & _
+                "  " & .kieu & " AS Kieu, " & _
+                "  N'" & Replace(.sohieu & " - " & IIf(nn > 0, .TenE, .Ten) & IIf(VV > 1, " - VV: " & TenVV(VV), ""), "'", "''") & "' AS TenTk, " & _
+                "  " & DoiDau(psn) & " AS NoLK, " & _
+                "  " & DoiDau(psc) & " AS CoLK, " & _
+                "  " & DoiDau(psn - psc) & " AS SoDuCK"
+
+            DBKetoan.ExecuteSQL sql
+
+
+            '        If loai = 0 Then
+            '            If Left(taikhoan.SoHieu, 3) = "111" And tcuoi = 0 Then
+            '                frmMain.Rpt.ReportFileName = "SOQUY.RPT"
+            '            Else
+            '                frmMain.Rpt.ReportFileName = "SOCAI.RPT"
+            '                frmMain.Rpt.Formulas(13) = "LastRow=" + CStr(GetLastRow("QSocai", "MaCT"))
+            '            End If
+            '        Else
+            '            If tdau = tcuoi Then
+            '                frmMain.Rpt.ReportFileName = "SOCAI2.RPT"
+            '            Else
+            '  frmMain.Rpt.ReportFileName = "SOCAI3.RPT"
+            '           End If
+            '      End If
+            ' them theo cai tien
+
+            frmMain.Rpt.ReportFileName = "SOQUY.RPT"
+        Else
+            If thongbao Then MsgBox "Kh«ng cã sè ®Çu kú hoÆc ph¸t sinh !", vbInformation, App.ProductName
+            InSocaiTk_them = False
+        End If
+    End With
 End Function
 
 '====================================================================================================

@@ -7,6 +7,7 @@ Private Declare Function SendMessageW Lib "user32" ( _
                                       lParam As Any) As Long
 
 Private Const SB_SETTEXTW = &H40B   ' G?i text Unicode
+Private pTempDSNFile As String
 Private Type OSVERSIONINFO
     dwOSVersionInfoSize As Long
     dwMajorVersion As Long
@@ -616,9 +617,9 @@ Public Sub SetRptInfonew()
     ' --- Formulas (gi? nguyên) ---
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -635,35 +636,15 @@ Public Sub SetRptInfonew()
 
     frmMain.Rpt.WindowShowPrintSetupBtn = True
 End Sub
+  
 Public Sub SetRptInfo()
     Dim i As Integer
-    Dim pDatabaseName As String
-    pDatabaseName = "Truongthinh26"
-    ' Connection string không c?n DSN
-    frmMain.Rpt.connect = "DRIVER={SQL Server};SERVER=pc43\SQLEXPRESS;DATABASE=" & pDatabaseName & ";UID=sa;PWD=123456"
-
-    ' Formulas...
-    frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
-    If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
-    Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
-    End If
-    frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
-    For i = 3 To 128
-        frmMain.Rpt.Formulas(i) = ""
-    Next
-
-    frmMain.Rpt.WindowShowPrintSetupBtn = True
-End Sub
-Public Sub SetRptInfoold()
-    Dim i As Integer
 
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
