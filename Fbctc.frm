@@ -4384,7 +4384,7 @@ Private Sub InLCTT2(tdau As Integer, tcuoi As Integer)
     SQL = SQL & "ChungTu.GhiChu, HeThongTK.SoHieu AS SoHieuNo, HeThongTK_1.SoHieu AS SoHieuCo, "
     SQL = SQL & "ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, "
     SQL = SQL & "IIF(HethongTK.SoHieu LIKE '1111*','0','1') + "
-    SQL = SQL & "CStr(10 + ChungTu.ThangCT) + ChungTu.SoHieu AS SH1 "
+    SQL = SQL & "CAST(10 + ChungTu.ThangCT AS VARCHAR) + ChungTu.SoHieu AS SH1 "  ' Ch? 1: ау s?a
     SQL = SQL & "FROM HeThongTK AS HeThongTK_3 RIGHT JOIN "
     SQL = SQL & "(HeThongTK AS HeThongTK_2 RIGHT JOIN "
     SQL = SQL & "(HeThongTK AS HeThongTK_1 RIGHT JOIN "
@@ -4402,7 +4402,7 @@ Private Sub InLCTT2(tdau As Integer, tcuoi As Integer)
     SQL = SQL & "AND ChungTu.MaTKNo<>ChungTu.MaTkco)) "
     SQL = SQL & "ORDER BY ThangCT, ChungTu.NgayGS, "
     SQL = SQL & "IIF(HethongTK.SoHieu LIKE '1111*','0','1') + "
-    SQL = SQL & "CStr(10 + ChungTu.ThangCT) + ChungTu.SoHieu"
+    SQL = SQL & "CAST(10 + ChungTu.ThangCT AS VARCHAR) + ChungTu.SoHieu"  ' Ch? 2: ау s?a
 
     Dim rs_import As Object
     Set rs_import = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)

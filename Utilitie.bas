@@ -617,9 +617,9 @@ Public Sub SetRptInfonew()
     ' --- Formulas (gi? nguyên) ---
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -627,7 +627,7 @@ Public Sub SetRptInfonew()
     Next
 
     ' --- Connect d?ng theo công ty ---
-    frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=" & sServer & _
+    frmMain.Rpt.Connect = "Provider=SQLOLEDB;Data Source=" & sServer & _
                           ";Initial Catalog=" & sDatabase & _
                           ";User ID=sa;Password=123456"
 
@@ -642,9 +642,9 @@ Public Sub SetRptInfo()
 
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -655,7 +655,7 @@ Public Sub SetRptInfo()
     ' frmMain.Rpt.DataFiles(0) = pDataPath
 
     ' Ch? dùng Connect
-    frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=pc43\SQLEXPRESS;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
+    frmMain.Rpt.Connect = "Provider=SQLOLEDB;Data Source=pc43\SQLEXPRESS;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
     'frmMain.Rpt.connect = "DSN=Saovietdns;UID=sa;PWD=123456"
 
     frmMain.Rpt.WindowShowPrintSetupBtn = True
@@ -939,16 +939,33 @@ Public Function XLSCol(c As Integer) As String
         XLSCol = Chr(i + 64) + Chr((c - 1) Mod 26 + 65)
     End If
 End Function
-
 Public Function BangDaCo(T As String) As Boolean
     Dim i As Integer
+    Dim tbl As Object
+
+    ' Ch? load n?u chua có d? li?u
+    If DBKetoan.TableDefs.count = 0 Then
+        DBKetoan.LoadTableDefs
+    End If
+
+    ' Duy?t t? 1 d?n count (không tr?)
+    For i = 1 To DBKetoan.TableDefs.count
+        Set tbl = DBKetoan.TableDefs(i)
+        If UCase(tbl.Name) = UCase(T) Then
+            BangDaCo = True
+            Exit For
+        End If
+    Next i
+End Function
+Public Function BangDaCoold(T As String) As Boolean
+    Dim i As Integer
     
-    BangDaCo = False
+    BangDaCoold = False
     DBKetoan.LoadTableDefs
 
     For i = 1 To DBKetoan.TableDefs.count - 1
         If UCase(DBKetoan.TableDefs(i).Name) = UCase(T) Then
-            BangDaCo = True
+            BangDaCoold = True
             Exit For
         End If
     Next
@@ -2687,9 +2704,25 @@ Public Sub CopyTable(fname As String, tbl As String)
 End Sub
 
 
-Public Sub XoaBang(tbl As String)
+Public Sub XoaBangold(tbl As String)
     If Not BangDaCo(tbl) Then Exit Sub
     DBKetoan.TableDefs.Delete tbl
+End Sub
+Public Sub XoaBang(tbl As String)
+    If Not BangDaCo(tbl) Then
+        MsgBox "B?ng " & tbl & " không t?n t?i!", vbExclamation
+        Exit Sub
+    End If
+
+    ' Dùng phuong th?c ExecuteSQL dã có trong clsDatabase
+    DBKetoan.ExecuteSQL "DROP TABLE [" & tbl & "]"
+
+    ' Xóa b?ng kh?i collection TableDefs d? c?p nh?t danh sách
+    On Error Resume Next
+    DBKetoan.TableDefs.Remove tbl
+    On Error GoTo 0
+
+    MsgBox "Ðã xóa b?ng " & tbl & " thành công!", vbInformation
 End Sub
 
 Public Function RoundMoney(tien As Double) As Double
@@ -2744,27 +2777,35 @@ Public Function WNgay2(f As String, ndau As Date, ncuoi As Date) As String
     WNgay2 = "(" + f + ">#" + Format(ndau, Mask_DB) + "# AND " + f + "<#" + Format(ncuoi, Mask_DB) + "#)"
 End Function
 
-Public Sub CopyTable2(tbl As String, tbl2 As String, Optional CP As Integer)
-    Dim tdf As TableDef, i As Integer
+Public Sub CopyTable2(tbl As String, tbl2 As String, Optional CP As Integer = 1)
+    Dim SQL As String
     
-    If Not BangDaCo(tbl2) Then
-        Set tdf = DBKetoan.CreateTableDef(tbl2)
-           
-           For i = 1 To DBKetoan.TableDefs(tbl).Fields.count
-            tdf.Fields.Append tdf.CreateField(DBKetoan.TableDefs(tbl).Fields(i - 1).Name, DBKetoan.TableDefs(tbl).Fields(i - 1).Type, DBKetoan.TableDefs(tbl).Fields(i - 1).Size)
-            tdf.Fields(i - 1).DefaultValue = DBKetoan.TableDefs(tbl).Fields(i - 1).DefaultValue
-            tdf.Fields(i - 1).Attributes = DBKetoan.TableDefs(tbl).Fields(i - 1).Attributes
-        Next
-        For i = 1 To DBKetoan.TableDefs(tbl).Indexes.count
-            tdf.Indexes.Append tdf.CreateIndex(DBKetoan.TableDefs(tbl).Indexes(i - 1).Name)
-            tdf.Indexes(DBKetoan.TableDefs(tbl).Indexes(i - 1).Name).Fields.Append tdf.Indexes(DBKetoan.TableDefs(tbl).Indexes(i - 1).Name).CreateField(DBKetoan.TableDefs(tbl).Indexes(i - 1).Fields(0).Name)
-            tdf.Indexes(DBKetoan.TableDefs(tbl).Indexes(i - 1).Name).Primary = DBKetoan.TableDefs(tbl).Indexes(i - 1).Primary
-            tdf.Indexes(DBKetoan.TableDefs(tbl).Indexes(i - 1).Name).Unique = DBKetoan.TableDefs(tbl).Indexes(i - 1).Unique
-        Next
-       
-        DBKetoan.TableDefs.Append tdf
-        If CP > 0 Then ExecuteSQL5 "INSERT INTO " + tbl2 + " SELECT * FROM " + tbl
+    ' Ki?m tra b?ng ngu?n
+    If Not BangDaCo(tbl) Then
+        MsgBox "B?ng ngu?n '" & tbl & "' không t?n t?i!", vbExclamation
+        Exit Sub
     End If
+    
+    ' Xóa b?ng dích n?u t?n t?i
+    If BangDaCo(tbl2) Then
+        If MsgBox("B?ng '" & tbl2 & "' dã t?n t?i. B?n có mu?n xóa và t?o l?i?", vbYesNo + vbQuestion) = vbNo Then
+            Exit Sub
+        End If
+        XoaBang tbl2
+    End If
+    
+    ' T?o b?ng m?i
+    SQL = "SELECT * INTO [" & tbl2 & "] FROM [" & tbl & "]"
+    
+    ' N?u CP = 0: ch? copy c?u trúc
+    If CP = 0 Then
+        SQL = SQL & " WHERE 1=0"
+    End If
+    
+    DBKetoan.ExecuteSQL SQL
+    DBKetoan.LoadTableDefs
+    
+    MsgBox "Ðã t?o b?ng '" & tbl2 & "' t? '" & tbl & "'!", vbInformation
 End Sub
 
 Public Function GetDiskSpace() As Long
