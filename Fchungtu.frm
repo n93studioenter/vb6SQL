@@ -3844,10 +3844,10 @@ End Type
 
 Private UniMenu() As UniMenuItem
 Private Declare Function GetMenuItemInfoW Lib "user32" _
-                                          (ByVal hMenu As Long, ByVal Item As Long, _
+                                          (ByVal hMenu As Long, ByVal item As Long, _
                                            ByVal fByPos As Long, mii As MENUITEMINFOW) As Long
 Private Declare Function SetMenuItemInfoW Lib "user32" _
-                                          (ByVal hMenu As Long, ByVal Item As Long, _
+                                          (ByVal hMenu As Long, ByVal item As Long, _
                                            ByVal fByPos As Long, ByRef mii As MENUITEMINFOW) As Long
 
 Private Declare Function DrawMenuBar Lib "user32" _
@@ -4001,7 +4001,7 @@ Dim rs_ktra711 As Object
 Dim stt As Integer
 Dim IndexFirst As Integer
 Dim IdDuyet As Integer
-Dim Item As ClsFileImport
+Dim item As ClsFileImport
 Dim i As Integer
 Dim displayInfo As String
 Dim xmlDoc As Object
@@ -4143,8 +4143,8 @@ End Sub
 Public Sub DisplayFileImportList()
 
     IdDuyet = 1
-    Set Item = fileImportList(IdDuyet)
-    DuyetItemList Item.patTH
+    Set item = fileImportList(IdDuyet)
+    DuyetItemList item.patTH
 
     ' Hi?n th? thông tin
 End Sub
@@ -4433,10 +4433,10 @@ Private Sub btnImport_Click()
     End If
 
     IndexFirst = 1
-    Set Item = fileImportList(IndexFirst)
+    Set item = fileImportList(IndexFirst)
     Dim notk As String
     With fileImportList(IndexFirst)
-        Xulyimport Item
+        Xulyimport item
     End With
 
 
@@ -4447,47 +4447,47 @@ Private Sub Another()
     Timer4.Enabled = True
 
 End Sub
-Private Sub Xulyimport(ByVal Item As ClsFileImport)
+Private Sub Xulyimport(ByVal item As ClsFileImport)
 
     Dim QueryUpdate As String
     Dim rstUPdate As String
-    QueryUpdate = "UPDATE tbimport SET Status = 1 where ID= " & Item.id & ""
+    QueryUpdate = "UPDATE tbimport SET Status = 1 where ID= " & item.id & ""
     'Set rstUPdate = DBKetoan.OpenRecordset(QueryUpdate, dbOpenSnapshot)
     ExecuteSQL5 QueryUpdate
 
 
     ' Do data tu tbimport len form
-    If Item.notk = "711" Then
+    If item.notk = "711" Then
         OptLoai(0).Value = True
         OptLoai_LostFocus 0
         RFocus CboThang
 
     End If
-    If Item.notk Like "635*" Then
+    If item.notk Like "635*" Then
         OptLoai(4).Value = True
         OptLoai_LostFocus 4
         RFocus CboThang
     End If
     ' If item.notk = "6422" Or item.notk = "6421" Then
-    If Item.notk Like "642*" Or Item.notk Like "242*" Then
+    If item.notk Like "642*" Or item.notk Like "242*" Then
         OptLoai(0).Value = True
         OptLoai_LostFocus 0
         RFocus CboThang
     End If
 
-    If (Item.notk Like "15*") And (Item.notk <> "154") Then
+    If (item.notk Like "15*") And (item.notk <> "154") Then
         'If item.notk = "152" Or item.notk = "156" Or item.notk = "153" Or item.notk = "155" Then
         OptLoai(1).Value = True
         OptLoai_LostFocus 1
         RFocus CboThang
     End If
-    If Item.notk Like "154*" Then
+    If item.notk Like "154*" Then
         OptLoai(1).Value = True
         OptLoai_LostFocus 1
         RFocus CboThang
     End If
 
-    If Item.cotk Like "511*" Then
+    If item.cotk Like "511*" Then
         ' If item.notk = "5111" Then
         OptLoai(8).Value = True
         OptLoai_LostFocus 8
@@ -4495,27 +4495,27 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
     End If
 
     Dim myDate As Date
-    myDate = CDate(Item.ngay)
-    txt(0).Text = Item.sohd
-    txtVT(1).Text = Item.khHD
+    myDate = CDate(item.ngay)
+    txt(0).Text = item.sohd
+    txtVT(1).Text = item.khHD
 
     CboThang.Text = month(myDate) & "/" & year(myDate)
-    MedNgay(0).Text = Format(Item.ngay, "dd/mm/yy")
+    MedNgay(0).Text = Format(item.ngay, "dd/mm/yy")
 
     ' If Month(myDate) <> Month(Date) Then
     ' MedNgay(1).Text = DateSerial(Year(Date), Month(Date), 1)
     'Else
-    MedNgay(1).Text = Format(Item.ngay, "dd/mm/yy")
+    MedNgay(1).Text = Format(item.ngay, "dd/mm/yy")
     'End If
 
     Dim rs_ktra As Object
     Dim Query As String
     Dim rst As String
 
-    If Len(Item.mst) < 10 Then
-        Query = "SELECT Ten,SoHieu, DiaChi, MST FROM KhachHang WHERE SoHieu = '" & Item.mst & "'"
+    If Len(item.mst) < 10 Then
+        Query = "SELECT Ten,SoHieu, DiaChi, MST FROM KhachHang WHERE SoHieu = '" & item.mst & "'"
     Else
-        Query = "SELECT Ten, DiaChi, MST FROM KhachHang WHERE MST = '" & Item.mst & "'"
+        Query = "SELECT Ten, DiaChi, MST FROM KhachHang WHERE MST = '" & item.mst & "'"
     End If
     Set rs_ktra = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
     If Not rs_ktra.EOF Then
@@ -4542,7 +4542,7 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
 
     ' txtchungtu(0).Text = 6422
     With fileImportList(IndexFirst)
-        If Item.notk Like "63*" Then
+        If item.notk Like "63*" Then
             txtchungtu(0).Text = .notk
             tempchungtu = .notk
         Else
@@ -4552,7 +4552,7 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
 
     End With
     With fileImportList(IndexFirst)
-        If Item.notk Like "64*" Or Item.notk Like "15*" Or Item.notk Like "63*" Then
+        If item.notk Like "64*" Or item.notk Like "15*" Or item.notk Like "63*" Then
             txtchungtu(0).Text = .notk
             tempchungtu = .notk
         Else
@@ -4577,12 +4577,12 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
             '1331 thue
-            txtchungtu(0).Text = Item.ThueTK
+            txtchungtu(0).Text = item.ThueTK
             txtChungtu_LostFocus (0)
-            txtchungtu(2).Text = Item.VAT
+            txtchungtu(2).Text = item.VAT
             Dim number As Long
             Dim VAT As Integer
-            VAT = CInt(Item.VAT)
+            VAT = CInt(item.VAT)
             number = CLng(Replace(txtchungtu(5).Text, ",", ""))
             number = number * VAT / 100
             txtchungtu(5).Text = number * (-1)
@@ -4590,7 +4590,7 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
             txtChungtu_KeyPress 6, 13
             '3311
             RFocus txtchungtu(0)
-            txtchungtu(0).Text = Item.cotk
+            txtchungtu(0).Text = item.cotk
             txtChungtu_LostFocus (0)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
@@ -4687,7 +4687,7 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
             RFocus txtchungtu(2)
             txtchungtu(2).Text = rs_ktra154!sohieu
             txtChungtu_LostFocus (2)
-            txtchungtu(5).Text = Item.TgTCThue
+            txtchungtu(5).Text = item.TgTCThue
             txtChungtu_LostFocus (5)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
@@ -4703,7 +4703,7 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
             If Not rs_check.EOF Then
             Else
                 RFocus txtchungtu(2)
-                txtchungtu(5).Text = Item.TongTien
+                txtchungtu(5).Text = item.TongTien
                 txtChungtu_LostFocus (5)
                 RFocus txtchungtu(6)
                 txtChungtu_KeyPress 6, 13
@@ -4715,9 +4715,9 @@ Private Sub Xulyimport(ByVal Item As ClsFileImport)
             '1331
             txtchungtu(0).Text = 1331
             txtChungtu_LostFocus (0)
-            txtchungtu(2).Text = Item.VAT
+            txtchungtu(2).Text = item.VAT
             txtChungtu_LostFocus (2)
-            txtchungtu(5).Text = Item.TgTThue
+            txtchungtu(5).Text = item.TgTThue
             txtChungtu_LostFocus (5)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
@@ -6683,7 +6683,8 @@ Private Sub Xuly51Child()
         MedNgay(1).Text = Format(myDate, "dd/mm/yy")
 
         txtchungtu(0) = rs_import!tkThue
-
+        txtChungtu_LostFocus (0)
+         txtchungtu(2).Text = "0"
 
         'Xu ly vat
         If rs_import!VAT <> 0 Then
