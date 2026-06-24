@@ -274,7 +274,7 @@ Begin VB.Form FrmChungtu
       EndProperty
       Height          =   315
       Index           =   6
-      Left            =   11475
+      Left            =   11520
       MaxLength       =   20
       TabIndex        =   21
       Tag             =   "14"
@@ -916,12 +916,12 @@ Begin VB.Form FrmChungtu
       Height          =   315
       Index           =   1
       ItemData        =   "Fchungtu.frx":281C9
-      Left            =   8160
+      Left            =   9600
       List            =   "Fchungtu.frx":281CB
       TabIndex        =   136
       Text            =   "CboNT"
       ToolTipText     =   "§¬n gi¸ mÆc ®Þnh"
-      Top             =   2760
+      Top             =   2880
       Visible         =   0   'False
       Width           =   1570
    End
@@ -940,13 +940,13 @@ Begin VB.Form FrmChungtu
       Height          =   315
       Index           =   3
       ItemData        =   "Fchungtu.frx":281CD
-      Left            =   9840
+      Left            =   11400
       List            =   "Fchungtu.frx":281F5
       TabIndex        =   135
       Tag             =   "0"
       Text            =   "CboNT"
       ToolTipText     =   "Ngo¹i tÖ ph¸t sinh"
-      Top             =   2760
+      Top             =   2880
       Visible         =   0   'False
       Width           =   1499
    End
@@ -965,12 +965,12 @@ Begin VB.Form FrmChungtu
       Height          =   315
       Index           =   0
       ItemData        =   "Fchungtu.frx":28220
-      Left            =   6360
+      Left            =   7920
       List            =   "Fchungtu.frx":28222
       Style           =   2  'Dropdown List
       TabIndex        =   134
       ToolTipText     =   "Ngo¹i tÖ ph¸t sinh"
-      Top             =   2640
+      Top             =   2880
       Visible         =   0   'False
       Width           =   1575
    End
@@ -3796,6 +3796,20 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
+Private Declare Function GetTickCount Lib "Kernel32" () As Long
+Dim ListBarcode As New Collection
+Dim httoan As String
+Dim lastKeyTime As Long
+Dim keyCount As Integer
+Dim isFastTyping As Boolean
+Dim strBarcodeBuffer As String  ' ? THÊM BI?N NÀY
+
+Dim sSanPhamHienTai As String  ' Luu mã n?i b? c?a s?n ph?m dang quét
+Dim iSoLuong As Integer        ' Luu s? lu?ng c?a s?n ph?m dó
+Dim isQuetma As Boolean
+Dim isxulybarcode As Boolean
+Dim sBarcodeBuffer As String
+Dim loaiBarcode As Integer
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorA" (ByVal hInstance As Long, ByVal lpCursorName As Long) As Long
 Public isInvoice As Boolean
@@ -4021,18 +4035,18 @@ Dim SetLoaiEnable As Boolean
 Dim shct As String
 Dim xddu As Boolean
 Dim TenTC As String, DiachiTC As String, ctgoc As String, TenNX As String, DiaChiNX As String, TenBH As String, DiaChiBH As String, MSTBH As String, unc1 As String, unc2 As String, unc3 As String, MaKHBH As Long, HanTT As Date
-Attribute DiachiTC.VB_VarUserMemId = 1073938545
-Attribute ctgoc.VB_VarUserMemId = 1073938545
-Attribute TenNX.VB_VarUserMemId = 1073938545
-Attribute DiaChiNX.VB_VarUserMemId = 1073938545
-Attribute TenBH.VB_VarUserMemId = 1073938545
-Attribute DiaChiBH.VB_VarUserMemId = 1073938545
-Attribute MSTBH.VB_VarUserMemId = 1073938545
-Attribute unc1.VB_VarUserMemId = 1073938545
-Attribute unc2.VB_VarUserMemId = 1073938545
-Attribute unc3.VB_VarUserMemId = 1073938545
-Attribute MaKHBH.VB_VarUserMemId = 1073938545
-Attribute HanTT.VB_VarUserMemId = 1073938545
+Attribute DiachiTC.VB_VarUserMemId = 1073938557
+Attribute ctgoc.VB_VarUserMemId = 1073938557
+Attribute TenNX.VB_VarUserMemId = 1073938557
+Attribute DiaChiNX.VB_VarUserMemId = 1073938557
+Attribute TenBH.VB_VarUserMemId = 1073938557
+Attribute DiaChiBH.VB_VarUserMemId = 1073938557
+Attribute MSTBH.VB_VarUserMemId = 1073938557
+Attribute unc1.VB_VarUserMemId = 1073938557
+Attribute unc2.VB_VarUserMemId = 1073938557
+Attribute unc3.VB_VarUserMemId = 1073938557
+Attribute MaKHBH.VB_VarUserMemId = 1073938557
+Attribute HanTT.VB_VarUserMemId = 1073938557
 Dim HD() As tpHoaDon, hdcount As Integer
 Attribute HD.VB_VarUserMemId = 1073938518
 Attribute hdcount.VB_VarUserMemId = 1073938518
@@ -6013,6 +6027,223 @@ Private Function BuildCKyDTu() As String
     BuildCKyDTu = content
 End Function
 
+Private Sub Form_KeyPress(KeyAscii As Integer)
+    Exit Sub
+    If isQuetma = False Then
+
+    End If
+    On Error GoTo XL_Loi
+
+    Dim iCode As Integer
+    iCode = KeyAscii
+
+    ' Ki?m tra ký t? h?p l?
+    ' 48-57: S? 0-9
+    ' 65-90: Ch? hoa A-Z
+    ' 97-122: Ch? thu?ng a-z
+    ' 45: D?u -
+    ' 42: D?u *
+    ' 46: D?u .        <--- THÊM DÒNG NÀY
+    ' 32: D?u cách (Space)
+    If (iCode >= 48 And iCode <= 57) Or _
+       (iCode >= 65 And iCode <= 90) Or _
+       (iCode >= 97 And iCode <= 122) Or _
+       iCode = 45 Or _
+       iCode = 42 Or _
+       iCode = 46 Or _
+       iCode = 32 Then
+
+        ' G?p ký t? vào buffer
+        sBarcodeBuffer = sBarcodeBuffer & Chr(iCode)
+
+        ' Không truy?n ký t? này vào Control dang focus
+        KeyAscii = 0
+
+    ElseIf iCode = 13 Then
+        ' ===== PHÁT HI?N MÁY QUÉT G?I PHÍM ENTER =====
+        If Len(sBarcodeBuffer) > 0 Then
+            Dim sBarcode As String
+            sBarcode = sBarcodeBuffer
+
+            ' X? lý mã v?ch
+            Call xulybarcode(sBarcode)
+
+            ' Reset buffer
+            sBarcodeBuffer = ""
+        End If
+
+        KeyAscii = 0
+
+    Else
+        ' Các phím khác cho qua
+        ' Không làm gì c?
+    End If
+
+    Exit Sub
+
+XL_Loi:
+    Call GhiLog("Loi Form_KeyPress: " & Err.Description)
+    sBarcodeBuffer = ""
+    KeyAscii = 0
+    Resume Next
+End Sub
+Private Function DaQuetChua(BarCode As String) As Boolean
+    Dim i As Integer
+    
+    For i = 1 To ListBarcode.count
+        If ListBarcode(i) = BarCode Then
+            DaQuetChua = True
+            Exit Function
+        End If
+    Next i
+    
+    DaQuetChua = False
+End Function
+Private Sub xulybarcode(ByVal sBarcode As String)
+    If isQuetma = False Then
+        Exit Sub
+    End If
+    isQuetma = False
+    isxulybarcode = True
+    'Kiem tra dang l nhap hoac ba
+    If loaiBarcode = 8 Then
+
+        If httoan <> "CongNo" And httoan <> "TienMat" Then
+            RFocus txtchungtu(0)
+            txtchungtu(0).Text = "5111"
+            txtChungtu_LostFocus (0)
+            txtchungtu(2).Text = sBarcode
+            txtChungtu_LostFocus (2)
+            If DaQuetChua(sBarcode) Then
+                'iSoLuong = iSoLuong + 1
+                'txtchungtu(3).Text = iSoLuong
+
+                With GrdChungtu
+                    For i = 0 To .Rows - 1
+                        .Row = i
+
+                        ' Ð?c d? li?u t? c?t 3
+                        .col = 3
+                        Dim BarCode As String
+                        BarCode = .Text
+
+                        ' Ki?m tra barcode
+                        If BarCode = sBarcode Then
+                            ' Tang c?t 4 lên 1
+                            .col = 4
+                            .Text = val(.Text) + 1
+                            ' Ð?c s? lu?ng (c?t 3) và don giá (c?t 4)
+                            .col = 4
+                            Dim SoLuong As Double
+                            SoLuong = val(.Text)
+
+                            .col = 5
+                            Dim strDonGia As String
+                            strDonGia = .Text
+                            Dim testso As Double
+                            testso = Cdbl5(.Text)
+                            strDonGia = Replace(strDonGia, ".", "")  ' Xóa d?u ch?m
+                            strDonGia = Replace(strDonGia, ",", "")  ' Xóa d?u ph?y
+                            Dim dongia As Double
+                            dongia = val(strDonGia)
+
+                            ' C?p nh?t c?t 6 (Thành ti?n)
+                            .col = 7
+                            .Text = Format(SoLuong * dongia / 100, "#,##0.00")
+                            RFocus txtchungtu(0)
+                        End If
+
+
+                    Next i
+                End With
+                Exit Sub
+            Else
+                ListBarcode.Add sBarcode
+                sSanPhamHienTai = sBarcode
+                RFocus txtchungtu(3)
+                txtchungtu(3).Text = 1
+                RFocus txtchungtu(5)
+                txtchungtu(5).Text = 0
+                txtChungtu_LostFocus (5)
+                RFocus txtchungtu(6)
+                txtChungtu_KeyPress 6, 13
+                isxulybarcode = False
+                iSoLuong = 1
+                RFocus txtchungtu(0)
+            End If
+        End If
+
+    End If
+
+    If loaiBarcode = 8 Then
+        If httoan = "TienMat" Or httoan = "CongNo" Then
+            txtchungtu(0).Text = "33311"
+            txtChungtu_LostFocus (0)
+            RFocus txtchungtu(2)
+            txtchungtu(2).Text = "10"
+            txtChungtu_LostFocus (2)
+            RFocus txtchungtu(5)
+            txtchungtu(5).Text = 0
+            RFocus txtchungtu(6)
+            txtChungtu_KeyPress 6, 13
+        End If
+        If httoan = "TienMat" Then
+            RFocus txtchungtu(0)
+            txtchungtu(0).Text = "1111"
+            txtChungtu_LostFocus (0)
+            RFocus txtchungtu(2)
+            txtChungtu_LostFocus (2)
+            RFocus txtchungtu(6)
+            txtChungtu_KeyPress 6, 13
+        End If
+        If httoan = "CongNo" Then
+            RFocus txtchungtu(0)
+            txtchungtu(0).Text = "131"
+            txtChungtu_LostFocus (0)
+            RFocus txtchungtu(2)
+            txtChungtu_LostFocus (2)
+            RFocus txtchungtu(6)
+            txtChungtu_KeyPress 6, 13
+        End If
+    End If
+
+    If loaiBarcode = 1 Then
+        txtchungtu(0).Text = "156"
+        txtChungtu_LostFocus (0)
+        txtchungtu(2).Text = sBarcode
+        txtChungtu_LostFocus (2)
+        If sSanPhamHienTai = sBarcode Then
+            iSoLuong = iSoLuong + 1
+            txtchungtu(3).Text = iSoLuong
+        Else
+            RFocus txtchungtu(3)
+            txtchungtu(3).Text = 1
+            RFocus txtchungtu(5)
+            txtChungtu_LostFocus (5)
+            RFocus txtchungtu(6)
+            txtchungtu(6).Text = 0
+            txtChungtu_KeyPress 6, 13
+            isxulybarcode = False
+            iSoLuong = 1
+        End If
+    End If
+End Sub
+Private Sub GhiLog(ByVal sMessage As String)
+    On Error Resume Next
+    
+    Dim sLogFile As String
+    Dim iFile As Integer
+    
+    sLogFile = App.path & "\ErrorLog_" & Format(Now, "yyyy-mm-dd") & ".txt"
+    
+    iFile = FreeFile
+    Open sLogFile For Append As #iFile
+        Print #iFile, Now & " - " & sMessage
+    Close #iFile
+End Sub
+
+ 
+
 Private Sub timerReadyNKNL_Timer()
     timerReadyNKNL.Enabled = False
     OptLoai(2).Value = True
@@ -7524,6 +7755,9 @@ Public Sub CmdChitiet_chon()
         Exit Sub
     End If
     oldKeypress = txtchungtu(0).Text
+    If isQuetma = False And txtchungtu(2).Text = "" And txtchungtu(0).Text <> "1111" Then
+        Exit Sub
+    End If
     If oldMa <> "" And txtchungtu(3).Text <> "" And FThuChi.FThuChiForm <> 0 And nknl <> 1 Then
         If oldMa = txtchungtu(2).Text And txtchungtu(3).Text = oldSL And oldMa <> "0" Then
             'Kiem tra them so luong neu co
@@ -7991,7 +8225,7 @@ htp:
                 If h.MaKhachHang > 0 Then    'neu da co khach hang do roi(da co hoa don)
                     FVAT.GetPhieu taikhoan.tk_id = TTDB_ID    ' mo form Fvat da duoc lap day thong tin
                 Else    'chua co hoa don,
-                    If FThuChi.FThuChiForm <> 0 Then
+                    If FThuChi.FThuChiForm <> 0 And FThuChi.FThuChiForm <> 6 Then
                         If rs_import!hdon = "02" Then
                             FVAT.Text1.Text = "1"
                         Else
@@ -9467,7 +9701,7 @@ Sub tinhkyhieu()
 
     End If
 End Sub
-Public Sub Test()
+Public Sub test()
     Command_Click 1
 
 End Sub
@@ -10113,7 +10347,7 @@ Public Sub Command_Click(Index As Integer)
                             If (loaict = 1 Or loaict = 2 Or loaict = 7 Or loaict = 8) And chungtu.MaVattu > 0 Then chungtu.dvt = m
                         End If
                     End If
-                    chungtu.User_ID = UserID
+                    chungtu.User_ID = userId
                     If pCongNoHD > 0 Then chungtu.HanTT = CInt5(txtchungtu(8).Text)
                     If pSongNgu Then chungtu.DienGiaiE = txt(2).Text
                     If pGiaUSD > 0 And (loaict = 1 Or loaict = 2 Or loaict = 8) And mvt > 0 Then
@@ -10966,6 +11200,11 @@ End Function
 
 
 Private Sub Form_Load()
+    isxulybarcode = False
+    Me.KeyPreview = True
+    'FThuChi.FThuChiForm = 6
+    ' Kh?i t?o buffer r?ng
+    sBarcodeBuffer = ""
 
     isclicktt = 0
     hPopup = CreateUnicodePopup()
@@ -11048,7 +11287,7 @@ Private Sub Form_Load()
 a:
         Int_RecsetToCbo "SELECT MaSo As F2,SoHieu+ ' - '+DienGiai As F1 FROM CTGhiSo ORDER BY SoHieu", CboNguon(3)
     Else
-        Int_RecsetToCbo "SELECT MaSo As F2,SoHieu As F1 FROM CTGhiSo INNER JOIN User2 ON CTGhiSo.MaSo=User2.CTGS WHERE User2.User=" + CStr(UserID) + " ORDER BY SoHieu", CboNguon(3)
+        Int_RecsetToCbo "SELECT MaSo As F2,SoHieu As F1 FROM CTGhiSo INNER JOIN User2 ON CTGhiSo.MaSo=User2.CTGS WHERE User2.User=" + CStr(userId) + " ORDER BY SoHieu", CboNguon(3)
         If CboNguon(3).ListCount = 0 Then GoTo a
     End If
     Int_RecsetToCbo "SELECT DoituongCT.MaSo As F2,(IIF(DoituongCT.MaKhachHang>0,KhachHang.Ten+' - '+DoituongCT.Sohieu+' - ','')+DienGiai) As F1 FROM DoituongCT LEFT JOIN KhachHang ON DoituongCT.MaKhachHang=KhachHang.MaSo ORDER BY  KhachHang.Ten,DoituongCT.SoHieu,DienGiai", CboNguon(2)
@@ -12171,8 +12410,9 @@ End Sub
 
 
 Public Sub OptLoai_Click(Index As Integer)
+    loaiBarcode = Index
     If Index = 8 Then
-       ' LoadStatushd
+        ' LoadStatushd
     End If
     If Index = 4 Then
         Command10(1).Visible = True
@@ -13339,7 +13579,114 @@ End Function
 '====================================================================================================
 ' Xö lý phÝm bÊm trªn c¸c « nhËp
 '====================================================================================================
+Private Sub mayquet(KeyAscii As Integer)
+    
+    On Error GoTo XL_Loi
+
+    Dim iCode As Integer
+    iCode = KeyAscii
+
+    ' Ki?m tra ký t? h?p l?
+    ' 48-57: S? 0-9
+    ' 65-90: Ch? hoa A-Z
+    ' 97-122: Ch? thu?ng a-z
+    ' 45: D?u -
+    ' 42: D?u *
+    ' 46: D?u .        <--- THÊM DÒNG NÀY
+    ' 32: D?u cách (Space)
+    If (iCode >= 48 And iCode <= 57) Or _
+       (iCode >= 65 And iCode <= 90) Or _
+       (iCode >= 97 And iCode <= 122) Or _
+       iCode = 45 Or _
+       iCode = 42 Or _
+       iCode = 46 Or _
+       iCode = 32 Then
+
+        ' G?p ký t? vào buffer
+        sBarcodeBuffer = sBarcodeBuffer & Chr(iCode)
+
+        ' Không truy?n ký t? này vào Control dang focus
+        KeyAscii = 0
+
+    ElseIf iCode = 13 Then
+        ' ===== PHÁT HI?N MÁY QUÉT G?I PHÍM ENTER =====
+        If Len(sBarcodeBuffer) > 0 Then
+            Dim sBarcode As String
+            sBarcode = sBarcodeBuffer
+
+            ' X? lý mã v?ch
+            Call xulybarcode(sBarcode)
+
+            ' Reset buffer
+            sBarcodeBuffer = ""
+        End If
+
+        KeyAscii = 0
+
+    Else
+        ' Các phím khác cho qua
+        ' Không làm gì c?
+    End If
+
+    Exit Sub
+
+XL_Loi:
+    Call GhiLog("Loi Form_KeyPress: " & Err.Description)
+    sBarcodeBuffer = ""
+    KeyAscii = 0
+    Resume Next
+End Sub
 Private Sub txtChungtu_KeyPress(Index As Integer, KeyAscii As Integer)
+    Dim currentTime As Long
+    currentTime = GetTickCount
+    httoan = ""
+    ' ===== C?P NH?T TR?NG THÁI TRU?C ===== (QUAN TR?NG)
+    If currentTime - lastKeyTime < 80 Then
+        isFastTyping = True
+        keyCount = keyCount + 1
+    Else
+        isFastTyping = False
+        keyCount = 0
+        strBarcodeBuffer = ""
+    End If
+    lastKeyTime = currentTime
+
+    ' ===== LUU KÝ T? VÀO BUFFER (TR? ENTER) =====
+    If KeyAscii <> 13 Then
+        strBarcodeBuffer = strBarcodeBuffer & Chr(KeyAscii)
+    End If
+
+    ' ===== X? LÝ ENTER =====
+    If KeyAscii = 13 Then
+        ' LÚC NÀY keyCount ÐÃ ÐU?C C?P NH?T
+        If isFastTyping And keyCount >= 6 Then
+            ' BARCODE
+            isQuetma = True
+            If strBarcodeBuffer = "TienMat" Then
+                httoan = "TienMat"
+                strBarcodeBuffer = "33311"
+            End If
+            If strBarcodeBuffer = "CongNo" Then
+                httoan = "CongNo"
+                strBarcodeBuffer = "33311"
+            End If
+            xulybarcode strBarcodeBuffer
+
+            ' RESET
+            strBarcodeBuffer = ""
+            keyCount = 0
+            isFastTyping = False
+        Else
+            ' GÕ TAY + ENTER
+            strBarcodeBuffer = ""
+            keyCount = 0
+        End If
+
+
+    End If
+
+
+    '-----------------------------------
     demClick = demClick + 1
     If Index = 6 Then
         hasError = False
@@ -13371,6 +13718,9 @@ Private Sub txtChungtu_KeyPress(Index As Integer, KeyAscii As Integer)
                 txtchungtu(0).Text = FrmTaikhoan.ChonTk(txtchungtu(0).Text)
             Else
                 RFocus txtchungtu(5)
+                If FThuChi.FThuChiForm = 6 Then
+                    RFocus txtchungtu(0)
+                End If
             End If
         End If
     Case 1:
@@ -13694,7 +14044,12 @@ Public Sub txtChungtu_LostFocus(Index As Integer)
                     'bo/////////////////////////////////////
                     'If Len(Trim(txtchungtu(2).Text)) <= 0 Then RFocus txtchungtu(2)
                     If txtchungtu(2).Enabled = True Then
-                        If isimport = False Then RFocus txtchungtu(2)
+                        If isimport = False And FThuChi.FThuChiForm <> 6 Then
+                            RFocus txtchungtu(2)
+                        End If
+                        If FThuChi.FThuChiForm = 6 Then
+                            RFocus txtchungtu(0)
+                        End If
                     End If
                 End If
             Else
@@ -13811,7 +14166,7 @@ Public Sub txtChungtu_LostFocus(Index As Integer)
 
                 txtchungtu(1).Text = vattu.TenVattu
                 txtchungtu(2).tag = 1
-                If isimport = False Then
+                If isimport = False And FThuChi.FThuChiForm <> 6 Then
                     RFocus txtchungtu(3)
                 End If
 

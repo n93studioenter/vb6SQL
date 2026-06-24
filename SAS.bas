@@ -3874,11 +3874,11 @@ Public Sub InKqkd(tdau As Integer, tcuoi As Integer, cap As Integer, nn As Integ
     ExecuteSQL5 "UPDATE KQKD SET KyNay=0, KyTruoc=0"
     
     SQL = "SELECT DISTINCTROW KQKD.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKNo+'*' AND TK.SoHieu LIKE KQKD.SHTKCo+'*' " _
+        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKNo+'*' AND TK.SoHieu LIKE KQKD.SHTKCo+'%' " _
         & " Where " + WThang("ThangCT", 0, tcuoi) + " AND KQKD.SHTKNo<>'0' AND KQKD.SHTKCo<>'0' GROUP BY KQKD.Ma"
     
     SQL = SQL + " UNION SELECT DISTINCTROW KQKD.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2" _
-        & " FROM (" + ChungTu2TKNC(1) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKCo+'*'" _
+        & " FROM (" + ChungTu2TKNC(1) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKCo+'%'" _
         & " Where (MaLoai<>3 AND MaLoai<>1) And " + WThang("ThangCT", 0, tcuoi) + " And (CLng(KQKD.SHTKNo) = 0) AND KQKD.SHTKCo<>'0' GROUP BY KQKD.Ma"
     
     'sql = sql + " UNION SELECT DISTINCTROW KQKD.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _

@@ -186,8 +186,83 @@ Private Sub Form_Activate()
     isLogin = False
 End Sub
 
+Private Sub Form_Load()
+    Dim configPath As String
+    Dim fileContent As String
+    Dim lines() As String
+    Dim i As Integer
+    Dim line As String
+    Dim connString As String
+    Dim server As String
+    Dim database As String
+    Dim userId As String
+    Dim password As String
+    
+    ' Ðu?ng d?n d?n file config
+    configPath = App.path & "\Tools\Debug\SaovietTax.exe.Config"
+    
+    ' Ki?m tra file t?n t?i
+    If Dir(configPath) = "" Then
+        MsgBox "Không tìm th?y file config!", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Ð?c toàn b? file
+    Open configPath For Input As #1
+    fileContent = Input$(LOF(1), 1)
+    Close #1
+    
+    ' Tìm connection string
+    Dim startPos As Integer
+    Dim endPos As Integer
+    
+    startPos = InStr(fileContent, "connectionString=""")
+    If startPos > 0 Then
+        startPos = startPos + Len("connectionString=""")
+        endPos = InStr(startPos, fileContent, """")
+        connString = Mid(fileContent, startPos, endPos - startPos)
+        
+        ' L?y thông tin
+        server = GetValueFromConnString(connString, "Server")
+        database = GetValueFromConnString(connString, "Database")
+        userId = GetValueFromConnString(connString, "User Id")
+        password = GetValueFromConnString(connString, "Password")
+        
+        ' Gán vào TextBox
+        Text1.Text = server
+        Text2.Text = database
+        Text3.Text = userId
+        Text4.Text = password
+        
+        'MsgBox "Ðã l?y thông tin thành công!", vbInformation
+    Else
+        MsgBox "Không tìm th?y connection string!", vbExclamation
+    End If
+End Sub
+
+Private Function GetValueFromConnString(ByVal connString As String, ByVal key As String) As String
+    Dim parts() As String
+    Dim i As Integer
+    Dim item As String
+
+    parts = Split(connString, ";")
+
+    For i = 0 To UBound(parts)
+        item = Trim(parts(i))
+        If InStr(item, "=") > 0 Then
+            If Trim(Split(item, "=")(0)) = key Then
+                GetValueFromConnString = Trim(Split(item, "=")(1))
+                Exit Function
+            End If
+        End If
+    Next i
+
+    GetValueFromConnString = ""
+End Function
+
 Private Sub Form_Unload(Cancel As Integer)
     If isLogin = False Then
         End
     End If
 End Sub
+

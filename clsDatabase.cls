@@ -13,7 +13,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Conn As Object
+Private conn As Object
 Private m_QueryDefs As Collection
 Private m_Relations As Collection
 Private m_TableDefs As Collection
@@ -21,30 +21,30 @@ Private m_TableDefs As Collection
 Public RecordsAffected As Long
 
 Private Sub Class_Initialize()
-    Set Conn = CreateObject("ADODB.Connection")
+    Set conn = CreateObject("ADODB.Connection")
     Set m_QueryDefs = New Collection
     Set m_Relations = New Collection
     Set m_TableDefs = New Collection
 End Sub
 
-Public Function Connect(Server As String, db As String, uID As String, PWD As String) As Boolean
+Public Function Connect(server As String, db As String, uID As String, PWD As String) As Boolean
     On Error Resume Next
-    Conn.Open "Provider=SQLOLEDB;Data Source=" & Server & ";Initial Catalog=" & db & ";User ID=" & uID & ";Password=" & PWD & ";"
+    conn.Open "Provider=SQLOLEDB;Data Source=" & server & ";Initial Catalog=" & db & ";User ID=" & uID & ";Password=" & PWD & ";"
     Connect = (Err.number = 0)
 End Function
 
-Public Sub ExecuteSQL(sql As String, Optional Options As Variant = dbFailOnError)
-    Debug.Print "Mientru " & sql
+Public Sub ExecuteSQL(SQL As String, Optional Options As Variant = dbFailOnError)
+    Debug.Print "Mientru " & SQL
     On Error GoTo Loi
-    Conn.Execute sql, RecordsAffected
+    conn.Execute SQL, RecordsAffected
     Exit Sub
 Loi:
     Debug.Print Err.number, "clsDatabase.ExecuteSQL", Err.Description
 End Sub
 
-Private Function ConvertSQL(ByVal sql As String) As String
+Private Function ConvertSQL(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     result = FixConvertError(result)
     result = FixPlusConcat(result)
     result = FixElseEndConcat(result)
@@ -61,9 +61,9 @@ Private Function ConvertSQL(ByVal sql As String) As String
     ConvertSQL = result
 End Function
 
-Private Function FixFormatDate(ByVal sql As String) As String
+Private Function FixFormatDate(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     Dim regex As Object
     Set regex = CreateObject("VBScript.RegExp")
     regex.Global = True
@@ -95,9 +95,9 @@ Private Function FixFormatDate(ByVal sql As String) As String
     FixFormatDate = result
 End Function
 
-Private Function FixConvertError(ByVal sql As String) As String
+Private Function FixConvertError(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     Dim regex As Object
     Set regex = CreateObject("VBScript.RegExp")
     regex.Global = True
@@ -127,9 +127,9 @@ Private Function FixConvertError(ByVal sql As String) As String
     FixConvertError = result
 End Function
 
-Private Function FixElseEndConcat(ByVal sql As String) As String
+Private Function FixElseEndConcat(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     Dim pos As Integer
     pos = InStr(1, result, "ELSE '' END+", vbTextCompare)
     Do While pos > 0
@@ -150,9 +150,9 @@ Private Function FixElseEndConcat(ByVal sql As String) As String
     FixElseEndConcat = result
 End Function
 
-Private Function FixPlusConcat(ByVal sql As String) As String
+Private Function FixPlusConcat(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     Dim pos As Integer
     pos = InStr(1, result, "+ '", vbTextCompare)
     If pos > 0 Then
@@ -195,14 +195,14 @@ Private Function FixPlusConcat(ByVal sql As String) As String
     FixPlusConcat = result
 End Function
 
-Private Function ConvertDateDelimiters(ByVal sql As String) As String
+Private Function ConvertDateDelimiters(ByVal SQL As String) As String
     Dim result As String
     Dim i As Integer
     Dim inString As Boolean
     Dim startPos As Integer
     Dim dateStr As String
     Dim ch As String
-    result = sql
+    result = SQL
     i = 1
     inString = False
     Do While i <= Len(result)
@@ -272,7 +272,7 @@ Private Function ConvertDateFormat(ByVal dateStr As String) As String
     ConvertDateFormat = dateStr
 End Function
 
-Private Function ConvertIIFToCase(ByVal sql As String) As String
+Private Function ConvertIIFToCase(ByVal SQL As String) As String
     Dim result As String
     Dim pos As Integer
     Dim i As Integer
@@ -284,7 +284,7 @@ Private Function ConvertIIFToCase(ByVal sql As String) As String
     Dim condition As String
     Dim truePart As String
     Dim falsePart As String
-    result = sql
+    result = SQL
     pos = InStr(1, result, "IIF(", vbTextCompare)
     Do While pos > 0
         startPos = pos
@@ -340,7 +340,7 @@ Private Function ConvertIIFToCase(ByVal sql As String) As String
     ConvertIIFToCase = result
 End Function
 
-Private Function ConvertWildcards(ByVal sql As String) As String
+Private Function ConvertWildcards(ByVal SQL As String) As String
     Dim result As String
     Dim i As Long
     Dim inString As Boolean
@@ -352,7 +352,7 @@ Private Function ConvertWildcards(ByVal sql As String) As String
     Dim j As Long
     Dim inBracket As Boolean
     Dim bracketContent As String
-    result = sql
+    result = SQL
     i = 1
     inString = False
     inLike = False
@@ -421,10 +421,10 @@ NextIteration:
     Loop
     ConvertWildcards = result
 End Function
-Public Function FixSQL(ByVal sql As String) As String
+Public Function FixSQL(ByVal SQL As String) As String
 
     Dim s As String
-    s = sql
+    s = SQL
 
     ' DISTINCTROW -> DISTINCT
     s = Replace(s, "DISTINCTROW", "DISTINCT", , , vbTextCompare)
@@ -460,16 +460,16 @@ Public Function FixSQL(ByVal sql As String) As String
 End Function
 Public Function OpenRecordset(Source As String, Optional Typ As Variant = 2, Optional Typ2 As Variant = 2) As Object
     Dim rs As Object
-    Dim sql As String
-    sql = Source
-    sql = FixSQL(sql)
-    sql = FixSpecialSQL(sql)
-    sql = ConvertSQL(sql)
-    sql = Replace(sql, "DISTINCTROW", "DISTINCT")
-    sql = Replace(sql, "distinctrow", "DISTINCT")
-    sql = Trim(sql)
+    Dim SQL As String
+    SQL = Source
+    SQL = FixSQL(SQL)
+    SQL = FixSpecialSQL(SQL)
+    SQL = ConvertSQL(SQL)
+    SQL = Replace(SQL, "DISTINCTROW", "DISTINCT")
+    SQL = Replace(SQL, "distinctrow", "DISTINCT")
+    SQL = Trim(SQL)
     On Error Resume Next
-    sql = m_QueryDefs(Source)
+    SQL = m_QueryDefs(Source)
     On Error GoTo 0
     Set rs = CreateObject("ADODB.Recordset")
     rs.CursorLocation = 3
@@ -482,14 +482,14 @@ Public Function OpenRecordset(Source As String, Optional Typ As Variant = 2, Opt
     Case Else:
         rsType = 3
     End Select
-    Debug.Print sql
-    rs.Open sql, Conn, rsType, 3
+    Debug.Print SQL
+    rs.Open SQL, conn, rsType, 3
     Set OpenRecordset = rs
 End Function
 
-Public Function FixSpecialSQL(ByVal sql As String) As String
+Public Function FixSpecialSQL(ByVal SQL As String) As String
     Dim result As String
-    result = sql
+    result = SQL
     
     ' 1. S?a CONVERT(varchar, NgayKy,'dd/mm/yy') -> CONVERT(varchar, NgayKy, 103)
     Dim pos As Integer
@@ -603,21 +603,21 @@ End Property
 Public Sub LoadTableDefs()
     Dim rs As Object
     Dim tdf As clsTableDef
-    Dim sql As String
+    Dim SQL As String
     
     On Error GoTo Loi  ' Thêm dòng này d? b?t l?i
     
     Set m_TableDefs = New Collection
     
     ' Dùng tr?c ti?p, không qua OpenRecordset d? tránh ConvertSQL
-    sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME"
+    SQL = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME"
     
     Set rs = CreateObject("ADODB.Recordset")
-    rs.Open sql, Conn, 3, 1  ' adOpenStatic, adLockReadOnly
+    rs.Open SQL, conn, 3, 1  ' adOpenStatic, adLockReadOnly
     
     Do While Not rs.EOF
         Set tdf = New clsTableDef
-        tdf.Init rs.Fields("TABLE_NAME").Value, Conn
+        tdf.Init rs.Fields("TABLE_NAME").Value, conn
         m_TableDefs.Add tdf, rs.Fields("TABLE_NAME").Value
         rs.MoveNext
     Loop
@@ -636,7 +636,7 @@ End Property
 
 Public Function CreateRelation(Name As String, Table1 As String, Table2 As String, Optional Typ As Variant = 2) As Object
     Dim Rel As New clsRelation
-    Rel.Init Name, Table1, Table2, 0, Conn
+    Rel.Init Name, Table1, Table2, 0, conn
     m_Relations.Add Rel, Name
     Set CreateRelation = Rel
 End Function
@@ -646,7 +646,7 @@ End Sub
 
 Public Sub Closes()
     On Error Resume Next
-    Conn.Close
+    conn.Close
 End Sub
 
 Public Function OpenDatabase(FileName As String, Exclusive As Boolean, ReadOnly As Boolean, Connect As String) As clsDatabase
@@ -662,7 +662,7 @@ End Function
 
 Public Sub BeginTrans()
     On Error GoTo Loi
-    Conn.BeginTrans
+    conn.BeginTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.BeginTrans", Err.Description
@@ -670,7 +670,7 @@ End Sub
 
 Public Sub CommitTrans()
     On Error GoTo Loi
-    Conn.CommitTrans
+    conn.CommitTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.CommitTrans", Err.Description
@@ -678,7 +678,7 @@ End Sub
 
 Public Sub RollbackTrans()
     On Error GoTo Loi
-    Conn.RollbackTrans
+    conn.RollbackTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.RollbackTrans", Err.Description
@@ -686,7 +686,7 @@ End Sub
 
 Public Sub Rollback()
     On Error GoTo Loi
-    Conn.RollbackTrans
+    conn.RollbackTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.Rollback", Err.Description
@@ -694,7 +694,7 @@ End Sub
 
 Public Function CreateTableDef(Name As String) As Object
     Dim tdf As New clsTableDef
-    tdf.Init Name, Conn
+    tdf.Init Name, conn
     m_TableDefs.Add tdf, Name
     Set CreateTableDef = tdf
 End Function
@@ -708,18 +708,18 @@ Public Function GetTableDef(TableName As String) As Object
     Set tdf = m_TableDefs(TableName)
     If tdf Is Nothing Then
         Set tdf = CreateObject("clsTableDef")
-        tdf.Init TableName, Conn
+        tdf.Init TableName, conn
         m_TableDefs.Add tdf, TableName
     End If
     Set GetTableDef = tdf
 End Function
 
-Public Function CreateQueryDef(Name As String, sql As String) As Object
+Public Function CreateQueryDef(Name As String, SQL As String) As Object
     Dim qdf As New clsQueryDef
     On Error Resume Next
     m_QueryDefs.Remove Name
     On Error GoTo 0
-    qdf.Init Name, sql, Conn
+    qdf.Init Name, SQL, conn
     m_QueryDefs.Add qdf, Name
     Set CreateQueryDef = qdf
 End Function
@@ -740,21 +740,21 @@ End Property
 
 Public Property Get QueryDefs() As Object
     Set QueryDefs = New clsQueryDefCollection
-    QueryDefs.Init m_QueryDefs, Conn
+    QueryDefs.Init m_QueryDefs, conn
 End Property
 
-Public Sub AddQuery(Name As String, sql As String)
+Public Sub AddQuery(Name As String, SQL As String)
     On Error Resume Next
     m_QueryDefs.Remove Name
     On Error GoTo 0
-    m_QueryDefs.Add sql, Name
+    m_QueryDefs.Add SQL, Name
 End Sub
 
 Public Function GetLastRow(q As String, f As String) As Variant
     Dim rs As Object
     Set rs = CreateObject("ADODB.Recordset")
     rs.CursorLocation = 3
-    rs.Open q, Conn, 3, 1
+    rs.Open q, conn, 3, 1
     If Not rs.EOF Then
         rs.MoveLast
         GetLastRow = rs.Fields(f).Value
@@ -764,10 +764,10 @@ Public Function GetLastRow(q As String, f As String) As Variant
 End Function
 
 Public Sub CreateIndex(TableName As String, IndexName As String, ColumnName As String, Optional IsUnique As Boolean = False, Optional IsClustered As Boolean = False)
-    Dim sql As String
+    Dim SQL As String
     Dim uniqueStr As String
     Dim clusteredStr As String
-    sql = "IF EXISTS (SELECT * FROM sys.indexes WHERE name = '" & IndexName & "' AND object_id = OBJECT_ID('" & TableName & "')) " & _
+    SQL = "IF EXISTS (SELECT * FROM sys.indexes WHERE name = '" & IndexName & "' AND object_id = OBJECT_ID('" & TableName & "')) " & _
           "DROP INDEX " & IndexName & " ON " & TableName & "; "
     If IsUnique Then
         uniqueStr = "UNIQUE "
@@ -775,7 +775,53 @@ Public Sub CreateIndex(TableName As String, IndexName As String, ColumnName As S
     If IsClustered Then
         clusteredStr = "CLUSTERED "
     End If
-    sql = sql & "CREATE " & uniqueStr & clusteredStr & "INDEX " & IndexName & " ON " & TableName & " (" & ColumnName & ")"
-    Me.ExecuteSQL sql
+    SQL = SQL & "CREATE " & uniqueStr & clusteredStr & "INDEX " & IndexName & " ON " & TableName & " (" & ColumnName & ")"
+    Me.ExecuteSQL SQL
 End Sub
-
+Public Function CreateView(ViewName As String, SQL As String) As Boolean
+    On Error GoTo ErrHandler
+    
+    If conn Is Nothing Or conn.State <> 1 Then
+        MsgBox "Chua k?t n?i!", vbCritical
+        CreateView = False
+        Exit Function
+    End If
+    
+    ' ? S?A L?I ISNULL NGAY TRONG SQL
+    Dim fixedSQL As String
+    fixedSQL = SQL
+    
+    ' Thay IsNull(Field) thành Field IS NULL
+    Dim regex As Object
+    Set regex = CreateObject("VBScript.RegExp")
+    regex.Global = True
+    regex.IgnoreCase = True
+    regex.pattern = "IsNull\s*\(\s*([^,]+?)\s*\)"
+    fixedSQL = regex.Replace(fixedSQL, "$1 IS NULL")
+    
+    ' Chuy?n d?i SQL
+    Dim strSQL As String
+    strSQL = ConvertSQL(fixedSQL)
+    
+    ' Xóa ORDER BY
+    Dim orderByPos As Integer
+    orderByPos = InStr(1, strSQL, "ORDER BY", vbTextCompare)
+    If orderByPos > 0 Then
+        strSQL = Left(strSQL, orderByPos - 1)
+    End If
+    
+    ' Xóa View cu
+    On Error Resume Next
+    conn.Execute "DROP VIEW " & ViewName
+    On Error GoTo ErrHandler
+    
+    ' T?o View m?i
+    conn.Execute "CREATE VIEW " & ViewName & " AS " & strSQL
+    
+    CreateView = True
+    Exit Function
+    
+ErrHandler:
+    MsgBox "L?i: " & Err.Description, vbCritical
+    CreateView = False
+End Function

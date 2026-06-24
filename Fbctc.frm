@@ -4383,7 +4383,7 @@ Private Sub InLCTT2(tdau As Integer, tcuoi As Integer)
     SQL = SQL & "ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai, ChungTu.SoPS, "
     SQL = SQL & "ChungTu.GhiChu, HeThongTK.SoHieu AS SoHieuNo, HeThongTK_1.SoHieu AS SoHieuCo, "
     SQL = SQL & "ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, "
-    SQL = SQL & "IIF(HethongTK.SoHieu LIKE '1111*','0','1') + "
+    SQL = SQL & "IIF(HethongTK.SoHieu LIKE '1111%','0','1') + "
     SQL = SQL & "CAST(10 + ChungTu.ThangCT AS VARCHAR) + ChungTu.SoHieu AS SH1 "  ' Ch? 1: ау s?a
     SQL = SQL & "FROM HeThongTK AS HeThongTK_3 RIGHT JOIN "
     SQL = SQL & "(HeThongTK AS HeThongTK_2 RIGHT JOIN "
@@ -4394,14 +4394,14 @@ Private Sub InLCTT2(tdau As Integer, tcuoi As Integer)
     SQL = SQL & "ON HeThongTK_2.MaSo = ChungTu.MaTKNo) "
     SQL = SQL & "ON HeThongTK_3.MaSo = ChungTu.MaTKCo "
     SQL = SQL & "WHERE SoPS<>0 "
-    SQL = SQL & "AND ((HethongTK.SoHieu LIKE '11*') "
-    SQL = SQL & "OR (HethongTK_1.SoHieu LIKE '11*')) "
+    SQL = SQL & "AND ((HethongTK.SoHieu LIKE '11%') "
+    SQL = SQL & "OR (HethongTK_1.SoHieu LIKE '11%')) "
     SQL = SQL & "AND (ThangCT>=1 AND ThangCT<=12) "
     SQL = SQL & "AND (ChungTu.MaLoai<>4 "
     SQL = SQL & "OR (ChungTu.MaLoai=4 "
     SQL = SQL & "AND ChungTu.MaTKNo<>ChungTu.MaTkco)) "
     SQL = SQL & "ORDER BY ThangCT, ChungTu.NgayGS, "
-    SQL = SQL & "IIF(HethongTK.SoHieu LIKE '1111*','0','1') + "
+    SQL = SQL & "IIF(HethongTK.SoHieu LIKE '1111%','0','1') + "
     SQL = SQL & "CAST(10 + ChungTu.ThangCT AS VARCHAR) + ChungTu.SoHieu"  ' Ch? 2: ау s?a
 
     Dim rs_import As Object
@@ -4415,24 +4415,24 @@ Private Sub InLCTT2(tdau As Integer, tcuoi As Integer)
 
     If Not rs_import.EOF Then
         Do While Not rs_import.EOF
-            If rs_import!SoHieuCo Like "131*" Then
+            If rs_import!SoHieuCo Like "131%" Then
                 sum131 = sum131 + rs_import!sops
             End If
             If rs_import!GhiChu Like "131," Or rs_import!GhiChu Like "1311," Then
                 sum131 = sum131 + rs_import!sops
             End If
-            If rs_import!SoHieuCo Like "3331*" Then
+            If rs_import!SoHieuCo Like "3331%" Then
                 sum3331 = sum3331 + rs_import!sops
             End If
             If InStr("," & rs_import!GhiChu, ",5111,") > 0 Then
                 sum511 = sum511 + rs_import!sops
             End If
 
-            If rs_import!SoHieuCo Like "511*" Then
+            If rs_import!SoHieuCo Like "511%" Then
                 sum511 = sum511 + rs_import!sops
             End If
 
-            If rs_import!SoHieuNo Like "156*" Then
+            If rs_import!SoHieuNo Like "156%" Then
                 sum156 = sum156 + rs_import!sops
             End If
             If InStr("," & rs_import!GhiChu, ",156,") > 0 Then

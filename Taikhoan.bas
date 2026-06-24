@@ -595,9 +595,9 @@ Public Sub XDSoHieuCap(cap As Integer)
 End Sub
 
 Public Function PSDuoold(shno As String, shco As String, tdau As Integer, tcuoi As Integer, Optional shct As String = "", Optional xl As Integer = 0) As Double
-    PSDu = SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(0) _
+    PSDuoold = SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(0) _
         & " WHERE HethongTK.SoHieu LIKE '" + shno + "*' AND TK.SoHieu LIKE '" + shco + "*' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
-    If xl = 0 Then PSDu = PSDu + SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) _
+    If xl = 0 Then PSDuoold = PSDuoold + SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) _
         & " WHERE HethongTK.SoHieu LIKE '" + shno + "*' AND InStr(ChungTu.GhiChu,'" + shco + "')>0 AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
 End Function
 Public Function PSDu(shno As String, shco As String, tdau As Integer, tcuoi As Integer, Optional shct As String = "", Optional xl As Integer = 0) As Double

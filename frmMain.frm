@@ -223,7 +223,7 @@ Begin VB.Form frmMain
          EndProperty
          BeginProperty Panel4 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
             Style           =   6
-            TextSave        =   "16/06/26"
+            TextSave        =   "24/06/26"
             Key             =   ""
             Object.Tag             =   ""
          EndProperty
@@ -3806,13 +3806,14 @@ Private Sub Form_Load()
 
 End Sub
 Public Function ExecuteSQL_them_query(Ten As String, SQL As String, Optional msg As Boolean = True) As Integer
-      On Error GoTo ErrLock
-     DBKetoan.CreateQueryDef Ten, SQL
-      On Error GoTo 0
-      ExecuteSQL_them_query = 0
-      Exit Function
+    On Error GoTo ErrLock
+    'DBKetoan.CreateQueryDef Ten, SQL
+    DBKetoan.CreateView Ten, SQL
+    On Error GoTo 0
+    ExecuteSQL_them_query = 0
+    Exit Function
 ErrLock:
-'MsgBox Err.Description
+    'MsgBox Err.Description
 End Function
 Public Function ExecuteSQL_them_bang(Ten As String, Optional msg As Boolean = True) As Integer
       On Error GoTo ErrLock

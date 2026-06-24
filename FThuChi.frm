@@ -520,7 +520,7 @@ Private Type PROCESS_INFORMATION
 End Type
 
 ' Khai báo hàm CreateProcess, CloseHandle, WaitForSingleObject
-Private Declare Function CreateProcess Lib "Kernel32" Alias "CreateProcessA" ( _
+Private Declare Function CreateProcess Lib "kernel32" Alias "CreateProcessA" ( _
                                        ByVal lpApplicationName As String, _
                                        ByVal lpCommandLine As String, _
                                        ByVal lpProcessAttributes As Long, _
@@ -532,16 +532,16 @@ Private Declare Function CreateProcess Lib "Kernel32" Alias "CreateProcessA" ( _
                                        lpStartupInfo As STARTUPINFO, _
                                        lpProcessInformation As PROCESS_INFORMATION) As Long
 
-Private Declare Function CloseHandle Lib "Kernel32" (ByVal hObject As Long) As Long
-Private Declare Function WaitForSingleObject Lib "Kernel32" (ByVal hHandle As Long, ByVal dwMilliseconds As Long) As Long
-Private Declare Function SetCurrentDirectory Lib "Kernel32" Alias "SetCurrentDirectoryA" (ByVal lpPathName As String) As Long
+Private Declare Function CloseHandle Lib "kernel32" (ByVal hObject As Long) As Long
+Private Declare Function WaitForSingleObject Lib "kernel32" (ByVal hHandle As Long, ByVal dwMilliseconds As Long) As Long
+Private Declare Function SetCurrentDirectory Lib "kernel32" Alias "SetCurrentDirectoryA" (ByVal lpPathName As String) As Long
 
 Private Const NORMAL_PRIORITY_CLASS = &H20&
 Private Const INFINITE = &HFFFF
 
 Dim hWndApp As Long
 Private Declare Function IsWindow Lib "user32" (ByVal hwnd As Long) As Long
-Private Declare Sub Sleep Lib "Kernel32" (ByVal dwMilliseconds As Long)
+Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" _
                                     ()
 Public FThuChiForm As Integer
@@ -595,7 +595,7 @@ Public Sub RunExeIndependent(ByVal exePath As String, Optional ByVal workingDir 
     End If
 End Sub
 
-Public Sub Test()
+Public Sub test()
  
     Unload Me
 End Sub

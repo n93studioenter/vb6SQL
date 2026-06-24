@@ -32,7 +32,7 @@ Public Sub GhiHoaDon(p As Integer)
     Dim SQL As String
 
     With h
-        If FThuChi.FThuChiForm <> 0 Then
+        If FThuChi.FThuChiForm <> 0 And FThuChi.FThuChiForm <> 6 Then
             Dim date1 As Date
             Dim date2 As Date
             date1 = CDate(.NgayPH)
