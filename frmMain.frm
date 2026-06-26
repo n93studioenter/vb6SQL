@@ -223,7 +223,7 @@ Begin VB.Form frmMain
          EndProperty
          BeginProperty Panel4 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
             Style           =   6
-            TextSave        =   "24/06/26"
+            TextSave        =   "25/06/26"
             Key             =   ""
             Object.Tag             =   ""
          EndProperty
@@ -3690,6 +3690,13 @@ Private Sub testsql()
 End Sub
 Private Sub Form_Load()
 '
+    Dim strSQL As String
+
+    ' 1. Thêm c?t m?i v?i ki?u mong mu?n
+    strSQL = "ALTER TABLE tbimportdetail ADD TTien_New DECIMAL(18,2) NULL"
+    ExecuteSQL5 strSQL
+    
+    
     frmMain.sbStatusBar.Panels(4).ToolTipText = "Log On Time: " + Format(Time, "hh:mm:ss")
     Dim check162 As String
     check162 = SelectSQL("SELECT SoHieu AS F1 FROM HeThongTK where SoHieu = '621' ")
@@ -3702,7 +3709,7 @@ Private Sub Form_Load()
     ' Kiemtraphienbanht
 
     Dim X1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer
- 
+
     If pVersion = 2 Then
         Label(19).Visible = False
     End If
@@ -4832,15 +4839,15 @@ Private Sub XKTheoNgay()
     ngayCTArray = Split(ngayCTList, ",")
 
     ' Duy?t qua m?ng và hi?n th? t?ng ph?n t?
-    Dim Item As Variant
+    Dim item As Variant
     If UBound(ngayCTArray) >= 0 Then
-        For Each Item In ngayCTArray
-            If Item = "" Then
+        For Each item In ngayCTArray
+            If item = "" Then
                 Exit Sub
             End If
             '   Luu tb  tbNhapkhotp
             Dim d As Date
-            d = CDate(Item)
+            d = CDate(item)
             Dim currentDateTime As Date
             currentDateTime = Now
             Dim KyHieu As String
@@ -4863,7 +4870,7 @@ Private Sub XKTheoNgay()
             'Lay danh sach chung tu den ngay hien tai
             Query = "SELECT * " & _
                     "FROM ChungTu " & _
-                    "WHERE NgayCT = #" & Format(Item, "yyyy-mm-dd") & "# " & _
+                    "WHERE NgayCT = #" & Format(item, "yyyy-mm-dd") & "# " & _
                     "AND MaVattu <> 0 " & _
                     "AND SoPS2Co <>0" & _
                     "AND sohieu NOT LIKE '*GV*'"
@@ -4954,7 +4961,7 @@ Private Sub XKTheoNgay()
                     rs_chungtu.MoveNext
                 Wend    ' K?t thúc vòng l?p While
             End If
-        Next Item
+        Next item
     End If
     Command_Click 0
 End Sub

@@ -274,7 +274,7 @@ Begin VB.Form FrmChungtu
       EndProperty
       Height          =   315
       Index           =   6
-      Left            =   11520
+      Left            =   11470
       MaxLength       =   20
       TabIndex        =   21
       Tag             =   "14"
@@ -3798,6 +3798,8 @@ Attribute VB_Exposed = False
 Option Explicit
 Private Declare Function GetTickCount Lib "Kernel32" () As Long
 Dim ListBarcode As New Collection
+Dim strSoHieu As String
+Dim isDuplicate As Boolean
 Dim httoan As String
 Dim lastKeyTime As Long
 Dim keyCount As Integer
@@ -4035,18 +4037,18 @@ Dim SetLoaiEnable As Boolean
 Dim shct As String
 Dim xddu As Boolean
 Dim TenTC As String, DiachiTC As String, ctgoc As String, TenNX As String, DiaChiNX As String, TenBH As String, DiaChiBH As String, MSTBH As String, unc1 As String, unc2 As String, unc3 As String, MaKHBH As Long, HanTT As Date
-Attribute DiachiTC.VB_VarUserMemId = 1073938557
-Attribute ctgoc.VB_VarUserMemId = 1073938557
-Attribute TenNX.VB_VarUserMemId = 1073938557
-Attribute DiaChiNX.VB_VarUserMemId = 1073938557
-Attribute TenBH.VB_VarUserMemId = 1073938557
-Attribute DiaChiBH.VB_VarUserMemId = 1073938557
-Attribute MSTBH.VB_VarUserMemId = 1073938557
-Attribute unc1.VB_VarUserMemId = 1073938557
-Attribute unc2.VB_VarUserMemId = 1073938557
-Attribute unc3.VB_VarUserMemId = 1073938557
-Attribute MaKHBH.VB_VarUserMemId = 1073938557
-Attribute HanTT.VB_VarUserMemId = 1073938557
+Attribute DiachiTC.VB_VarUserMemId = 1073938559
+Attribute ctgoc.VB_VarUserMemId = 1073938559
+Attribute TenNX.VB_VarUserMemId = 1073938559
+Attribute DiaChiNX.VB_VarUserMemId = 1073938559
+Attribute TenBH.VB_VarUserMemId = 1073938559
+Attribute DiaChiBH.VB_VarUserMemId = 1073938559
+Attribute MSTBH.VB_VarUserMemId = 1073938559
+Attribute unc1.VB_VarUserMemId = 1073938559
+Attribute unc2.VB_VarUserMemId = 1073938559
+Attribute unc3.VB_VarUserMemId = 1073938559
+Attribute MaKHBH.VB_VarUserMemId = 1073938559
+Attribute HanTT.VB_VarUserMemId = 1073938559
 Dim HD() As tpHoaDon, hdcount As Integer
 Attribute HD.VB_VarUserMemId = 1073938518
 Attribute hdcount.VB_VarUserMemId = 1073938518
@@ -7180,6 +7182,36 @@ Private Sub XulyMiddle(ByRef rs_import As Object)
             If rs_import!Ishaschild = 1 Then
                 Query = "SELECT * FROM tbimportdetail WHERE ParentId='" & rs_import!id & "'"
                 Set rs_ktra152 = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
+                ' Ki?m tra trùng SoHieu
+                Dim dict As Object
+                strSoHieu = ""
+                isDuplicate = False
+                Set dict = CreateObject("Scripting.Dictionary")
+                isDuplicate = False
+
+                If Not rs_ktra152.EOF Then
+                    rs_ktra152.MoveFirst
+                    Do While Not rs_ktra152.EOF
+                        strSoHieu = rs_ktra152!sohieu & ""
+                        If dict.Exists(strSoHieu) Then
+                            isDuplicate = True
+                            Exit Do
+                        Else
+                            dict.Add strSoHieu, 1
+                        End If
+                        rs_ktra152.MoveNext
+                    Loop
+                End If
+
+                If isDuplicate Then
+                    MsgBox "Có SoHieu b? trùng!", vbExclamation
+                    ' X? lý khi trùng
+                Else
+                    ' X? lý khi không trùng
+                End If
+                rs_ktra152.MoveFirst
+
+
                 Xuly51Child
             Else
                 Xuly51None
@@ -7753,18 +7785,21 @@ Public Sub CmdChitiet_chon()
     ' Ki?m tra chu?i có ch?a "6422" b?t k? ? dâu
     If oldKeypress Like "*642*" And txtchungtu(0).Text Like "*642*" And FThuChi.FThuChiForm <> 0 Then
         oldKeypress = ""
-        Exit Sub
+        ' Exit Sub
     End If
     oldKeypress = txtchungtu(0).Text
     If isQuetma = False And txtchungtu(2).Text = "" And txtchungtu(0).Text <> "1111" Then
-        Exit Sub
+        'Exit Sub
     End If
     If oldMa <> "" And txtchungtu(3).Text <> "" And FThuChi.FThuChiForm <> 0 And nknl <> 1 Then
         If oldMa = txtchungtu(2).Text And txtchungtu(3).Text = oldSL And oldMa <> "0" Then
             'Kiem tra them so luong neu co
             If txtchungtu(4).Text <> "" Then
                 If txtchungtu(4).Text = oldDongia And txtchungtu(0).Text <> "154" And txtchungtu(0).Text <> "1331" Then
-                    Exit Sub
+                    'Kiem tra xem hoa don thuc su co 2 ma nay
+                    If isDuplicate = False And strSoHieu <> oldMa Then
+                        Exit Sub
+                    End If
                 End If
             Else
                 If txtchungtu(0).Text <> "154" Then
@@ -13638,56 +13673,6 @@ XL_Loi:
     Resume Next
 End Sub
 Private Sub txtChungtu_KeyPress(Index As Integer, KeyAscii As Integer)
-    Dim currentTime As Long
-    currentTime = GetTickCount
-    httoan = ""
-    ' ===== C?P NH?T TR?NG THÁI TRU?C ===== (QUAN TR?NG)
-    If currentTime - lastKeyTime < 80 Then
-        isFastTyping = True
-        keyCount = keyCount + 1
-    Else
-        isFastTyping = False
-        keyCount = 0
-        strBarcodeBuffer = ""
-    End If
-    lastKeyTime = currentTime
-
-    ' ===== LUU KÝ T? VÀO BUFFER (TR? ENTER) =====
-    If KeyAscii <> 13 Then
-        strBarcodeBuffer = strBarcodeBuffer & Chr(KeyAscii)
-    End If
-
-    ' ===== X? LÝ ENTER =====
-    If KeyAscii = 13 Then
-        ' LÚC NÀY keyCount ÐÃ ÐU?C C?P NH?T
-        If isFastTyping And keyCount >= 6 Then
-            ' BARCODE
-            isQuetma = True
-            If strBarcodeBuffer = "TienMat" Then
-                httoan = "TienMat"
-                strBarcodeBuffer = "33311"
-            End If
-            If strBarcodeBuffer = "CongNo" Then
-                httoan = "CongNo"
-                strBarcodeBuffer = "33311"
-            End If
-            xulybarcode strBarcodeBuffer
-
-            ' RESET
-            strBarcodeBuffer = ""
-            keyCount = 0
-            isFastTyping = False
-        Else
-            ' GÕ TAY + ENTER
-            strBarcodeBuffer = ""
-            keyCount = 0
-        End If
-
-
-    End If
-
-
-    '-----------------------------------
     demClick = demClick + 1
     If Index = 6 Then
         hasError = False
@@ -13719,9 +13704,6 @@ Private Sub txtChungtu_KeyPress(Index As Integer, KeyAscii As Integer)
                 txtchungtu(0).Text = FrmTaikhoan.ChonTk(txtchungtu(0).Text)
             Else
                 RFocus txtchungtu(5)
-                If FThuChi.FThuChiForm = 6 Then
-                    RFocus txtchungtu(0)
-                End If
             End If
         End If
     Case 1:

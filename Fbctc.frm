@@ -2470,7 +2470,7 @@ Dim letter As String
 Dim Text1 As String
 Dim Text2 As String
 Dim MapNum As String
-Dim i, pos, Item, TLen
+Dim i, pos, item, TLen
     ' Assign content of input Textbox to Text1
     'Text1 = TextBox1(0).Text
     If IsNull(chuoi) Then
@@ -2483,9 +2483,9 @@ Dim i, pos, Item, TLen
     ' Iterate through every multi-character vowel
     For i = 0 To lstVNI.ListCount - 1
        ' Get an item from the Vowel listbox
-       Item = lstVNI.List(i)  ' like a^~016
-       letter = RTrim(Left(Item, 3))  ' isolate the multi-character vowel eg: a^~
-       MapNum = "|" & Right(Item, 3)  ' Prefix the | character to the digit string eg: &016
+       item = lstVNI.List(i)  ' like a^~016
+       letter = RTrim(Left(item, 3))  ' isolate the multi-character vowel eg: a^~
+       MapNum = "|" & Right(item, 3)  ' Prefix the | character to the digit string eg: &016
       
        Text1 = Replace(Text1, letter, MapNum) ' replace all occurences of the vowel
     Next
@@ -7798,8 +7798,9 @@ Private Sub ToKhaiVAT(tdau As Integer, tcuoi As Integer, taikhoan As ClsTaikhoan
     Dim url As String
 
     ' T?o URL
-    url = "http://localhost:8082/home/index"
+    url = "http://localhost:8082"
     url = url & "?ky=" & result
+    url = url & "&path=" & frmMain.sqlDatabasename
     ' M? URL trong trình duy?t
     Shell "explorer.exe """ & url & """", vbNormalFocus
 
