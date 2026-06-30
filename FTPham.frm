@@ -890,7 +890,7 @@ Private Sub CboSohieu_LostFocus()
             L = Len(CboSohieu.Text)
             If L > 0 Then
                 If Not IsNumeric(CboSohieu.Text) Then
-                    shct = SelectSQL("SELECT TOP 1 SoHieu AS F1 FROM ThanhPham WHERE Len(SoHieu)>" + CStr(L) + " AND IsNumeric(Right(SoHieu,Len(SoHieu)-" + CStr(L) + ")) AND SoHieu LIKE'" + CboSohieu.Text + "*' AND Thang=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + " ORDER BY SoHieu DESC")
+                    shct = SelectSQL("SELECT TOP 1 SoHieu AS F1 FROM ThanhPham WHERE Len(SoHieu)>" + CStr(L) + " AND IsNumeric(Right(SoHieu,Len(SoHieu)-" + CStr(L) + ")) AND SoHieu LIKE'" + CboSohieu.Text + "%' AND Thang=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + " ORDER BY SoHieu DESC")
                     If shct <> "0" Then CboSohieu.Text = SHCtuMoi(shct)
                 End If
             End If
@@ -1674,10 +1674,10 @@ Private Sub InNVL()
     ExecuteSQL5 "INSERT INTO BaoCaoCP2 (MaSo,SoHieu,Ten,Kq1,Kq2) " _
         & " SELECT MaVattu, Vattu.SoHieu, Vattu.TenVattu, Sum(SoPS2Co), Sum(SoPS) " _
         & " FROM (" + ChungTu2TKNC(-1) + ") INNER JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo" _
-        & " WHERE HethongTK.SoHieu LIKE '621*' AND ChungTu.MaLoai=2 AND ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + IIf(m.MaSo > 0, " AND ChungTu.MaTP=" + CStr(m.MaSo), "") + " GROUP BY MaVattu, Vattu.SoHieu, Vattu.TenVattu"
+        & " WHERE HethongTK.SoHieu LIKE '621%' AND ChungTu.MaLoai=2 AND ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + IIf(m.MaSo > 0, " AND ChungTu.MaTP=" + CStr(m.MaSo), "") + " GROUP BY MaVattu, Vattu.SoHieu, Vattu.TenVattu"
     SQL = "SELECT MaVattu, Sum(SoPS2Co) AS SL, Sum(SoPS) AS TT" _
         & " FROM " + ChungTu2TKNC(1) _
-        & " WHERE HethongTK.SoHieu LIKE '621*' AND ChungTu.MaLoai=1 AND ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + IIf(m.MaSo > 0, " AND ChungTu.MaTP=" + CStr(m.MaSo), "") + " GROUP BY MaVattu"
+        & " WHERE HethongTK.SoHieu LIKE '621%' AND ChungTu.MaLoai=1 AND ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + IIf(m.MaSo > 0, " AND ChungTu.MaTP=" + CStr(m.MaSo), "") + " GROUP BY MaVattu"
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     Do While Not rs.EOF
         ExecuteSQL5 "UPDATE BaoCaoCP2 SET Kq1=Kq1-" + DoiDau(rs!sl) + ",Kq2=Kq2-" + DoiDau(rs!tt) + " WHERE MaSo=" + CStr(rs!MaVattu)
@@ -1727,7 +1727,7 @@ Private Sub LietKeTP()
     
     SQL = "SELECT MaTKNo, MaVattu, Sum(SoPS2No) AS SL, Vattu.SoHieu, Vattu.TenVattu, DonVi, HethongTK.SoHieu AS SHTK " _
         & " FROM (" + ChungTu2TKNC(-1) + ") INNER JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo " _
-        & " WHERE ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + " AND HethongTK.SoHieu LIKE '" + ShTkTP + "*' AND MaTP=" + CStr(m.MaSo) _
+        & " WHERE ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + " AND HethongTK.SoHieu LIKE '" + ShTkTP + "%' AND MaTP=" + CStr(m.MaSo) _
         & " GROUP BY MaTKNo, MaVattu, Vattu.SoHieu, Vattu.TenVattu, DonVi, HethongTK.SoHieu ORDER BY HethongTK.SoHieu DESC, Vattu.SoHieu DESC"
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     Do While Not rs.EOF

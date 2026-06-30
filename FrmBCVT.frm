@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{C932BA88-4374-101B-A56C-00AA003668DC}#1.1#0"; "MSMASK32.OCX"
+Object = "{C932BA88-4374-101B-A56C-00AA003668DC}#1.1#0"; "msmask32.ocx"
 Begin VB.Form FrmBCVT 
    AutoRedraw      =   -1  'True
    BackColor       =   &H00FFFFFF&
@@ -327,7 +327,7 @@ Private Sub Command_Click(Index As Integer)
             GoTo KT
     End Select
 Bad:
-    MsgBox "Error " + CStr(Err.Number) + ": " + Err.Description, vbExclamation, App.ProductName
+    MsgBox "Error " + CStr(Err.number) + ": " + Err.Description, vbExclamation, App.ProductName
 KT:
     Me.MousePointer = 0
 End Sub
@@ -370,13 +370,13 @@ Private Sub OptBc_Click(Index As Integer)
 End Sub
 
 Private Sub BangKeLuuChuyen(tdau As Integer, tcuoi As Integer, ndau As Date, ncuoi As Date, K1 As Long, k2 As Long)
-    Dim sql As String, wsql As String
+    Dim SQL As String, wsql As String
     
     wsql = IIf(tdau > 0, WThang("ThangCT", tdau, tcuoi), WNgay("NgayGS", ndau, ncuoi))
-    sql = "SELECT MaCT, SoHieu, NgayCT, NgayGS, DienGiai, Sum(SoPS) AS SoTien FROM ChungTu " _
+    SQL = "SELECT MaCT, SoHieu, NgayCT, NgayGS, DienGiai, Sum(SoPS) AS SoTien FROM ChungTu " _
         & " WHERE MaLoai=4 AND MaKho=" + CStr(K1) + " AND MaNguon=" + CStr(k2) + " AND " + wsql _
         + " GROUP BY MaCT, SoHieu, NgayCT, NgayGS, DienGiai ORDER BY NgayCT, MaCT"
-    SetSQL "QTheKho", sql
+    SetSQL "QTheKho", SQL
     
     frmMain.Rpt.ReportFileName = "BKLCNB.RPT"
     frmMain.Rpt.Formulas(3) = "ThoiGian = IF PageNumber() = 1 THEN '" + IIf(tdau > 0, ThoiGian(tdau, tcuoi), ThoiGianN(ndau, ncuoi)) + "'"
@@ -385,15 +385,15 @@ Private Sub BangKeLuuChuyen(tdau As Integer, tcuoi As Integer, ndau As Date, ncu
 End Sub
 
 Private Sub BangKeNhapKho(tdau As Integer, tcuoi As Integer, ndau As Date, ncuoi As Date, mk As Long, ml As Long)
-    Dim sql As String, wsql As String, cap As Integer
+    Dim SQL As String, wsql As String, cap As Integer
     
     wsql = IIf(tdau > 0, WThang("ThangCT", tdau, tcuoi), WNgay("NgayGS", ndau, ncuoi)) + " AND " + IIf(mk > 0, "((MaLoai=1 AND MaKho=" + CStr(mk) + ") OR (MaLoai=4 AND MaNguon=" + CStr(mk) + "))", "(MaLoai=1 OR MaLoai=4)")
     cap = SelectSQL("SELECT Cap AS F1 FROM PhanLoaiVattu WHERE MaSo=" + CStr(ml))
     
-    sql = "SELECT MaCT, ChungTu.SoHieu, NgayCT, NgayGS, DienGiai, Sum(SoPS) AS SoTien, First(HethongTK.Sohieu) AS TKDU, First(KhachHang.Sohieu) AS SHKH, First(KhachHang.Ten) AS TenKH " _
+    SQL = "SELECT MaCT, ChungTu.SoHieu, NgayCT, NgayGS, DienGiai, Sum(SoPS) AS SoTien, First(HethongTK.Sohieu) AS TKDU, First(KhachHang.Sohieu) AS SHKH, First(KhachHang.Ten) AS TenKH " _
         & " FROM (((" + ChungTu2TKNC(1) + ") INNER JOIN Vattu ON ChungTu.MaVattu=Vattu.MaSo) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo) LEFT JOIN KhachHang ON ChungTu.MaKHC=KhachHang.MaSo " _
-        & " WHERE " + wsql + IIf(ml > 0, " AND PhanLoaiVattu.SoHieu LIKE '" + MaSo2SoHieu(ml, "PhanLoaiVattu") + "*' AND (PhanLoaiVattu.Cap>" + CStr(cap) + " OR PhanLoaiVattu.MaSo=" + CStr(ml) + ")", "") + " GROUP BY MaCT, ChungTu.SoHieu, NgayCT, NgayGS, DienGiai ORDER BY NgayCT, MaCT"
-    SetSQL "QTheKho", sql
+        & " WHERE " + wsql + IIf(ml > 0, " AND PhanLoaiVattu.SoHieu LIKE '" + MaSo2SoHieu(ml, "PhanLoaiVattu") + "%' AND (PhanLoaiVattu.Cap>" + CStr(cap) + " OR PhanLoaiVattu.MaSo=" + CStr(ml) + ")", "") + " GROUP BY MaCT, ChungTu.SoHieu, NgayCT, NgayGS, DienGiai ORDER BY NgayCT, MaCT"
+    SetSQL "QTheKho", SQL
     
     frmMain.Rpt.ReportFileName = "BKNK.RPT"
     frmMain.Rpt.Formulas(3) = "ThoiGian = IF PageNumber() = 1 THEN '" + IIf(tdau > 0, ThoiGian(tdau, tcuoi), ThoiGianN(ndau, ncuoi)) + "'"

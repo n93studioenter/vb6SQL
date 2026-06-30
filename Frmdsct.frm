@@ -2043,7 +2043,7 @@ End Sub
     ' Thêm các di?u ki?n WHERE
     If Len(shd) > 0 Then
         If ChkTaikhoan(10).Value = 0 Then
-            SQL = SQL + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "*' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "*')"
+            SQL = SQL + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "%' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "%')"
         Else
             SQL = SQL + " AND (HoaDon" & sh & ".SoHD = '" & shd & "' OR ChungTu" & sh & ".SoHieu = '" & shd & "')"
         End If
@@ -2052,7 +2052,7 @@ End Sub
     If mts > 0 Then SQL = SQL + " AND (CTTaiSan.MaTS = " + CStr(mts) + ")"
     If mcn > 0 Then SQL = SQL + " AND (MaKH = " + CStr(mcn) + " OR MaKhachHang = " + CStr(mcn) + " OR MaKHC=" + CStr(mcn) + ")"
     If Len(shtk) > 0 Then
-        SQL = SQL + " AND (HethongTK.SoHieu LIKE '" + shtk + "*' OR HethongTK_1.SoHieu LIKE '" + shtk + "*')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
+        SQL = SQL + " AND (HethongTK.SoHieu LIKE '" + shtk + "%' OR HethongTK_1.SoHieu LIKE '" + shtk + "%')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
         If ChkTaikhoan(7).Value = 1 Then SQL = SQL + " AND ((HethongTK.TK_ID=" + CStr(TKCNPT_ID) + " OR HethongTK_1.TK_ID=" + CStr(TKCNKH_ID) + ") AND CT_ID=0)"
     End If
     If st > 0 Then
@@ -2239,7 +2239,7 @@ Public Sub LietKeChungtuold(shtk As String, mvt As Long, mts As Long, mcn As Lon
     If Len(shd) > 0 Then
         If ChkTaikhoan(10).Value = 0 Then
             'Truong hop tim gan dung
-            SQL = SQL + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "*' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "*')"
+            SQL = SQL + " AND (HoaDon" + sh + ".SoHD LIKE '" + shd + "%' OR ChungTu" + sh + ".SoHieu LIKE '" + shd + "%')"
         Else
             'Truong hop tim chinh xac
             SQL = SQL + " AND (HoaDon" & sh & ".SoHD = '" & shd & "' OR ChungTu" & sh & ".SoHieu = '" & shd & "')"
@@ -2249,7 +2249,7 @@ Public Sub LietKeChungtuold(shtk As String, mvt As Long, mts As Long, mcn As Lon
     If mts > 0 Then SQL = SQL + " AND (CTTaiSan.MaTS = " + CStr(mts) + ")"
     If mcn > 0 Then SQL = SQL + " AND (MaKH = " + CStr(mcn) + " OR MaKhachHang = " + CStr(mcn) + " OR MaKHC=" + CStr(mcn) + ")"
     If Len(shtk) > 0 Then
-        SQL = SQL + " AND (HethongTK.SoHieu LIKE '" + shtk + "*' OR HethongTK_1.SoHieu LIKE '" + shtk + "*')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
+        SQL = SQL + " AND (HethongTK.SoHieu LIKE '" + shtk + "%' OR HethongTK_1.SoHieu LIKE '" + shtk + "%')" + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
         'sql = sql + IIf(st <> 0, " AND SoPS=" + DoiDau(st), "")
         If ChkTaikhoan(7).Value = 1 Then SQL = SQL + " AND ((HethongTK.TK_ID=" + CStr(TKCNPT_ID) + " OR HethongTK_1.TK_ID=" + CStr(TKCNKH_ID) + ") AND CT_ID=0)"
     End If
@@ -2422,7 +2422,6 @@ Public Sub LietKeChungtu_1(shtk As String, mvt As Long, mts As Long, mcn As Long
 
     SQL = SQL & " GROUP BY MaCT"
     SetSQL "MienTru", SQL
-    Debug.Print "mmtru " & SQL
 
     ' ============ PH?N 2: XÂY D?NG SQL CHÍNH (THÊM DISTINCT) ============
     Dim strSQL_Main As String

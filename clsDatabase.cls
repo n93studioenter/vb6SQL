@@ -13,7 +13,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Private conn As Object
+Private Conn As Object
 Private m_QueryDefs As Collection
 Private m_Relations As Collection
 Private m_TableDefs As Collection
@@ -21,7 +21,7 @@ Private m_TableDefs As Collection
 Public RecordsAffected As Long
 
 Private Sub Class_Initialize()
-    Set conn = CreateObject("ADODB.Connection")
+    Set Conn = CreateObject("ADODB.Connection")
     Set m_QueryDefs = New Collection
     Set m_Relations = New Collection
     Set m_TableDefs = New Collection
@@ -29,17 +29,21 @@ End Sub
 
 Public Function Connect(server As String, db As String, uID As String, PWD As String) As Boolean
     On Error Resume Next
-    conn.Open "Provider=SQLOLEDB;Data Source=" & server & ";Initial Catalog=" & db & ";User ID=" & uID & ";Password=" & PWD & ";"
+    Conn.Open "Provider=SQLOLEDB;Data Source=" & server & ";Initial Catalog=" & db & ";User ID=" & uID & ";Password=" & PWD & ";"
     Connect = (Err.number = 0)
 End Function
 
 Public Sub ExecuteSQL(SQL As String, Optional Options As Variant = dbFailOnError)
-    Debug.Print "Mientru " & SQL
+    If Left(SQL, 5) <> "ALTER" Then
+        Debug.Print "ExecuteSQL     " & SQL
+    End If
     On Error GoTo Loi
-    conn.Execute SQL, RecordsAffected
+    Conn.Execute SQL, RecordsAffected
     Exit Sub
-Loi:
-    Debug.Print Err.number, "clsDatabase.ExecuteSQL", Err.Description
+Loi:     If Left(SQL, 5) <> "ALTER" Then
+
+        Debug.Print Err.number, "clsDatabase.ExecuteSQL", Err.Description
+    End If
 End Sub
 
 Private Function ConvertSQL(ByVal SQL As String) As String
@@ -459,6 +463,7 @@ Public Function FixSQL(ByVal SQL As String) As String
 
 End Function
 Public Function OpenRecordset(Source As String, Optional Typ As Variant = 2, Optional Typ2 As Variant = 2) As Object
+
     Dim rs As Object
     Dim SQL As String
     SQL = Source
@@ -482,8 +487,8 @@ Public Function OpenRecordset(Source As String, Optional Typ As Variant = 2, Opt
     Case Else:
         rsType = 3
     End Select
-    Debug.Print SQL
-    rs.Open SQL, conn, rsType, 3
+    Debug.Print "OpenRecordset  " & SQL
+    rs.Open SQL, Conn, rsType, 3
     Set OpenRecordset = rs
 End Function
 
@@ -613,11 +618,11 @@ Public Sub LoadTableDefs()
     SQL = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME"
     
     Set rs = CreateObject("ADODB.Recordset")
-    rs.Open SQL, conn, 3, 1  ' adOpenStatic, adLockReadOnly
+    rs.Open SQL, Conn, 3, 1  ' adOpenStatic, adLockReadOnly
     
     Do While Not rs.EOF
         Set tdf = New clsTableDef
-        tdf.Init rs.Fields("TABLE_NAME").Value, conn
+        tdf.Init rs.Fields("TABLE_NAME").Value, Conn
         m_TableDefs.Add tdf, rs.Fields("TABLE_NAME").Value
         rs.MoveNext
     Loop
@@ -636,7 +641,7 @@ End Property
 
 Public Function CreateRelation(Name As String, Table1 As String, Table2 As String, Optional Typ As Variant = 2) As Object
     Dim Rel As New clsRelation
-    Rel.Init Name, Table1, Table2, 0, conn
+    Rel.Init Name, Table1, Table2, 0, Conn
     m_Relations.Add Rel, Name
     Set CreateRelation = Rel
 End Function
@@ -646,7 +651,7 @@ End Sub
 
 Public Sub Closes()
     On Error Resume Next
-    conn.Close
+    Conn.Close
 End Sub
 
 Public Function OpenDatabase(FileName As String, Exclusive As Boolean, ReadOnly As Boolean, Connect As String) As clsDatabase
@@ -662,7 +667,7 @@ End Function
 
 Public Sub BeginTrans()
     On Error GoTo Loi
-    conn.BeginTrans
+    Conn.BeginTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.BeginTrans", Err.Description
@@ -670,7 +675,7 @@ End Sub
 
 Public Sub CommitTrans()
     On Error GoTo Loi
-    conn.CommitTrans
+    Conn.CommitTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.CommitTrans", Err.Description
@@ -678,7 +683,7 @@ End Sub
 
 Public Sub RollbackTrans()
     On Error GoTo Loi
-    conn.RollbackTrans
+    Conn.RollbackTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.RollbackTrans", Err.Description
@@ -686,7 +691,7 @@ End Sub
 
 Public Sub Rollback()
     On Error GoTo Loi
-    conn.RollbackTrans
+    Conn.RollbackTrans
     Exit Sub
 Loi:
     Err.Raise Err.number, "clsDatabase.Rollback", Err.Description
@@ -694,7 +699,7 @@ End Sub
 
 Public Function CreateTableDef(Name As String) As Object
     Dim tdf As New clsTableDef
-    tdf.Init Name, conn
+    tdf.Init Name, Conn
     m_TableDefs.Add tdf, Name
     Set CreateTableDef = tdf
 End Function
@@ -708,7 +713,7 @@ Public Function GetTableDef(TableName As String) As Object
     Set tdf = m_TableDefs(TableName)
     If tdf Is Nothing Then
         Set tdf = CreateObject("clsTableDef")
-        tdf.Init TableName, conn
+        tdf.Init TableName, Conn
         m_TableDefs.Add tdf, TableName
     End If
     Set GetTableDef = tdf
@@ -719,18 +724,18 @@ Public Function CreateQueryDef(Name As String, SQL As String) As Object
     On Error Resume Next
     m_QueryDefs.Remove Name
     On Error GoTo 0
-    qdf.Init Name, SQL, conn
+    qdf.Init Name, SQL, Conn
     m_QueryDefs.Add qdf, Name
     Set CreateQueryDef = qdf
 End Function
 
 Public Property Get QueryDefByIndex(idx As Integer) As Object
     Dim i As Integer
-    Dim Item As Variant
+    Dim item As Variant
     i = 1
-    For Each Item In m_QueryDefs
+    For Each item In m_QueryDefs
         If i = idx + 1 Then
-            Set QueryDefByIndex = Item
+            Set QueryDefByIndex = item
             Exit Property
         End If
         i = i + 1
@@ -740,7 +745,7 @@ End Property
 
 Public Property Get QueryDefs() As Object
     Set QueryDefs = New clsQueryDefCollection
-    QueryDefs.Init m_QueryDefs, conn
+    QueryDefs.Init m_QueryDefs, Conn
 End Property
 
 Public Sub AddQuery(Name As String, SQL As String)
@@ -754,7 +759,7 @@ Public Function GetLastRow(q As String, f As String) As Variant
     Dim rs As Object
     Set rs = CreateObject("ADODB.Recordset")
     rs.CursorLocation = 3
-    rs.Open q, conn, 3, 1
+    rs.Open q, Conn, 3, 1
     If Not rs.EOF Then
         rs.MoveLast
         GetLastRow = rs.Fields(f).Value
@@ -781,7 +786,7 @@ End Sub
 Public Function CreateView(ViewName As String, SQL As String) As Boolean
     On Error GoTo ErrHandler
     
-    If conn Is Nothing Or conn.State <> 1 Then
+    If Conn Is Nothing Or Conn.State <> 1 Then
         MsgBox "Chua k?t n?i!", vbCritical
         CreateView = False
         Exit Function
@@ -812,11 +817,11 @@ Public Function CreateView(ViewName As String, SQL As String) As Boolean
     
     ' Xóa View cu
     On Error Resume Next
-    conn.Execute "DROP VIEW " & ViewName
+    Conn.Execute "DROP VIEW " & ViewName
     On Error GoTo ErrHandler
     
     ' T?o View m?i
-    conn.Execute "CREATE VIEW " & ViewName & " AS " & strSQL
+    Conn.Execute "CREATE VIEW " & ViewName & " AS " & strSQL
     
     CreateView = True
     Exit Function

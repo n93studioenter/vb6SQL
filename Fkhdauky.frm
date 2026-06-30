@@ -812,8 +812,8 @@ Private Sub xoa_Click()
         SQL = SQL + ",DuNT_0 = 0"
         DBKetoan.ExecuteSQL SQL
         LietKeTonKho CboKho.ItemData(CboKho.ListIndex)
-        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '331*'"
-        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '131*'"
+        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '331%'"
+        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '131%'"
         'MsgBox "Xãa thµnh c«ng"
         Dim s As String
 

@@ -114,11 +114,11 @@ Public Function InSocaiTk(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi As Int
         If dkn <> 0 Or dkc <> 0 Or ps Then
 
             If ps Then
-                SetSQL "QSocai", "SELECT DISTINCTROW ChungTu.MaCT, ChungTu.ThangCT, ChungTu.SoHieu, ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai" + IIf(nn > 0, "E", "") + ", ChungTu.SoPS, ChungTu.GhiChu, HeThongTK.SoHieu as SoHieu1, HeThongTK_1.SoHieu as SoHieu2, ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, " + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu AS SH1" _
+                SetSQL "QSocai", "SELECT DISTINCTROW ChungTu.MaCT, ChungTu.ThangCT, ChungTu.SoHieu, ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai" + IIf(nn > 0, "E", "") + ", ChungTu.SoPS, ChungTu.GhiChu, HeThongTK.SoHieu as SoHieu1, HeThongTK_1.SoHieu as SoHieu2, ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, " + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu AS SH1" _
                                & " FROM HeThongTK AS HeThongTK_3 RIGHT JOIN (HeThongTK AS HeThongTK_2 RIGHT JOIN (HeThongTK AS HeThongTK_1 RIGHT JOIN (HeThongTK RIGHT JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTKTCNo) ON HeThongTK_1.MaSo = ChungTu.MaTKTCCo) ON HeThongTK_2.MaSo = ChungTu.MaTKNo) ON HeThongTK_3.MaSo = ChungTu.MaTKCo" _
                                & " Where SoPS<>0 AND ((HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_3.SoHieu LIKE '" + doiung + "%'") _
                                + ") Or (HethongTK_1.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_2.SoHieu LIKE '" + doiung + "%'") _
-                               + ")) And " + sqlw + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ThangCT,ChungTu.NgayGS," + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu"
+                               + ")) And " + sqlw + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ThangCT,ChungTu.NgayGS," + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu"
             Else
                 SetSQL "QSocai", "SELECT DISTINCTROW 0 AS MaCT,0 AS ThangCT, '' AS SoHieu, Null AS NgayCT, Null AS NgayGS, '' AS DienGiai, 0 AS SoPS, '' AS GhiChu, '' AS SoHieu1, '' AS SoHieu2, 0 AS MaTKTCNo, 0 AS MaTKTCCo" _
                                & " FROM ChungTu Where (chungtu.MaCT = 0)"
@@ -232,11 +232,11 @@ Public Function InSocaiTk_them(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi A
         If dkn <> 0 Or dkc <> 0 Or ps Then
 
             If ps Then
-                SetSQL "QSocai", "SELECT DISTINCTROW ChungTu.MaCT, ChungTu.ThangCT, ChungTu.SoHieu, ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai" + IIf(nn > 0, "E", "") + ", ChungTu.SoPS, ChungTu.GhiChu, HeThongTK.SoHieu as SoHieu1, HeThongTK_1.SoHieu as SoHieu2, ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, " + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu AS SH1" _
+                SetSQL "QSocai", "SELECT DISTINCTROW ChungTu.MaCT, ChungTu.ThangCT, ChungTu.SoHieu, ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai" + IIf(nn > 0, "E", "") + ", ChungTu.SoPS, ChungTu.GhiChu, HeThongTK.SoHieu as SoHieu1, HeThongTK_1.SoHieu as SoHieu2, ChungTu.MaTKTCNo, ChungTu.MaTKTCCo, " + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu AS SH1" _
                                & " FROM HeThongTK AS HeThongTK_3 RIGHT JOIN (HeThongTK AS HeThongTK_2 RIGHT JOIN (HeThongTK AS HeThongTK_1 RIGHT JOIN (HeThongTK RIGHT JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTKTCNo) ON HeThongTK_1.MaSo = ChungTu.MaTKTCCo) ON HeThongTK_2.MaSo = ChungTu.MaTKNo) ON HeThongTK_3.MaSo = ChungTu.MaTKCo" _
                                & " Where SoPS<>0 AND ((HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_3.SoHieu LIKE '" + doiung + "%'") _
                                + ") Or (HethongTK_1.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_2.SoHieu LIKE '" + doiung + "%'") _
-                               + ")) And " + sqlw + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ThangCT,ChungTu.NgayGS," + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "*','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu"
+                               + ")) And " + sqlw + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ThangCT,ChungTu.NgayGS," + IIf(.kieu < 0, "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','0','1')", "IIF(HethongTK.SoHieu LIKE '" + .sohieu + "%','1','0')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu"
             Else
                 SetSQL "QSocai", "SELECT DISTINCTROW 0 AS MaCT,0 AS ThangCT, '' AS SoHieu, Null AS NgayCT, Null AS NgayGS, '' AS DienGiai, 0 AS SoPS, '' AS GhiChu, '' AS SoHieu1, '' AS SoHieu2, 0 AS MaTKTCNo, 0 AS MaTKTCCo" _
                                & " FROM ChungTu Where (chungtu.MaCT = 0)"
@@ -334,7 +334,7 @@ Public Function InSoChitiet(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi As I
         
         SetSQL "QChitiet", "SELECT DISTINCTROW ChungTu.MaCT, ChungTu.SoHieu, ChungTu.NgayCT, ChungTu.NgayGS, ChungTu.DienGiai" + IIf(nn > 0, "E", "") + ", ChungTu.SoPS, ChungTu.SoPS2No, ChungTu.SoPS2Co, ChungTu.GhiChu, HeThongTK.SoHieu, HeThongTK_1.SoHieu, ChungTu.MaTKNo, ChungTu.MaTKCo, HethongTK_2.SoHieu As SHNo, HethongTK_3.SoHieu As SHCo,ThangCT" _
             & " FROM HeThongTK AS HeThongTK_3 RIGHT JOIN (HeThongTK AS HeThongTK_2 RIGHT JOIN (HeThongTK AS HeThongTK_1 RIGHT JOIN (HeThongTK RIGHT JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTKTCNo) ON HeThongTK_1.MaSo = ChungTu.MaTKTCCo) ON HeThongTK_2.MaSo = ChungTu.MaTKNo) ON HeThongTK_3.MaSo = ChungTu.MaTKCo" _
-            & " Where SoPS<>0 AND (" + sqlw + " And (" + SQL + "))" + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ChungTu.NgayGS," + IIf(taikhoan.kieu < 0, "IIF(HethongTK_2.SoHieu LIKE '" + taikhoan.sohieu + "*','0','1')", "IIF(HethongTK_3.SoHieu LIKE '" + taikhoan.sohieu + "*','0','1')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu, MaCT"
+            & " Where SoPS<>0 AND (" + sqlw + " And (" + SQL + "))" + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + IIf(mdt1 > 0, " AND (ChungTu.MaDT1 = " + CStr(mdt1) + ")", "") + IIf(mdt2 > 0, " AND (ChungTu.MaDT2 = " + CStr(mdt2) + ")", "") + IIf(mdt3 > 0, " AND (ChungTu.MaDT3 = " + CStr(mdt3) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) ORDER BY ChungTu.NgayGS," + IIf(taikhoan.kieu < 0, "IIF(HethongTK_2.SoHieu LIKE '" + taikhoan.sohieu + "%','0','1')", "IIF(HethongTK_3.SoHieu LIKE '" + taikhoan.sohieu + "%','0','1')") + "+Cstr(10+ChungTu.ThangCT)+ChungTu.SoHieu, MaCT"
     Else
         SetSQL "QChitiet", "SELECT DISTINCTROW 0 AS MaCT, '' AS SoHieu, Null AS NgayCT, Null AS NgayGS, '' AS DienGiai, 0 AS SoPS, 0 AS SoPS2No, 0 AS SoPS2Co, '' AS GhiChu, '' AS SoHieu0, '' AS SoHieu1, 0 AS MaTKNo, 0 AS MaTKCo, '' As SHNo, '' As SHCo, 0 AS ThangCT" _
             & " FROM ChungTu Where (chungtu.MaCT = 0)"
@@ -479,7 +479,7 @@ Dim rs As Object
     ExecuteSQL5 "UPDATE HethongTK SET CapDuoi = 0 WHERE SoHieu LIKE '" + shtk + "%'"
     
     Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW TKCha0" _
-      & " FROM HethongTK WHERE (TKCon = 1) AND (SoHieu LIKE '" + shtk + "*') GROUP BY TKCha0", dbOpenSnapshot)
+      & " FROM HethongTK WHERE (TKCon = 1) AND (SoHieu LIKE '" + shtk + "%') GROUP BY TKCha0", dbOpenSnapshot)
 
     Do While Not rs.EOF
       ExecuteSQL5 "UPDATE HethongTK SET CapDuoi = 1 WHERE TKCha0 = " + CStr(rs!TkCha0)
@@ -522,7 +522,7 @@ Public Sub CongDonKC(cap0 As Boolean)
     Set rs_sub = Nothing
 End Sub
 
-Public Function MaTKFix(db As Database, shtk As String, shct As String, tenct As String) As Long
+Public Function MaTKFix(db As database, shtk As String, shct As String, tenct As String) As Long
     Dim sh As String, m As Long, TK As ClsTaikhoan, tentk As String
         
     sh = shtk
@@ -596,17 +596,17 @@ End Sub
 
 Public Function PSDuoold(shno As String, shco As String, tdau As Integer, tcuoi As Integer, Optional shct As String = "", Optional xl As Integer = 0) As Double
     PSDuoold = SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(0) _
-        & " WHERE HethongTK.SoHieu LIKE '" + shno + "*' AND TK.SoHieu LIKE '" + shco + "*' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
+        & " WHERE HethongTK.SoHieu LIKE '" + shno + "%' AND TK.SoHieu LIKE '" + shco + "%' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
     If xl = 0 Then PSDuoold = PSDuoold + SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) _
-        & " WHERE HethongTK.SoHieu LIKE '" + shno + "*' AND InStr(ChungTu.GhiChu,'" + shco + "')>0 AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
+        & " WHERE HethongTK.SoHieu LIKE '" + shno + "%' AND InStr(ChungTu.GhiChu,'" + shco + "')>0 AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
 End Function
 Public Function PSDu(shno As String, shco As String, tdau As Integer, tcuoi As Integer, Optional shct As String = "", Optional xl As Integer = 0) As Double
-' S?a LIKE '*' thành LIKE '%'
+' S?a LIKE '%' thành LIKE '%'
     PSDu = SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(0) _
                    & " WHERE HethongTK.SoHieu LIKE '" + shno + "%' AND TK.SoHieu LIKE '" + shco + "%' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
 
     If xl = 0 Then
-        ' S?a InStr thành CHARINDEX và LIKE '*' thành LIKE '%'
+        ' S?a InStr thành CHARINDEX và LIKE '%' thành LIKE '%'
         PSDu = PSDu + SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) _
                               & " WHERE HethongTK.SoHieu LIKE '" + shno + "%' AND CHARINDEX('" + shco + "', ChungTu.GhiChu) > 0 AND " + WThang("ThangCT", tdau, tcuoi) + IIf(Len(shct) > 0, " AND RIGHT(HethongTK.SoHieu," + CStr(Len(shct)) + ")='" + shct + "'", ""))
     End If
@@ -619,7 +619,7 @@ Public Function BKChiTiet(xlapp As Excel.Application, xlsheet As Worksheet, TK A
     wsql = IIf(tdau > 0, WThang("ThangCT", tdau, tcuoi), WNgay("NgayGS", ndau, ncuoi))
     
     SQL = "SELECT DISTINCTROW LEFT(HethongTK.SoHieu,3) AS SHN,LEFT(TK.SoHieu,3) AS SHC FROM " + ChungTu2TKNC(0) _
-        & " WHERE (HethongTK.SoHieu LIKE '" + TK + "*' OR TK.SoHieu LIKE '" + TK + "*') AND " + wsql + " AND SoPS<>0  GROUP BY LEFT(HethongTK.SoHieu,3),LEFT(TK.SoHieu,3)"
+        & " WHERE (HethongTK.SoHieu LIKE '" + TK + "%' OR TK.SoHieu LIKE '" + TK + "%') AND " + wsql + " AND SoPS<>0  GROUP BY LEFT(HethongTK.SoHieu,3),LEFT(TK.SoHieu,3)"
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     If rs.recordCount = 0 Then GoTo KgIn
     
@@ -653,7 +653,7 @@ X1:
     xlsheet.Range("E6", XLSCol(4 + i) + "6").MergeCells = True
     
     SQL = "SELECT DISTINCTROW LEFT(HethongTK.SoHieu,3) AS SHN,LEFT(TK.SoHieu,3) AS SHC, ChungTu.SoHieu,DienGiai,SoPS FROM " + ChungTu2TKNC(0) _
-        & " WHERE (HethongTK.SoHieu LIKE '" + TK + "*' OR TK.SoHieu LIKE '" + TK + "*') AND " + wsql + " AND SoPS<>0 ORDER BY NgayCT"
+        & " WHERE (HethongTK.SoHieu LIKE '" + TK + "%' OR TK.SoHieu LIKE '" + TK + "%') AND " + wsql + " AND SoPS<>0 ORDER BY NgayCT"
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     j = 0
     Do While Not rs.EOF
@@ -709,9 +709,9 @@ End Function
 
 Public Function PSTKCP(shno As String, tdau As Integer, tcuoi As Integer, Optional mtp As Long = 0) As Double
     PSTKCP = SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) _
-        & " WHERE HethongTK.SoHieu LIKE '" + shno + "*' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mtp > 0, " AND MaTP=" + CStr(mtp), ""))
+        & " WHERE HethongTK.SoHieu LIKE '" + shno + "%' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mtp > 0, " AND MaTP=" + CStr(mtp), ""))
     PSTKCP = PSTKCP - SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(0) _
-        & " WHERE MaLoai<>3 AND TK.SoHieu LIKE '" + shno + "*' AND LEFT(HethongTK.SoHieu,3)<>'154' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mtp > 0, " AND MaTP=" + CStr(mtp), ""))
+        & " WHERE MaLoai<>3 AND TK.SoHieu LIKE '" + shno + "%' AND LEFT(HethongTK.SoHieu,3)<>'154' AND " + WThang("ThangCT", tdau, tcuoi) + IIf(mtp > 0, " AND MaTP=" + CStr(mtp), ""))
 End Function
 
 Public Function InSocaiTk2(taikhoan As ClsTaikhoan, tdau As Integer, tcuoi As Integer, thongbao As Boolean, doiung As String, VV As Long, Optional nn As Integer = 0) As Boolean
@@ -726,11 +726,11 @@ With taikhoan
     If dkn <> 0 Or dkc <> 0 Or ps Then
         
         If ps Then
-            SetSQL "QSocai", "SELECT DISTINCTROW CTGhiSo.SoHieu, Last(ChungTu.NgayCT) AS NCT, Last(CTGhiSo.DienGiai) AS DG, Sum(IIF(HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "*', ChungTu.SoPS,0)) AS PSNo, Sum(IIF(HethongTK_1.SoHieu LIKE '" + taikhoan.sohieu + "*', ChungTu.SoPS,0)) AS PSCo, IIF(HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "*',HeThongTK_1.SoHieu,HeThongTK.SoHieu) AS TKDu" _
+            SetSQL "QSocai", "SELECT DISTINCTROW CTGhiSo.SoHieu, Last(ChungTu.NgayCT) AS NCT, Last(CTGhiSo.DienGiai) AS DG, Sum(IIF(HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%', ChungTu.SoPS,0)) AS PSNo, Sum(IIF(HethongTK_1.SoHieu LIKE '" + taikhoan.sohieu + "%', ChungTu.SoPS,0)) AS PSCo, IIF(HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%',HeThongTK_1.SoHieu,HeThongTK.SoHieu) AS TKDu" _
                 & " FROM (HeThongTK AS HeThongTK_3 RIGHT JOIN (HeThongTK AS HeThongTK_2 RIGHT JOIN (HeThongTK AS HeThongTK_1 RIGHT JOIN (HeThongTK RIGHT JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTKTCNo) ON HeThongTK_1.MaSo = ChungTu.MaTKTCCo) ON HeThongTK_2.MaSo = ChungTu.MaTKNo) ON HeThongTK_3.MaSo = ChungTu.MaTKCo) INNER JOIN CTGhiSo ON ChungTu.CTGS=CTGhiSo.MaSo" _
                 & " Where SoPS<>0 AND ((HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_3.SoHieu LIKE '" + doiung + "%'") _
                 + ") Or (HethongTK_1.SoHieu LIKE '" + taikhoan.sohieu + "%'" + IIf(Len(doiung) = 0, "", " And HethongTK_2.SoHieu LIKE '" + doiung + "%'") _
-                + ")) And " + WThang("ThangCT", tdau, tcuoi) + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) GROUP BY CTGhiSo.SoHieu, IIF(HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "*',HeThongTK_1.SoHieu,HeThongTK.SoHieu)"
+                + ")) And " + WThang("ThangCT", tdau, tcuoi) + IIf(VV > 1, " AND (ChungTu.MaDT = " + CStr(VV) + ")", "") + " AND (Chungtu.MaLoai<>4 OR (Chungtu.MaLoai=4 AND Chungtu.MaTKNo<>Chungtu.MaTkco)) GROUP BY CTGhiSo.SoHieu, IIF(HethongTK.SoHieu LIKE '" + taikhoan.sohieu + "%',HeThongTK_1.SoHieu,HeThongTK.SoHieu)"
         Else
             SetSQL "QSocai", "SELECT DISTINCTROW '' AS SoHieu,Null AS NCT, '' AS DienGiai, 0 AS PSNo, 0 AS PSCo, '' AS TKDu" _
             & " FROM ChungTu Where (chungtu.MaCT = 0)"
@@ -865,7 +865,7 @@ Public Function SoPSTK2(TK As ClsTaikhoan, tdau As Integer, tcuoi As Integer) As
         If i > 0 And i < 13 Then SQL = SQL + "+" + IIf(TK.kieu < 0, "No_" + CStr(i), "Co_" + CStr(i))
     Next
     If Len(SQL) > 0 Then SoPSTK2 = SelectSQL("SELECT Sum(" + SQL + ") AS F1 FROM HethongTK WHERE SoHieu='" + TK.sohieu + "'")
-    If TK.loai > 4 Then SoPSTK2 = SoPSTK2 - SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(IIf(TK.kieu < 0, 1, -1)) + " WHERE MaLoai<>3 AND HethongTK.SoHieu LIKE '" + TK.sohieu + "*' AND " + WThang("ThangCT", tdau, tcuoi))
+    If TK.loai > 4 Then SoPSTK2 = SoPSTK2 - SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(IIf(TK.kieu < 0, 1, -1)) + " WHERE MaLoai<>3 AND HethongTK.SoHieu LIKE '" + TK.sohieu + "%' AND " + WThang("ThangCT", tdau, tcuoi))
 End Function
 
 Public Function GetTK_ID(sh As String, mtk As Long, Optional kieu As Integer, Optional tkcon As Integer) As Long
@@ -875,10 +875,10 @@ End Function
 Public Sub SoPSTKN(shtk As String, ndau As Date, ncuoi As Date, psn As Double, psc As Double)
 Dim SQL As String
     SQL = "SELECT DISTINCTROW Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) _
-        & "WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND " + WNgay("NgayGS", ndau, ncuoi)
+        & "WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND " + WNgay("NgayGS", ndau, ncuoi)
     psn = SelectSQL(SQL)
     SQL = "SELECT DISTINCTROW Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(1) _
-        & "WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND " + WNgay("NgayGS", ndau, ncuoi)
+        & "WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND " + WNgay("NgayGS", ndau, ncuoi)
     psc = SelectSQL(SQL)
 End Sub
 

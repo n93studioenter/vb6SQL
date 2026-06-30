@@ -268,27 +268,27 @@ Dim rs_khauhao As Object
             Case 0                  ' KhÊu hao tµi s¶n cè ®Þnh h÷u h×nh
                   SQL = "SELECT DISTINCTROW TKCha0,Sum(ThongSo.KH_NS+ThongSo.KH_TBS+ThongSo.KH_CNK+ ThongSo.KH_TD) AS TKH, HethongTK.SoHieu " _
                         & "FROM HethongTK RIGHT JOIN ((LoaiTaiSan RIGHT JOIN TaiSan ON LoaiTaiSan.MaSo = TaiSan.MaTaiKhoan) RIGHT JOIN ThongSo ON TaiSan.MaSo = ThongSo.MaTS) ON HethongTK.MaSo = ThongSo.MaDTSD " _
-                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "*' AND ThongSo.Thang >= " + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '1' GROUP BY HethongTK.SoHieu,TKCha0"
+                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "%' AND ThongSo.Thang >= " + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '1' GROUP BY HethongTK.SoHieu,TKCha0"
                   thg = 1
             Case 1                  ' KhÊu hao tµi s¶n cè ®Þnh v« h×nh
                   SQL = "SELECT DISTINCTROW TKCha0,Sum(ThongSo.KH_NS+ThongSo.KH_TBS+ThongSo.KH_CNK+ ThongSo.KH_TD) AS TKH, HethongTK.SoHieu " _
                         & "FROM HethongTK RIGHT JOIN ((LoaiTaiSan RIGHT JOIN TaiSan ON LoaiTaiSan.MaSo = TaiSan.MaTaiKhoan) RIGHT JOIN ThongSo ON TaiSan.MaSo = ThongSo.MaTS) ON HethongTK.MaSo = ThongSo.MaDTSD " _
-                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "*' AND ThongSo.Thang >=" + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '3' GROUP BY HethongTK.SoHieu,TKCha0"
+                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "%' AND ThongSo.Thang >=" + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '3' GROUP BY HethongTK.SoHieu,TKCha0"
                   thg = 3
             Case 2                  ' KhÊu hao tµi s¶n cè ®Þnh thuª tµi chÝnh
                   SQL = "SELECT DISTINCTROW TKCha0,Sum(ThongSo.KH_NS+ThongSo.KH_TBS+ThongSo.KH_CNK+ ThongSo.KH_TD) AS TKH, HethongTK.SoHieu " _
                         & "FROM HethongTK RIGHT JOIN ((LoaiTaiSan RIGHT JOIN TaiSan ON LoaiTaiSan.MaSo = TaiSan.MaTaiKhoan) RIGHT JOIN ThongSo ON TaiSan.MaSo = ThongSo.MaTS) ON HethongTK.MaSo = ThongSo.MaDTSD " _
-                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "*' AND ThongSo.Thang >=" + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '2' GROUP BY HethongTK.SoHieu,TKCha0"
+                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "%' AND ThongSo.Thang >=" + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '2' GROUP BY HethongTK.SoHieu,TKCha0"
                   thg = 2
             Case 3:
                 SQL = "SELECT DISTINCTROW TKCha0,Sum(ThongSo.KH_NS+ThongSo.KH_TBS+ThongSo.KH_CNK+ ThongSo.KH_TD) AS TKH, HethongTK.SoHieu " _
                         & "FROM HethongTK RIGHT JOIN ((LoaiTaiSan RIGHT JOIN TaiSan ON LoaiTaiSan.MaSo = TaiSan.MaTaiKhoan) RIGHT JOIN ThongSo ON TaiSan.MaSo = ThongSo.MaTS) ON HethongTK.MaSo = ThongSo.MaDTSD " _
-                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "*' AND ThongSo.Thang >= " + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '7' GROUP BY HethongTK.SoHieu,TKCha0"
+                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "%' AND ThongSo.Thang >= " + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,3,1) = '7' GROUP BY HethongTK.SoHieu,TKCha0"
                thg = 7
            Case 4                  ' KhÊu hao tµi s¶n cè ®Þnh h÷u h×nh
                   SQL = "SELECT DISTINCTROW TKCha0,Sum(ThongSo.KH_NS+ThongSo.KH_TBS+ThongSo.KH_CNK+ ThongSo.KH_TD) AS TKH, HethongTK.SoHieu " _
                         & "FROM HethongTK RIGHT JOIN ((LoaiTaiSan RIGHT JOIN TaiSan ON LoaiTaiSan.MaSo = TaiSan.MaTaiKhoan) RIGHT JOIN ThongSo ON TaiSan.MaSo = ThongSo.MaTS) ON HethongTK.MaSo = ThongSo.MaDTSD " _
-                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "*' AND ThongSo.Thang >= " + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,1,3) = '242' GROUP BY HethongTK.SoHieu,TKCha0"
+                        & "WHERE HethongTK.SoHieu LIKE '" + txt.Text + "%' AND ThongSo.Thang >= " + CStr(thg) + " AND ThongSo.Thang <= " + CStr(thgcuoi) + " AND Mid(LoaiTaiSan.SoHieu,1,3) = '242' GROUP BY HethongTK.SoHieu,TKCha0"
                   thg = 1
       End Select
       Set rs_khauhao = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)

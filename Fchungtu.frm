@@ -9934,7 +9934,8 @@ Public Sub TuDongNhapKho()
     Query = "SELECT * FROM ChungTu WHERE MaCT = " & lastMact - 1 & " AND SoHieu NOT LIKE '%GV%' AND MaVattu <> 0 and MaLoai =8"
     Set rs_ct = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
 
-    ExecuteSQL5 "UPDATE License SET Lock12=10+ Lock12 Mod 10 + Lock12 \100"
+    'ExecuteSQL5 "UPDATE License SET Lock12=10+ Lock12 Mod 10 + Lock12 \100"
+    ExecuteSQL5 "UPDATE License SET Lock12 = (Lock12 % 10) + (Lock12 / 100)"
 
 
     If Not rs_ct.EOF Then
@@ -10074,13 +10075,34 @@ Public Sub TuDongNhapKho()
         Loop
     End If
 
-    ExecuteSQL5 "UPDATE License SET Lock12=10+ Lock12 Mod 10 + Lock12 \100"
+    'ExecuteSQL5 "UPDATE License SET Lock12=10+ Lock12 Mod 10 + Lock12 \100"
+    ExecuteSQL5 "UPDATE License SET Lock12 = 10 + (Lock12 % 10) + (Lock12 / 100)"
+
+End Sub
+Public Sub SaveInvoice()
+    Dim tong_tien_
+    tong_tien_ = 0
+    With GrdChungtu
+        For i = 0 To .Row - 1
+            '  For j = 0 To .Cols - 1
+            .Row = i
+            .col = 7
+            '.col = 6
+            If Len(.Text) > 0 Then
+                tong_tien_ = tong_tien_ + Int(.Text)
+            End If
+
+        Next
+    End With
 End Sub
 Public Sub Command_Click(Index As Integer)
 
     typehanhdong = Index
     'bak nhapid
     If Index = 1 Then
+        Debug.Print "Bat dau ghi"
+        'SaveInvoice
+        'Exit Sub
         Dim rsport As Object
         Set rsport = DBKetoan.OpenRecordset("select IdNhap AS f1 FROM HoaDon " & _
                                             "inner join ChungTu on HoaDon.MaSo = ChungTu.MaSo " & _
@@ -11524,7 +11546,7 @@ Function kiemtralicenkey() As Boolean
     Dim tongsoct As Long
 
     ' tongsoct = val(SelectSQL( _
-      ' "SELECT Count(*) as f1 FROM (SELECT DISTINCT MacT FROM ChungTu WHERE SoHieu NOT LIKE '*GV*') AS T" _
+      ' "SELECT Count(*) as f1 FROM (SELECT DISTINCT MacT FROM ChungTu WHERE SoHieu NOT LIKE '*GV%') AS T" _
       '))
 
 
@@ -11533,7 +11555,7 @@ Function kiemtralicenkey() As Boolean
                    "SELECT COUNT(*) AS F1 " & _
                    "FROM (" & _
                  " SELECT MaCT FROM ChungTu " & _
-                 " WHERE SoHieu NOT LIKE '*GV*' " & _
+                 " WHERE SoHieu NOT LIKE '%GV%' " & _
                  " GROUP BY MaCT" & _
                    ") AS T" _
                  )
@@ -11568,7 +11590,7 @@ Function kiemtralicenkey() As Boolean
                        "SELECT COUNT(*) AS F1 " & _
                        "FROM (" & _
                      " SELECT MaCT FROM ChungTu " & _
-                     " WHERE SoHieu NOT LIKE '*GV*' " & _
+                     " WHERE SoHieu NOT LIKE '%GV%' " & _
                      " GROUP BY MaCT" & _
                        ") AS T" _
                      )
@@ -13028,7 +13050,7 @@ Private Sub txt_LostFocus(Index As Integer)
             L = Len(txt(0).Text)
             If Index = 0 And L > 0 And MaSoCT = 0 Then
                 If Not IsNumeric(txt(0).Text) Then
-                    'shct = SelectSQL("SELECT TOP 1 SoHieu AS F1 FROM ChungTu" + sh + " WHERE Len(SoHieu)>" + CStr(L) + " AND IsNumeric(Right(SoHieu,Len(SoHieu)-" + CStr(L) + ")) AND SoHieu LIKE'" + txt(0).Text + "*' AND ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + " ORDER BY SoHieu DESC")
+                    'shct = SelectSQL("SELECT TOP 1 SoHieu AS F1 FROM ChungTu" + sh + " WHERE Len(SoHieu)>" + CStr(L) + " AND IsNumeric(Right(SoHieu,Len(SoHieu)-" + CStr(L) + ")) AND SoHieu LIKE'" + txt(0).Text + "%' AND ThangCT=" + CStr(CboThang.ItemData(CboThang.ListIndex)) + " ORDER BY SoHieu DESC")
                     shct = SelectSQL("SELECT TOP 1 SoHieu AS F1 FROM ChungTu" + sh + " WHERE LEN(SoHieu) > " + CStr(L) + " AND TRY_CAST(RIGHT(SoHieu, LEN(SoHieu) - " + CStr(L) + ") AS INT) IS NOT NULL AND SoHieu LIKE '" + txt(0).Text + "%' AND ThangCT = " + CStr(CboThang.ItemData(CboThang.ListIndex)) + " ORDER BY SoHieu DESC")
                     If shct <> "0" Then txt(0).Text = SHCtuMoi(shct)
                 End If
@@ -16137,7 +16159,7 @@ Private Sub InTC(loai As Integer)
     Dim rs As Object
 
     If Not GetDate2.GetDate("In tıng phi’u " + IIf(loai = 0, "thu", "chi") + " theo ngµy", d1, d2) Then Exit Sub
-    SQL = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111*' GROUP BY MaCT"
+    SQL = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111%' GROUP BY MaCT"
     frmMain.Rpt.Destination = crptToPrinter
     P_1 = 1
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot, dbForwardOnly)
@@ -16163,7 +16185,7 @@ Private Sub InTC_in_toan_bo(loai As Integer)
 
     ' If Not GetDate2.GetDate("In tıng phi’u " + IIf(loai = 0, "thu", "chi") + " theo ngµy", d1, d2) Then Exit Sub
     ' dieukien = FrmDsCT
-    SQL = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111*' GROUP BY MaCT"
+    SQL = "SELECT MaCT FROM HeThongTK INNER JOIN ChungTu ON HeThongTK.MaSo = ChungTu.MaTK" + IIf(loai = 0, "N", "C") + "o WHERE " + WNgay("NgayGS", d1, d2) + " AND HethongTK.SoHieu LIKE '1111%' GROUP BY MaCT"
     frmMain.Rpt.Destination = crptToPrinter
     P_1 = 1
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot, dbForwardOnly)
@@ -16499,9 +16521,9 @@ End Function
 Private Sub LaySohieuDoiTuong2(loaidt As Integer, sh As String)
     Select Case loaidt
     Case 1:
-        Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, SoHieu + ' - ' + TenVattu AS F1 FROM Vattu WHERE SoHieu LIKE '" + sh + "*' ORDER BY SoHieu", CboNT(3), 1
+        Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, SoHieu + ' - ' + TenVattu AS F1 FROM Vattu WHERE SoHieu LIKE '" + sh + "%' ORDER BY SoHieu", CboNT(3), 1
     Case 2:
-        Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, SoHieu + ' - ' + Ten AS F1 FROM KhachHang WHERE SoHieu LIKE '" + sh + "*' AND LEFT(SoHieu,1)<>'#' ORDER BY SoHieu", CboNT(3), 1
+        Int_RecsetToCbo "SELECT DISTINCTROW MaSo AS F2, SoHieu + ' - ' + Ten AS F1 FROM KhachHang WHERE SoHieu LIKE '" + sh + "%' AND LEFT(SoHieu,1)<>'#' ORDER BY SoHieu", CboNT(3), 1
     End Select
     Me.Refresh
     CboNT(3).tag = loaidt

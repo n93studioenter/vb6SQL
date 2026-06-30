@@ -441,7 +441,7 @@ Private Sub Baocao111(tcuoi As Integer)
     xlsheet.Cells(4, 1) = "§Õn ngµy :" + Format(ncuoi, Mask_DR)
     xlsheet.Cells(9, 7) = duno - duco
     
-    Set rs = DBKetoan.OpenRecordset("SELECT MaSo, SoHieu, Ten, GhiChu, DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + " AS SoDu FROM HethongTK WHERE SoHieu LIKE '1121*' AND TKCon=0 AND Cap>2 ORDER BY SoHieu", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT MaSo, SoHieu, Ten, GhiChu, DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + " AS SoDu FROM HethongTK WHERE SoHieu LIKE '1121%' AND TKCon=0 AND Cap>2 ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If i > 1 Then
@@ -460,7 +460,7 @@ Private Sub Baocao111(tcuoi As Integer)
     k = 3 + i
     i = 0
     Set rs = DBKetoan.OpenRecordset("SELECT HethongTK.MaSo, SoHieu, Ten, GhiChu, KyHieu, DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + " AS SoDu,DuNT_" + CStr(CThangDB(tcuoi)) + " AS DuNT FROM HethongTK INNER JOIN NguyenTe ON HethongTK.MaNT=NguyenTe.MaSo " _
-        & " WHERE SoHieu LIKE '1122*' AND TKCon=0 AND Cap>2 ORDER BY SoHieu", dbOpenSnapshot)
+        & " WHERE SoHieu LIKE '1122%' AND TKCon=0 AND Cap>2 ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If i > 1 Then
@@ -651,7 +651,7 @@ Private Sub Baocao142(tdau As Integer, tcuoi As Integer)
         sqlcx = sqlcx + " + Co_" + st
     Next
     i = 0
-    Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuNo_" + CStr(CThangDB(ThangTruoc(tcuoi))) + "-DuCo_" + CStr(CThangDB(ThangTruoc(tcuoi))) + ") AS DuDK, Sum(" + sqln + ") AS PSN, Sum(" + sqlc + ") AS PSC, Sum(" + sqlnx + ") AS PSNx, Sum(" + sqlcx + ") AS PSCx, Sum(DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + ") AS DuCK FROM HethongTK WHERE SoHieu LIKE '142*' AND Cap>1 GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuNo_" + CStr(CThangDB(ThangTruoc(tcuoi))) + "-DuCo_" + CStr(CThangDB(ThangTruoc(tcuoi))) + ") AS DuDK, Sum(" + sqln + ") AS PSN, Sum(" + sqlc + ") AS PSC, Sum(" + sqlnx + ") AS PSNx, Sum(" + sqlcx + ") AS PSCx, Sum(DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + ") AS DuCK FROM HethongTK WHERE SoHieu LIKE '142%' AND Cap>1 GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         xlsheet.Cells(7 + i, 1) = CStr(i)
@@ -731,7 +731,7 @@ Private Sub Baocao152(tcuoi As Integer)
     xlsheet.Cells(1, 1) = pTenCty + " - " + pTenCn
     xlsheet.Cells(3, 1) = "§Õn ngµy :" + Format(ncuoi, Mask_DR)
     
-    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW HethongTK.SoHieu AS SHTK, PhanLoaiVattu.SoHieu AS SHPL, HethongTK.Ten, PhanLoaiVattu.TenPhanLoai, KhoHang.TenKho, Sum(Tien_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM (((TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN Vattu ON TonKho.MaVattu=Vattu.MaSo) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo WHERE (HethongTK.SoHieu LIKE '152*' OR HethongTK.SoHieu LIKE '153*' OR HethongTK.SoHieu LIKE '155*' OR HethongTK.SoHieu LIKE '156*') GROUP BY HethongTK.SoHieu, PhanLoaiVattu.SoHieu, HethongTK.Ten, PhanLoaiVattu.TenPhanLoai, KhoHang.TenKho HAVING Sum(Tien_" + CStr(CThangDB(tcuoi)) + ")<>0", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW HethongTK.SoHieu AS SHTK, PhanLoaiVattu.SoHieu AS SHPL, HethongTK.Ten, PhanLoaiVattu.TenPhanLoai, KhoHang.TenKho, Sum(Tien_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM (((TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN Vattu ON TonKho.MaVattu=Vattu.MaSo) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo WHERE (HethongTK.SoHieu LIKE '152%' OR HethongTK.SoHieu LIKE '153%' OR HethongTK.SoHieu LIKE '155%' OR HethongTK.SoHieu LIKE '156%') GROUP BY HethongTK.SoHieu, PhanLoaiVattu.SoHieu, HethongTK.Ten, PhanLoaiVattu.TenPhanLoai, KhoHang.TenKho HAVING Sum(Tien_" + CStr(CThangDB(tcuoi)) + ")<>0", dbOpenSnapshot)
     Do While Not rs.EOF
 a:
         i = i + 1
@@ -773,7 +773,7 @@ a:
     xlsheet.Cells(1, 1) = pTenCty + " - " + pTenCn
     xlsheet.Cells(3, 1) = "§Õn ngµy :" + Format(ncuoi, Mask_DR)
     
-    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW HethongTK.SoHieu AS SHTK, PhanLoaiVattu.SoHieu AS SHPL, HethongTK.Ten, TenPhanLoai, KhoHang.TenKho, Vattu.SoHieu, TenVattu, DonVi, (Tien_" + CStr(CThangDB(tcuoi)) + ") AS Tien, (Luong_" + CStr(CThangDB(tcuoi)) + ") AS Luong FROM (((TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN Vattu ON TonKho.MaVattu=Vattu.MaSo) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo WHERE (HethongTK.SoHieu LIKE '152*' OR HethongTK.SoHieu LIKE '153*' OR HethongTK.SoHieu LIKE '155*' OR HethongTK.SoHieu LIKE '156*') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0) ORDER BY HethongTK.SoHieu, PhanLoaiVattu.SoHieu, KhoHang.TenKho, Vattu.SoHieu", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW HethongTK.SoHieu AS SHTK, PhanLoaiVattu.SoHieu AS SHPL, HethongTK.Ten, TenPhanLoai, KhoHang.TenKho, Vattu.SoHieu, TenVattu, DonVi, (Tien_" + CStr(CThangDB(tcuoi)) + ") AS Tien, (Luong_" + CStr(CThangDB(tcuoi)) + ") AS Luong FROM (((TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN Vattu ON TonKho.MaVattu=Vattu.MaSo) INNER JOIN PhanLoaiVattu ON Vattu.MaPhanLoai=PhanLoaiVattu.MaSo WHERE (HethongTK.SoHieu LIKE '152%' OR HethongTK.SoHieu LIKE '153%' OR HethongTK.SoHieu LIKE '155%' OR HethongTK.SoHieu LIKE '156%') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0) ORDER BY HethongTK.SoHieu, PhanLoaiVattu.SoHieu, KhoHang.TenKho, Vattu.SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
 B:
         i = i + 1
@@ -817,7 +817,7 @@ B:
     Set xlsheet = xlapp.Worksheets(3)
     xlsheet.Cells(1, 1) = pTenCty + " - " + pTenCn
     xlsheet.Cells(3, 1) = "§Õn ngµy :" + Format(ncuoi, Mask_DR)
-    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW KhoHang.MaSo, TenKho FROM (TonKho INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo WHERE (HethongTK.SoHieu LIKE '152*' OR HethongTK.SoHieu LIKE '153*' OR HethongTK.SoHieu LIKE '155*' OR HethongTK.SoHieu LIKE '156*') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0)ORDER BY TenKho", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW KhoHang.MaSo, TenKho FROM (TonKho INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo WHERE (HethongTK.SoHieu LIKE '152%' OR HethongTK.SoHieu LIKE '153%' OR HethongTK.SoHieu LIKE '155%' OR HethongTK.SoHieu LIKE '156%') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0)ORDER BY TenKho", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         j = 0
@@ -830,7 +830,7 @@ B:
             Set xlsheet = xlapp.Worksheets(3)
         End If
         xlsheet.Cells(4, 1) = "Kho :" + rs!tenkho
-        Set rs2 = DBKetoan.OpenRecordset("SELECT DISTINCTROW HethongTK.SoHieu AS SHTK, HethongTK.Ten, Vattu.SoHieu, TenVattu, DonVi, (Tien_" + CStr(CThangDB(tcuoi)) + ") AS Tien, (Luong_" + CStr(CThangDB(tcuoi)) + ") AS Luong FROM (TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo) INNER JOIN Vattu ON TonKho.MaVattu=Vattu.MaSo WHERE (HethongTK.SoHieu LIKE '152*' OR HethongTK.SoHieu LIKE '153*' OR HethongTK.SoHieu LIKE '155*' OR HethongTK.SoHieu LIKE '156*') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0) AND MaSoKho=" + CStr(rs!MaSo) + " ORDER BY HethongTK.SoHieu, Vattu.SoHieu", dbOpenSnapshot)
+        Set rs2 = DBKetoan.OpenRecordset("SELECT DISTINCTROW HethongTK.SoHieu AS SHTK, HethongTK.Ten, Vattu.SoHieu, TenVattu, DonVi, (Tien_" + CStr(CThangDB(tcuoi)) + ") AS Tien, (Luong_" + CStr(CThangDB(tcuoi)) + ") AS Luong FROM (TonKho INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo) INNER JOIN Vattu ON TonKho.MaVattu=Vattu.MaSo WHERE (HethongTK.SoHieu LIKE '152%' OR HethongTK.SoHieu LIKE '153%' OR HethongTK.SoHieu LIKE '155%' OR HethongTK.SoHieu LIKE '156%') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0) AND MaSoKho=" + CStr(rs!MaSo) + " ORDER BY HethongTK.SoHieu, Vattu.SoHieu", dbOpenSnapshot)
         Do While Not rs2.EOF
 c:
             j = j + 1
@@ -864,7 +864,7 @@ c:
     
     k = 3 + i
     i = 0
-    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW KhoHang.MaSo AS MKho,TenKho,HethongTK.MaSo,HethongTK.SoHieu,Ten FROM (TonKho INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo WHERE (HethongTK.SoHieu LIKE '152*' OR HethongTK.SoHieu LIKE '153*' OR HethongTK.SoHieu LIKE '155*' OR HethongTK.SoHieu LIKE '156*') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0) GROUP BY TenKho,HethongTK.SoHieu,Ten,KhoHang.MaSo,HethongTK.MaSo ORDER BY TenKho,HethongTK.SoHieu", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW KhoHang.MaSo AS MKho,TenKho,HethongTK.MaSo,HethongTK.SoHieu,Ten FROM (TonKho INNER JOIN KhoHang ON TonKho.MaSoKho=KhoHang.MaSo) INNER JOIN HethongTK ON TonKho.MaTaiKhoan=HethongTK.MaSo WHERE (HethongTK.SoHieu LIKE '152%' OR HethongTK.SoHieu LIKE '153%' OR HethongTK.SoHieu LIKE '155%' OR HethongTK.SoHieu LIKE '156%') AND (Tien_" + CStr(CThangDB(tcuoi)) + "<>0 OR Luong_" + CStr(CThangDB(tcuoi)) + "<>0) GROUP BY TenKho,HethongTK.SoHieu,Ten,KhoHang.MaSo,HethongTK.MaSo ORDER BY TenKho,HethongTK.SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If i > 1 Then
@@ -1021,7 +1021,7 @@ Private Sub Baocao241(tdau As Integer, tcuoi As Integer)
     
     i = 0
     Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuNo_0-DuCo_0) AS DuDK,Sum(" + sqln + ") AS PSN,Sum(" + sqlc + ") AS PSC,Sum(" + sqlnx + ") AS PSNx,Sum(" + sqlcx + ") AS PSCx,Sum(DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + ") AS DuCK " _
-        & " FROM HethongTK WHERE SoHieu LIKE '241*' AND Cap>1 AND (DuNo_0-DuCo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
+        & " FROM HethongTK WHERE SoHieu LIKE '241%' AND Cap>1 AND (DuNo_0-DuCo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         TK.InitTaikhoanSohieu rs!sohieu
@@ -1096,7 +1096,7 @@ Private Sub Baocao311(tcuoi As Integer)
     Set xlsheet = xlapp.Worksheets(3)
     xlsheet.Cells(1, 1) = pTenCty + " - " + pTenCn
     xlsheet.Cells(5, 1) = "§Õn ngµy :" + Format(ncuoi, Mask_DR)
-    Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuCo_0-DuNo_0) AS DN, Sum(" + sqln + ") AS PSN, Sum(" + sqlc + ") AS PSC, Sum(DuCo_" + CStr(CThangDB(tcuoi)) + "-DuNo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM HethongTK WHERE SoHieu LIKE '341*' AND Cap>1 GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuCo_0-DuNo_0) AS DN, Sum(" + sqln + ") AS PSN, Sum(" + sqlc + ") AS PSC, Sum(DuCo_" + CStr(CThangDB(tcuoi)) + "-DuNo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM HethongTK WHERE SoHieu LIKE '341%' AND Cap>1 GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If rs!cap = 2 Then
@@ -1166,7 +1166,7 @@ Private Sub Baocao333(tdau As Integer, tcuoi As Integer)
     
     i = 0
     Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuCo_0-DuNo_0) AS DuDK,Sum(" + sqln + ") AS PSN,Sum(" + sqlc + ") AS PSC,Sum(" + sqlnx + ") AS PSNx,Sum(" + sqlcx + ") AS PSCx,Sum(DuCo_" + CStr(CThangDB(tcuoi)) + "-DuNo_" + CStr(CThangDB(tcuoi)) + ") AS DuCK " _
-        & " FROM HethongTK WHERE ((SoHieu LIKE '333*' AND Cap=2) OR (SoHieu LIKE '333111*' AND Cap=5 AND TKCon=0)) AND (DuCo_0-DuNo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
+        & " FROM HethongTK WHERE ((SoHieu LIKE '333%' AND Cap=2) OR (SoHieu LIKE '333111%' AND Cap=5 AND TKCon=0)) AND (DuCo_0-DuNo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If rs!cap = 2 Then
@@ -1201,7 +1201,7 @@ Private Sub Baocao333(tdau As Integer, tcuoi As Integer)
     i = 0
     j = 0
     Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuCo_0-DuNo_0) AS DuDK,Sum(" + sqln + ") AS PSN,Sum(" + sqlc + ") AS PSC,Sum(" + sqlnx + ") AS PSNx,Sum(" + sqlcx + ") AS PSCx,Sum(DuCo_" + CStr(CThangDB(tcuoi)) + "-DuNo_" + CStr(CThangDB(tcuoi)) + ") AS DuCK " _
-        & " FROM HethongTK WHERE ((SoHieu LIKE '3383*') OR (SoHieu LIKE '3384*')) AND (DuCo_0-DuNo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
+        & " FROM HethongTK WHERE ((SoHieu LIKE '3383%') OR (SoHieu LIKE '3384%')) AND (DuCo_0-DuNo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If rs!cap = 2 Then
@@ -1253,7 +1253,7 @@ Private Sub Baocao333(tdau As Integer, tcuoi As Integer)
     j = 0
     sqln = ""
     Set rs = DBKetoan.OpenRecordset("SELECT HethongTK.SoHieu AS SH, HethongTK.Ten,ChungTu.SoHieu,ChungTu.NgayCT, SoPS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKTCNo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKCo=TK.MaSo WHERE " _
-        + WThang("ThangCT", tdau, tcuoi) + " AND HethongTK.SoHieu LIKE '333*' AND (TK.SoHieu LIKE '111*' OR TK.SoHieu LIKE '112*') ORDER BY HethongTK.SoHieu, ChungTu.NgayCT, ChungTu.SoHieu", dbOpenSnapshot)
+        + WThang("ThangCT", tdau, tcuoi) + " AND HethongTK.SoHieu LIKE '333%' AND (TK.SoHieu LIKE '111%' OR TK.SoHieu LIKE '112%') ORDER BY HethongTK.SoHieu, ChungTu.NgayCT, ChungTu.SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If sqln <> rs!sh Then
@@ -1377,7 +1377,7 @@ Private Sub Baocao338(tdau As Integer, tcuoi As Integer)
     xlsheet.Cells(1, 1) = pTenCty + " - " + pTenCn
     xlsheet.Cells(4, 1) = ThoiGian(tdau, tcuoi)
     Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(DuCo_0-DuNo_0) AS DuDK, Sum(" + sqln + ") AS PSN, Sum(" + sqlc + ") AS PSC, Sum(" + sqlnx + ") AS PSNx, Sum(" + sqlcx + ") AS PSCx, Sum(DuCo_" + CStr(CThangDB(tcuoi)) + "-DuNo_" + CStr(CThangDB(tcuoi)) + ") AS DuCK " _
-        & " FROM HethongTK WHERE (SoHieu LIKE '335*' AND Cap>1) AND (DuCo_0-DuNo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
+        & " FROM HethongTK WHERE (SoHieu LIKE '335%' AND Cap>1) AND (DuCo_0-DuNo_0<>0 OR " + sqlnx + "<>0 OR " + sqlcx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If rs!cap = 2 Then
@@ -1614,7 +1614,7 @@ Private Sub Baocao642(tdau As Integer, tcuoi As Integer)
     
     i = 0
     Set rs = DBKetoan.OpenRecordset("SELECT SoHieu, Cap, Ten, GhiChu, Sum(" + sqln + ") AS PSN,Sum(" + sqlnx + ") AS PSNx " _
-        & " FROM HethongTK WHERE SoHieu LIKE '642*' AND Cap>1 AND (" + sqlnx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
+        & " FROM HethongTK WHERE SoHieu LIKE '642%' AND Cap>1 AND (" + sqlnx + "<>0) GROUP BY SoHieu, Cap, Ten, GhiChu ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If rs!cap = 2 Then
@@ -1695,7 +1695,7 @@ Private Sub SheetSoDu(xlsheet As Worksheet, shtk As String, captk As Integer, tc
     
     id = GetTK_ID(shtk, 0, k)
     If id <> TKCNKH_ID And id <> TKCNPT_ID Then
-        Set rs = DBKetoan.OpenRecordset("SELECT MaSo, SoHieu, Cap, Ten, TKCon, TK_ID, GhiChu, (DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM HethongTK WHERE SoHieu LIKE '" + shtk + "*' AND Cap>=" + CStr(captk) + " ORDER BY SoHieu", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT MaSo, SoHieu, Cap, Ten, TKCon, TK_ID, GhiChu, (DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM HethongTK WHERE SoHieu LIKE '" + shtk + "%' AND Cap>=" + CStr(captk) + " ORDER BY SoHieu", dbOpenSnapshot)
         Do While Not rs.EOF
             i = i + 1
             If rs!cap = captk Then
@@ -1724,7 +1724,7 @@ Private Sub SheetSoDu(xlsheet As Worksheet, shtk As String, captk As Integer, tc
         Loop
         xlsheet.Cells(fix_row + 1 + i, sd_col) = T
     Else
-        Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW MaPhanLoai, PhanLoaiKhachHang.TenPhanLoai, KhachHang.SoHieu, KhachHang.Ten, SoDuKhachHang.DuNo_" + CStr(CThangDB(tcuoi)) + "-SoDuKhachHang.DuCo_" + CStr(CThangDB(tcuoi)) + " AS SoDu,KhachHang.GhiChu FROM ((SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhachHang ON SoDuKhachHang.MaKhachHang=KhachHang.MaSo) INNER JOIN PhanLoaiKhachHang ON KhachHang.MaPhanLoai=PhanLoaiKhachHang.MaSo WHERE HethongTK.SoHieu LIKE '" + shtk + "*' ORDER BY PhanLoaiKhachHang.SoHieu,KhachHang.SoHieu", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW MaPhanLoai, PhanLoaiKhachHang.TenPhanLoai, KhachHang.SoHieu, KhachHang.Ten, SoDuKhachHang.DuNo_" + CStr(CThangDB(tcuoi)) + "-SoDuKhachHang.DuCo_" + CStr(CThangDB(tcuoi)) + " AS SoDu,KhachHang.GhiChu FROM ((SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhachHang ON SoDuKhachHang.MaKhachHang=KhachHang.MaSo) INNER JOIN PhanLoaiKhachHang ON KhachHang.MaPhanLoai=PhanLoaiKhachHang.MaSo WHERE HethongTK.SoHieu LIKE '" + shtk + "%' ORDER BY PhanLoaiKhachHang.SoHieu,KhachHang.SoHieu", dbOpenSnapshot)
         Do While Not rs.EOF
             i = i + 1
             If mpl = rs!MaPhanLoai Then
@@ -1763,7 +1763,7 @@ Private Sub SheetSoDu2(xlsheet As Worksheet, shtk As String, captk As Integer, t
     Dim i As Integer, j As Integer, T As Double, rs As Object, id As Long, k As Integer, mpl As Long, K1 As Integer
     
     id = GetTK_ID(shtk, 0, K1)
-    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW MaKhachHang, KhachHang.SoHieu, KhachHang.Ten, HethongTK.Ten AS TenTK, (SoDuKhachHang.DuNo_" + CStr(CThangDB(tcuoi)) + "-SoDuKhachHang.DuCo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM (SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhachHang ON SoDuKhachHang.MaKhachHang=KhachHang.MaSo WHERE HethongTK.SoHieu LIKE '" + shtk + "*' ORDER BY KhachHang.SoHieu,HethongTK.SoHieu", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW MaKhachHang, KhachHang.SoHieu, KhachHang.Ten, HethongTK.Ten AS TenTK, (SoDuKhachHang.DuNo_" + CStr(CThangDB(tcuoi)) + "-SoDuKhachHang.DuCo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM (SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo) INNER JOIN KhachHang ON SoDuKhachHang.MaKhachHang=KhachHang.MaSo WHERE HethongTK.SoHieu LIKE '" + shtk + "%' ORDER BY KhachHang.SoHieu,HethongTK.SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If mpl = rs!MaKhachHang Then
@@ -1788,7 +1788,7 @@ Private Sub SheetSoDu2(xlsheet As Worksheet, shtk As String, captk As Integer, t
     
     i = i + 1
     j = 0
-    Set rs = DBKetoan.OpenRecordset("SELECT MaSo, SoHieu, Cap, Ten, TKCon, TK_ID, GhiChu, (DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM HethongTK WHERE SoHieu LIKE '" + shtk + "*' AND Cap>=" + CStr(captk) + " AND (TK_ID<>" + CStr(TKCNKH_ID) + " AND TK_ID<>" + CStr(TKCNPT_ID) + ") ORDER BY SoHieu", dbOpenSnapshot)
+    Set rs = DBKetoan.OpenRecordset("SELECT MaSo, SoHieu, Cap, Ten, TKCon, TK_ID, GhiChu, (DuNo_" + CStr(CThangDB(tcuoi)) + "-DuCo_" + CStr(CThangDB(tcuoi)) + ") AS SoDu FROM HethongTK WHERE SoHieu LIKE '" + shtk + "%' AND Cap>=" + CStr(captk) + " AND (TK_ID<>" + CStr(TKCNKH_ID) + " AND TK_ID<>" + CStr(TKCNPT_ID) + ") ORDER BY SoHieu", dbOpenSnapshot)
     Do While Not rs.EOF
         i = i + 1
         If rs!cap = captk Then

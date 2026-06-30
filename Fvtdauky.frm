@@ -1044,9 +1044,9 @@ Public Sub xoa_Click()
         SQL = SQL + " ,b.Luong_0 = 0"
         DBKetoan.ExecuteSQL SQL
         CboKho_Click
-        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '156*'"
-        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '154*'"
-        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '152*'"
+        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '156%'"
+        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '154%'"
+        DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '152%'"
     End If
 
 End Sub

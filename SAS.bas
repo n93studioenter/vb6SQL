@@ -74,7 +74,7 @@ Public pSHPT As String
 Public Const MaxGridRow = 16352
 Public Const Max1000 = 1000
 
-Public UserID As Long
+Public userId As Long
 Public UserName As String
 Public User_Right As Long
 Public pMaxUser As Integer
@@ -338,7 +338,7 @@ Public Sub CloseUp(Optional nen As Integer = 0)
     
     CloseItemList
     On Error Resume Next
-    ExecuteSQL5 "UPDATE Users SET WS='...' WHERE MaSo=" + CStr(UserID), False
+    ExecuteSQL5 "UPDATE Users SET WS='...' WHERE MaSo=" + CStr(userId), False
     DelTemp
     mst = SelectSQL("SELECT MaSoThue AS F1 FROM License")
     DBKetoan.Closes
@@ -388,7 +388,6 @@ Public Function ExecuteSQL5(SQL As String, Optional msg As Boolean = True) As In
     Dim s As String
     On Error GoTo ErrLock
     DBKetoan.ExecuteSQL SQL, dbFailOnError
-    Debug.Print SQL
     On Error GoTo 0
     ExecuteSQL5 = 0
     Exit Function
@@ -435,7 +434,7 @@ End Function
 '======================================================================================
 Public Function SelectSQL(SQL As String, Optional SoPhu As Variant = 0, Optional SoPhu2 As Variant = 0, Optional SoPhu3 As Variant = 0, Optional SoPhu4 As Variant = 0) As Variant
     Dim rs As Object
-    Debug.Print "rp - " & SQL
+    Debug.Print "SelectSQL    " & SQL
 
     SoPhu = 0
     SoPhu2 = 0
@@ -485,7 +484,7 @@ ErrLock:
 'MsgBox Err.Description
 End Function
 
-Public Function SelectSQLDB(db As Database, SQL As String, Optional SoPhu As Variant, Optional SoPhu1 As Variant, Optional SoPhu2 As Variant) As Variant
+Public Function SelectSQLDB(db As database, SQL As String, Optional SoPhu As Variant, Optional SoPhu1 As Variant, Optional SoPhu2 As Variant) As Variant
 Dim rs As Object
       Set rs = db.OpenRecordset(SQL, dbOpenSnapshot)
       On Error Resume Next
@@ -650,7 +649,7 @@ Private Function ConvertToSQLServer(ByVal SQL As String) As String
 
     Dim re As Object
     Set re = CreateObject("VBScript.RegExp")
-    re.pattern = "(LIKE\s+')([^']*)\*([^']*') "
+    re.pattern = "(LIKE\s+')([^']*)\*([^']%') "
     re.Global = True
     s = re.Replace(s, "$1$2%$3")
     
@@ -828,7 +827,8 @@ tt:
 
     HienThongBao s, 1
 
-    ExecuteSQL5 "DELETE DISTINCTROW TonKho.* FROM Vattu RIGHT JOIN TonKho ON Vattu.MaSo = TonKho.MaVatTu WHERE ((Vattu.MaSo Is Null))"
+    'ExecuteSQL5 "DELETE DISTINCTROW TonKho.* FROM Vattu RIGHT JOIN TonKho ON Vattu.MaSo = TonKho.MaVatTu WHERE ((Vattu.MaSo Is Null))"
+    ExecuteSQL5 "DELETE TonKho FROM TonKho LEFT JOIN Vattu ON TonKho.MaVatTu = Vattu.MaSo WHERE Vattu.MaSo IS NULL"
     SQL = "UPDATE TonKho SET MaSoKho=MaSoKho"
     For i = 1 To 12
         SQL = SQL + ",Luong_Nhap_" + CStr(i) + "=0,Luong_Xuat_" + CStr(i) + "=0,Tien_Nhap_" + CStr(i) + "=0,Tien_Xuat_" + CStr(i) + "=0"
@@ -857,7 +857,9 @@ tt:
 K1:
         ExecuteSQL5 SQL + " WHERE MaSoKho = " + CStr(rs_taikhoan!mk) + " AND MaTaiKhoan=" + CStr(rs_taikhoan!MaTkNo) + " AND MaVattu=" + CStr(rs_taikhoan!MaVattu)
         If DBKetoan.RecordsAffected = 0 Then
-            If TinhTonKho(rs_taikhoan!mk, rs_taikhoan!MaTkNo, rs_taikhoan!MaVattu, 12, -1, 0, 0, 0) = 0 Then GoTo K1
+            If TinhTonKho(rs_taikhoan!mk, rs_taikhoan!MaTkNo, rs_taikhoan!MaVattu, 12, -1, 0, 0, 0) = 0 Then
+                GoTo K1
+            End If
         End If
         rs_taikhoan.MoveNext
     Loop
@@ -890,20 +892,34 @@ k2:
 
 
     HienThongBao "KiÓm tra sè tån ...", 1
-    ExecuteSQL5 "UPDATE TonKho SET Luong_0 = Fix(iif(Luong_0>0,0.5,-0.5) + Luong_0 * " + CStr(Mask_N) + ") / " + CStr(Mask_N) + ", Tien_0 = " + IIf(pTien = 0, "Fix(iif(Tien_0>0,0.5,-0.5)  + Tien_0)", "Fix(iif(Tien_0>0,0.5,-0.5)  + " + CStr(Mask_N) + "*Tien_0)/" + CStr(Mask_N))
+    'ExecuteSQL5 "UPDATE TonKho SET Luong_0 = Fix(iif(Luong_0>0,0.5,-0.5) + Luong_0 * " + CStr(Mask_N) + ") / " + CStr(Mask_N) + ", Tien_0 = " + IIf(pTien = 0, "Fix(iif(Tien_0>0,0.5,-0.5)  + Tien_0)", "Fix(iif(Tien_0>0,0.5,-0.5)  + " + CStr(Mask_N) + "*Tien_0)/" + CStr(Mask_N))
+    ExecuteSQL5 "UPDATE TonKho SET Luong_0 = (CASE WHEN Luong_0 > 0 THEN 0.5 ELSE -0.5 END + Luong_0 * " & CStr(Mask_N) & ") / " & CStr(Mask_N) & ", Tien_0 = " & IIf(pTien = 0, "(CASE WHEN Tien_0 > 0 THEN 0.5 ELSE -0.5 END + Tien_0)", "(CASE WHEN Tien_0 > 0 THEN 0.5 ELSE -0.5 END + " & CStr(Mask_N) & " * Tien_0) / " & CStr(Mask_N))
     SQL = "UPDATE TonKho SET MaVattu = MaVattu"
+
     For i = 1 To 12
-        st = "Luong_0"
-        st2 = "Tien_0"
-        st4 = "USDTien_0"
+        st = "ISNULL(Luong_0, 0)"
+        st2 = "ISNULL(Tien_0, 0)"
+        st4 = "ISNULL(USDTien_0, 0)"
+
         For j = 1 To i
             st3 = CStr(j)
-            st = st + " + Luong_Nhap_" + st3 + " - Luong_Xuat_" + st3
-            st2 = st2 + " + Tien_Nhap_" + st3 + " - Tien_Xuat_" + st3
-            st4 = st4 + " + USDTien_Nhap_" + st3 + " - USDTien_Xuat_" + st3
+            st = st & " + ISNULL(Luong_Nhap_" & st3 & ", 0) - ISNULL(Luong_Xuat_" & st3 & ", 0)"
+            st2 = st2 & " + ISNULL(Tien_Nhap_" & st3 & ", 0) - ISNULL(Tien_Xuat_" & st3 & ", 0)"
+            st4 = st4 & " + ISNULL(USDTien_Nhap_" & st3 & ", 0) - ISNULL(USDTien_Xuat_" & st3 & ", 0)"
         Next
-        SQL = SQL + ", Luong_" + CStr(i) + " = Fix(iif(" + st + ">0,0.5,-0.5)  + (" + st + ") * " + CStr(Mask_N) + ")/" + CStr(Mask_N) + ", Tien_" + CStr(i) + " = " + st2 + IIf(pGiaUSD > 0, ", USDTien_" + CStr(i) + " = " + st4, "")
+
+        ' Luong_i - làm tròn v? s? nguyên (gi?ng Fix)
+        SQL = SQL & ", Luong_" & CStr(i) & " = ROUND(" & st & ", 0)"
+
+        ' Tien_i - gi? nguyên st2 (không làm tròn) - gi?ng Access cu
+        SQL = SQL & ", Tien_" & CStr(i) & " = " & st2
+
+        ' USDTien_i n?u có
+        If pGiaUSD > 0 Then
+            SQL = SQL & ", USDTien_" & CStr(i) & " = " & st4
+        End If
     Next
+
     ExecuteSQL5 SQL
 
     SQL = "DELETE FROM TonKho WHERE Luong_0=0 And Tien_0=0" + IIf(pGiaUSD > 0, " AND USDTien_0=0", "")
@@ -1616,7 +1632,7 @@ Public Sub PhanBoCP(tdau As Integer, tcuoi As Integer, shtk As String, tentk As 
     For i = CThangDB(tdau) To CThangDB(tcuoi)
         SQL = SQL + "+No_" + CStr(i) + "-Co_" + CStr(i)
     Next
-    SQL = "SELECT DISTINCTROW MaSo,(" + SQL + "+KC_C)" + IIf(TyLe < 100, "*" + CStr(TyLe) + "/100", "") + " AS CP FROM HethongTK WHERE SoHieu LIKE '" + shtk + "*' AND TKCon=0 AND (" + SQL + "+KC_C)<>0"
+    SQL = "SELECT DISTINCTROW MaSo,(" + SQL + "+KC_C)" + IIf(TyLe < 100, "*" + CStr(TyLe) + "/100", "") + " AS CP FROM HethongTK WHERE SoHieu LIKE '" + shtk + "%' AND TKCon=0 AND (" + SQL + "+KC_C)<>0"
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     Do While Not rs.EOF
         tongpb = 0
@@ -1694,8 +1710,8 @@ Public Sub PhanBoCP2(tdau As Integer, tcuoi As Integer, tc As Integer)
         SQL = SQL + "+No_" + CStr(i)
     Next
     
-    CP = SelectSQL("SELECT DISTINCTROW Sum(" + SQL + ") AS F1 FROM HethongTK WHERE SoHieu LIKE '627*' AND TKCon=0") - SoCPTT("627", tdau, tcuoi)
-    cpkh = SelectSQL("SELECT DISTINCTROW Sum(" + SQL + ") AS F1 FROM HethongTK WHERE SoHieu LIKE '6274*' AND TKCon=0") - SoCPTT("6274", tdau, tcuoi)
+    CP = SelectSQL("SELECT DISTINCTROW Sum(" + SQL + ") AS F1 FROM HethongTK WHERE SoHieu LIKE '627%' AND TKCon=0") - SoCPTT("627", tdau, tcuoi)
+    cpkh = SelectSQL("SELECT DISTINCTROW Sum(" + SQL + ") AS F1 FROM HethongTK WHERE SoHieu LIKE '6274%' AND TKCon=0") - SoCPTT("6274", tdau, tcuoi)
     
     For i = CThangDB(tdau) To CThangDB(ThangTruoc(tcuoi))
         ExecuteSQL5 "UPDATE TP154 SET CPSXC_" + CStr(i) + "=0,CPKH_" + CStr(i) + "=0"
@@ -1733,7 +1749,7 @@ Public Function InChiPhi(tdau As Integer, tcuoi As Integer, msg As Boolean, nn A
     
     ExecuteSQL5 "DELETE FROM BaoCaoCP"
     If ExecuteSQL5("INSERT INTO BaoCaoCP (MaSo, SoHieu, CoCon, MaCha, Cap, Ten, Kq5) SELECT DISTINCTROW MaSo, SoHieu, TkCon, TkCha0, Cap, Ten" + IIf(nn > 0, "E", "") + ", DuNo_" + CStr(CThangDB(ThangTruoc(tdau))) _
-        & " FROM HethongTK WHERE (SoHieu LIKE '" + ShTkSPDo + "*' OR SoHieu LIKE '" + ShTkTP + "*') AND (MaTC > 0 AND MaTC <> MaSo) AND (" + SQL + ") ORDER BY SoHieu") <> 0 Then GoTo KhongIn
+        & " FROM HethongTK WHERE (SoHieu LIKE '" + ShTkSPDo + "%' OR SoHieu LIKE '" + ShTkTP + "%') AND (MaTC > 0 AND MaTC <> MaSo) AND (" + SQL + ") ORDER BY SoHieu") <> 0 Then GoTo KhongIn
     
     If DBKetoan.RecordsAffected = 0 Then
         If msg Then ErrMsg er_KoPS
@@ -1781,7 +1797,7 @@ Public Function InChiPhi(tdau As Integer, tcuoi As Integer, msg As Boolean, nn A
                 rs_tktc.MoveNext
             Loop
             
-            Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE ((TK_ID = " + CStr(TKCPGIA_ID) + " OR TK_ID2 = " + CStr(TKCPGIA_ID) + ") OR (SoHieu LIKE '" + ShTkTP + "*')) AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
+            Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE ((TK_ID = " + CStr(TKCPGIA_ID) + " OR TK_ID2 = " + CStr(TKCPGIA_ID) + ") OR (SoHieu LIKE '" + ShTkTP + "%')) AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
             Do While Not rs_tktc.EOF
                 ExecuteSQL5 "UPDATE BaoCaoCP SET Kq6 = Kq6 + " + DoiDau(PhatSinhDu(rs_tk!MaSo, rs_tktc!MaSo, tdau, tcuoi, 1)) _
                     & " WHERE MaSo = " + CStr(rs_tk!MaSo)
@@ -1981,7 +1997,7 @@ Public Function InKetQua(tdau As Integer, tcuoi As Integer, tag As Integer, msg 
     
     ExecuteSQL5 "DELETE FROM BaoCaoCP"
     If ExecuteSQL5("INSERT INTO BaoCaoCP (MaSo, SoHieu, CoCon, MaCha, Cap, Ten) SELECT DISTINCTROW MaSo, SoHieu, TkCon, TkCha0, Cap, Ten" + IIf(nn > 0, "E", "") _
-        & " FROM HethongTK WHERE (SoHieu LIKE '" + ShTkKQ + "*') AND (MaTC > 0 AND MaTC <> MaSo) AND (" + IIf(tag = 0, SQL, "TRUE") + ") ORDER BY SoHieu") <> 0 Then GoTo KhongIn
+        & " FROM HethongTK WHERE (SoHieu LIKE '" + ShTkKQ + "%') AND (MaTC > 0 AND MaTC <> MaSo) AND (" + IIf(tag = 0, SQL, "TRUE") + ") ORDER BY SoHieu") <> 0 Then GoTo KhongIn
     
     If DBKetoan.RecordsAffected = 0 Then
         If msg Then ErrMsg er_KoPS
@@ -1994,7 +2010,7 @@ Public Function InKetQua(tdau As Integer, tcuoi As Integer, tag As Integer, msg 
     Do While Not rs_tk.EOF
         HienThongBao VString(rs_tk!sohieu + " - " + rs_tk!Ten), 1
         If rs_tk!CoCon = 0 Then
-           Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE (TK_ID = " + CStr(TKCPGIA_ID) + " OR SoHieu LIKE '635*') AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
+           Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE (TK_ID = " + CStr(TKCPGIA_ID) + " OR SoHieu LIKE '635%') AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
            Do While Not rs_tktc.EOF
                 ExecuteSQL5 "UPDATE BaoCaoCP SET Kq1 = Kq1 + " + DoiDau(PhatSinhDu(rs_tk!MaSo, rs_tktc!MaSo, tdau, tcuoi, -1)) _
                     & " WHERE MaSo = " + CStr(rs_tk!MaSo)
@@ -2022,7 +2038,7 @@ Public Function InKetQua(tdau As Integer, tcuoi As Integer, tag As Integer, msg 
                 rs_tktc.MoveNext
            Loop
             
-           Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE (TK_ID = " + CStr(TKDT_ID) + " OR SoHieu LIKE '515*') AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
+           Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE (TK_ID = " + CStr(TKDT_ID) + " OR SoHieu LIKE '515%') AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
            Do While Not rs_tktc.EOF
                 ExecuteSQL5 "UPDATE BaoCaoCP SET Kq4 = Kq4 + " + DoiDau(PhatSinhDu(rs_tk!MaSo, rs_tktc!MaSo, tdau, tcuoi, 1)) _
                      & " WHERE MaSo = " + CStr(rs_tk!MaSo)
@@ -2035,7 +2051,7 @@ Public Function InKetQua(tdau As Integer, tcuoi As Integer, tag As Integer, msg 
                      & " WHERE MaSo = " + CStr(rs_tk!MaSo)
                 rs_tktc.MoveNext
            Loop
-           Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE SoHieu LIKE '635*' AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
+           Set rs_tktc = DBKetoan.OpenRecordset("SELECT MaSo FROM HethongTK WHERE SoHieu LIKE '635%' AND MaTC = MaSo", dbOpenSnapshot, dbForwardOnly)
            Do While Not rs_tktc.EOF
                 ExecuteSQL5 "UPDATE BaoCaoCP SET Kq5 = Kq5 + " + DoiDau(PhatSinhDu(rs_tk!MaSo, rs_tktc!MaSo, tdau, tcuoi, -1)) _
                      & " WHERE MaSo = " + CStr(rs_tk!MaSo)
@@ -2180,11 +2196,11 @@ Public Sub UpDateDB()
     
     s = pSongNgu
     pSongNgu = False
-    ExecuteSQL5 "UPDATE " + ChungTu2TKNC(-1) + " SET SoPS2Co=SoPS2No,SoPS2No=SoPS2Co,MaTKCo=MaTKNo,MaTKTCCo=MaTKTCNo,MaTKNo=MaTKCo,MaTKTCNo=MaTKTCCo WHERE HethongTK.SoHieu LIKE '3331*' AND SoPS=0"
-    ExecuteSQL5 "UPDATE " + ChungTu2TKNC(1) + " SET SoPS2Co=SoPS2No,SoPS2No=SoPS2Co,MaTKCo=MaTKNo,MaTKTCCo=MaTKTCNo,MaTKNo=MaTKCo,MaTKTCNo=MaTKTCCo WHERE HethongTK.SoHieu LIKE '" + pVATV + "*' AND SoPS=0"
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=5000 WHERE SoHieu LIKE '511*'"
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=0 WHERE SoHieu LIKE '" + pVATV + "112*' OR SoHieu LIKE '" + pVATV + "212*'"
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID2=" + CStr(TKLT_ID) + " WHERE SoHieu LIKE '" + pSHPT + "*' OR SoHieu LIKE '331*' OR SoHieu LIKE '138*' OR SoHieu LIKE '338*' OR Cap=0"
+    ExecuteSQL5 "UPDATE " + ChungTu2TKNC(-1) + " SET SoPS2Co=SoPS2No,SoPS2No=SoPS2Co,MaTKCo=MaTKNo,MaTKTCCo=MaTKTCNo,MaTKNo=MaTKCo,MaTKTCNo=MaTKTCCo WHERE HethongTK.SoHieu LIKE '3331%' AND SoPS=0"
+    ExecuteSQL5 "UPDATE " + ChungTu2TKNC(1) + " SET SoPS2Co=SoPS2No,SoPS2No=SoPS2Co,MaTKCo=MaTKNo,MaTKTCCo=MaTKTCNo,MaTKNo=MaTKCo,MaTKTCNo=MaTKTCCo WHERE HethongTK.SoHieu LIKE '" + pVATV + "%' AND SoPS=0"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=5000 WHERE SoHieu LIKE '511%'"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=0 WHERE SoHieu LIKE '" + pVATV + "112%' OR SoHieu LIKE '" + pVATV + "212%'"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID2=" + CStr(TKLT_ID) + " WHERE SoHieu LIKE '" + pSHPT + "%' OR SoHieu LIKE '331%' OR SoHieu LIKE '138%' OR SoHieu LIKE '338%' OR Cap=0"
     ExecuteSQL5 "UPDATE License SET TKVattu='4' WHERE Instr(TKVattu,'-')=0"
     ExecuteSQL5 "UPDATE License SET Flag1=Flag1+300000000 WHERE Flag1\100000000=0"
         
@@ -2209,7 +2225,7 @@ Public Sub UpDateDB()
         ThemTruong "License", "Lock" + CStr(i), dbInteger
     Next
     
-    If ThemTruong("HethongTK", "TK_ID3", dbLong) Then ExecuteSQL5 "UPDATE HethongTK SET TK_ID3=1 WHERE SoHieu LIKE '336*' Or SoHieu LIKE '334*'"
+    If ThemTruong("HethongTK", "TK_ID3", dbLong) Then ExecuteSQL5 "UPDATE HethongTK SET TK_ID3=1 WHERE SoHieu LIKE '336%' Or SoHieu LIKE '334%'"
     ThemTruong "HethongTK", "TenDA", dbText, 50
     ThemTruong "HethongTK", "NhomDA", dbText, 3
     ThemTruong "HethongTK", "DiaDiem", dbText, 50
@@ -2248,7 +2264,7 @@ Public Sub UpDateDB()
     ThemTruong "ChungTu", "User_ID", dbLong, , 1
     
     If ThemTruong("PhanLoaiVattu", "MaTK", dbLong) Then
-          ExecuteSQL5 "UPDATE PhanLoaiVattu SET MaTK=" + CStr(SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE TKCon=0 AND SoHieu LIKE '156*' ORDER BY SoHieu"))
+          ExecuteSQL5 "UPDATE PhanLoaiVattu SET MaTK=" + CStr(SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE TKCon=0 AND SoHieu LIKE '156%' ORDER BY SoHieu"))
     End If
     
     ThemTruong "KhoHang", "MaTK", dbLong
@@ -2447,7 +2463,7 @@ Public Sub UpDateDB()
             Next
             ThemTruong "TP154", "DT", dbDouble
             ThemTruong "TP154", "CPTC", dbDouble
-            ThemTruong "TP154", "MaTK", dbLong, , SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '" + ShTkSPDo + "*' ORDER BY SoHieu")
+            ThemTruong "TP154", "MaTK", dbLong, , SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '" + ShTkSPDo + "%' ORDER BY SoHieu")
             ThemTruong "TP154", "KPB", dbInteger
             ThemTruong "TP154", "SanLuong", dbDouble
         End If
@@ -2522,11 +2538,11 @@ Public Sub UpDateDB()
     End If
         
     If ThemTruong("HoaDon", "GiaTT", dbDouble) Then
-        ExecuteSQL5 "UPDATE HethongTK SET TK_ID=3332 WHERE SoHieu LIKE '3332*'"
+        ExecuteSQL5 "UPDATE HethongTK SET TK_ID=3332 WHERE SoHieu LIKE '3332%'"
     End If
     
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=1330 WHERE SoHieu LIKE '33312*'"
-    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + CStr(TKGT_ID) + " WHERE SoHieu LIKE '521*' OR SoHieu LIKE '531*'"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=1330 WHERE SoHieu LIKE '33312%'"
+    ExecuteSQL5 "UPDATE HethongTK SET TK_ID=" + CStr(TKGT_ID) + " WHERE SoHieu LIKE '521%' OR SoHieu LIKE '531%'"
     
     If pVersion = 3 Then GoTo E
     TK.InitTaikhoanSohieu "6234"
@@ -2534,8 +2550,8 @@ Public Sub UpDateDB()
         TK.InitTaikhoanSohieu "623"
         If TK.MaSo > 0 Then
             TK.ThemTKCon "4", ABCtoVNI("Chi phÝ khÊu hao TSC§"), "Depreciation of fixed assets", 0, 3003
-            ExecuteSQL5 "UPDATE HethongTK SET MaTC=MaSo WHERE Cap=2 AND SoHieu LIKE '623*'"
-            ExecuteSQL5 "UPDATE HethongTK SET MaTC=0 WHERE Cap=1 AND SoHieu LIKE '623*'"
+            ExecuteSQL5 "UPDATE HethongTK SET MaTC=MaSo WHERE Cap=2 AND SoHieu LIKE '623%'"
+            ExecuteSQL5 "UPDATE HethongTK SET MaTC=0 WHERE Cap=1 AND SoHieu LIKE '623%'"
         End If
     End If
     TK.InitTaikhoanSohieu "621"
@@ -2593,8 +2609,8 @@ c:
         TK.ThemTKCon "2", ABCtoVNI("Chªnh lÖch tû gi¸ trong giai ®o¹n ®Çu t­ c¬ b¶n"), "...", 0, 0
         TK.ThemTKCon "3", ABCtoVNI("Chªnh lÖch tû gi¸ tõ chuyÓn ®æi b¸o c¸o tµi chÝnh"), "...", 0, 0
         
-        ExecuteSQL5 "UPDATE HethongTK SET MaTC=MaSo WHERE Cap=2 AND SoHieu LIKE '413*'"
-        ExecuteSQL5 "UPDATE HethongTK SET MaTC=0 WHERE Cap=1 AND SoHieu LIKE '413*'"
+        ExecuteSQL5 "UPDATE HethongTK SET MaTC=MaSo WHERE Cap=2 AND SoHieu LIKE '413%'"
+        ExecuteSQL5 "UPDATE HethongTK SET MaTC=0 WHERE Cap=1 AND SoHieu LIKE '413%'"
     End If
 d:
     If frmMain.lb(0).tag < 3 Then
@@ -2681,7 +2697,7 @@ Public Sub UpdateAcount()
       Dim rs As DAO.Recordset
        
       'Them Tkcon cua TK 128==========================================
-       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '128*'", dbOpenSnapshot)
+       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '128%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2696,7 +2712,7 @@ Public Sub UpdateAcount()
 t2:
        frmXuly.Gau.Value = 2
          'Them tkcon 511 la 5117 ==============================================================
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '511*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '511%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2717,7 +2733,7 @@ T:
         End If
 h:
        'thuc hien 138
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '138*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '138%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
          Loop
@@ -2729,7 +2745,7 @@ h:
        frmXuly.Gau.Value = 4
       'thuc hien 142 giam TK con
 h1:
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '142*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '142%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2746,7 +2762,7 @@ h1:
          ExecuteSQL5 "Update HethongTK set TKcon=1 where Sohieu='142'"
        End If
       'thuc hien 153=================================================================
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '153*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '153%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2768,7 +2784,7 @@ h1:
        End If
        frmXuly.Gau.Value = 7
        'thuc hien them tai khoan moi 158============================================
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '158*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '158%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
          Loop
@@ -2781,7 +2797,7 @@ h1:
        'thuc hien TK 221 giam TKcon==================================================
 h2:
  
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '221*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '221%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2789,7 +2805,7 @@ h2:
          'do update sub  acount of acount to sub acount
           TK.InitTaikhoanSohieu "2211*"
          If TK.MaSo > 0 Then
-          ExecuteSQL5 "Update HethongTK set TKcon=2 where Sohieu='2211*'"
+          ExecuteSQL5 "Update HethongTK set TKcon=2 where Sohieu='2211%'"
           End If
          TK.InitTaikhoanSohieu "2211"
          If TK.MaSo > 0 Then
@@ -2802,7 +2818,7 @@ h2:
           ExecuteSQL5 "Update HethongTK set TKcon=1 where Sohieu='153'"
         End If
         'thuc hien them tk 228==========================================================
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '228*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '228%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2826,7 +2842,7 @@ H4:
         'thuc hieu them moi tK 243
 H5:
  
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '243*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '243%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2839,7 +2855,7 @@ H5:
          'thuc hien TK loai 3 1-3
          'giam 331
 H6:
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '331*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '331%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2856,7 +2872,7 @@ H6:
           ExecuteSQL5 "Update HethongTK set TKcon=1 where sohieu='331'"
         End If
         'thuc hien them tk 334
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '334*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '334%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2869,7 +2885,7 @@ H6:
           frmXuly.Gau.Value = 11
 H7:
         'thu hien TK 338
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '338*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '338%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2885,7 +2901,7 @@ H8:
         
 H9:
          'them tK 347,351,352
-          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '347*'", dbOpenSnapshot)
+          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '347%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2896,7 +2912,7 @@ H9:
         End If
         frmXuly.Gau.Value = 12
 H10:
-          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '351*'", dbOpenSnapshot)
+          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '351%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2906,7 +2922,7 @@ H10:
           ExecuteSQL5 "INSERT INTO HethongTK (MaSo,SoHieu,Cap,Ten,Loai,Kieu,TkCha0,TKCha1, MaTC) VALUES (14017,'351',1,'" + ABCtoVNI("Quü dù phßng trî cÊp mÊt viÖc") + "',3,1,79,0,14017)"
         End If
 H11:
-          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '352*'", dbOpenSnapshot)
+          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '352%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2917,7 +2933,7 @@ H11:
          End If
 H12:
         'loai 4
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '411*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '411%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2929,7 +2945,7 @@ H12:
         frmXuly.Gau.Value = 13
 H13:
       ' Thuc hien tk411 giam TKcon cap 3, sua ten tai khoan cap 2
-      Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '411*'", dbOpenSnapshot)
+      Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '411%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2962,7 +2978,7 @@ H13:
         End If
       frmXuly.Gau.Value = 14
       ' thuchien TK 412 giam TKcon
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '412*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '412%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2978,7 +2994,7 @@ H13:
              ExecuteSQL5 "Update HethongTK set TKcon=1 where sohieu='412'"
         End If
         'thuc  hien 413================================================
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '413*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '413%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -2989,7 +3005,7 @@ H13:
            End If
         End If
     'thuc hien  414============================================================
-     Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '414*'", dbOpenSnapshot)
+     Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '414%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3006,7 +3022,7 @@ H13:
         End If
         frmXuly.Gau.Value = 15
     'thuc hien Xoa 416, 417 =======================================================================
-       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '416*'", dbOpenSnapshot)
+       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '416%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3021,7 +3037,7 @@ H13:
            End If
         End If
     'thuc hien Them moi 418 =========================================================
-       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '418*'", dbOpenSnapshot)
+       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '418%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3033,7 +3049,7 @@ H13:
          frmXuly.Gau.Value = 16
 H14:
     'thuc hien them moi TK 419=============================================================
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '419*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '419%'", dbOpenSnapshot)
           Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3044,7 +3060,7 @@ H14:
          End If
     
     ' Thuc hien doi ten tai khoan cap 2 cua tk 421 ==================================
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '421*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '421%'", dbOpenSnapshot)
           Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3056,7 +3072,7 @@ H14:
         frmXuly.Gau.Value = 17
 H15:
      'thuc hien 431=======================================================
-       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '431*'", dbOpenSnapshot)
+       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '431%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3067,7 +3083,7 @@ H15:
            End If
         End If
     'thuc hien 441 giam con=====================================
-       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '441*'", dbOpenSnapshot)
+       Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '441%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3084,7 +3100,7 @@ H15:
         End If
      frmXuly.Gau.Value = 18
      'thuc hien TK 451 xoa
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '451*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '451%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3096,7 +3112,7 @@ H15:
         End If
         'thuc hien loai 5 ========================================================
         'thuc hien xoa Tkcon 512=================================
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '521*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '521%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
          Loop
@@ -3116,7 +3132,7 @@ H15:
              ExecuteSQL5 "Update HethongTK set TKcon=1 where sohieu='521'"
         End If
         '515============
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '515*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '515%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
          Loop
@@ -3125,7 +3141,7 @@ H15:
         
         'thuchien TK loai 6
         'thuc hien 623==========================================================
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '623*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '623%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3140,7 +3156,7 @@ H16:
        End If
 H17:
         'thu hien 635 xoa conTK
-          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '635*'", dbOpenSnapshot)
+          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '635%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3152,7 +3168,7 @@ H17:
           ExecuteSQL5 "Update HethongTK set TKcon=1 where sohieu='635'"
         End If
         'thuc hien TK loai 8
-          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '821*'", dbOpenSnapshot)
+          Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '821%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3164,7 +3180,7 @@ H17:
         frmXuly.Gau.Value = 20
 h18:
      'thieun hien tK con
-        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '821*'", dbOpenSnapshot)
+        Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '821%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3180,7 +3196,7 @@ H19:
         End If
 h20:
         'thuc hien 008=======================================
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '008*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '008%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3197,7 +3213,7 @@ h20:
             ExecuteSQL5 "Update HethongTK set TKcon=1, Ten='" + ABCtoVNI("Dù to¸n chi sù nghiÖp, dù ¸n") + "' where sohieu='008'"
         End If
         'thuc hien 007=====================
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '007*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '007%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3210,7 +3226,7 @@ h20:
             ExecuteSQL5 "Update HethongTK set TKcon=1 where sohieu='007'"
         End If
         ' thuchien bo 009
-         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '009*'", dbOpenSnapshot)
+         Set rs = DBKetoan.OpenRecordset("SELECT SoHieu as F1 FROM HeThongTK WHERE SoHieu Like '009%'", dbOpenSnapshot)
          Do While Not rs.EOF
           rs.MoveNext
         Loop
@@ -3322,7 +3338,7 @@ Public Sub PhanBoCP3(tdau As Integer, tcuoi As Integer, tc As Integer, shtk As S
     SQL = "SELECT Count(MaSo) AS F1 FROM BaoCaoCP"
     sopb = SelectSQL(SQL)
        
-    CP = SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=0")
+    CP = SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=0")
     
     For i = CThangDB(tdau) To CThangDB(ThangTruoc(tcuoi))
         ExecuteSQL5 "UPDATE TP154 SET " + f + CStr(i) + "=0"
@@ -3371,7 +3387,7 @@ Public Sub PhanBoCP64(tdau As Integer, tcuoi As Integer, tc As Integer, shtk As 
     SQL = "SELECT Count(MaSo) AS F1 FROM BaoCaoCP"
     sopb = SelectSQL(SQL)
     
-    CP = SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=0")
+    CP = SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=0")
     
     For i = CThangDB(tdau) To CThangDB(ThangTruoc(tcuoi))
         ExecuteSQL5 "UPDATE TP154 SET " + f + CStr(i) + "=0"
@@ -3474,7 +3490,7 @@ Public Function ChoXemBC(bc As Integer, c As String) As Boolean
         ChoXemBC = True
     Else
         If TruongDaCo("Users", c + CStr(bc)) Then
-            ChoXemBC = (SelectSQL("SELECT " + c + CStr(bc) + " AS F1 FROM Users WHERE MaSo=" + CStr(UserID)) > 0)
+            ChoXemBC = (SelectSQL("SELECT " + c + CStr(bc) + " AS F1 FROM Users WHERE MaSo=" + CStr(userId)) > 0)
         Else
             ChoXemBC = False
         End If
@@ -3619,11 +3635,11 @@ Public Sub CloseItemList()
 End Sub
 
 Public Sub DelTemp()
-    ExecuteSQL5 "DELETE * FROM BaoCaoCP", False
-    ExecuteSQL5 "DELETE * FROM BaoCaoCP2", False
-    ExecuteSQL5 "DELETE * FROM BKNhomPS", False
+    ExecuteSQL5 "DELETE  FROM BaoCaoCP", False
+    ExecuteSQL5 "DELETE FROM BaoCaoCP2", False
+    ExecuteSQL5 "DELETE  FROM BKNhomPS", False
     'ExecuteSQL5 "DELETE * FROM ChungTuP", False
-    ExecuteSQL5 "DELETE * FROM CNDauNam2", False
+    ExecuteSQL5 "DELETE  FROM CNDauNam2", False
 End Sub
 
 Public Function ChoDieuChinhDauKy() As Boolean
@@ -3806,7 +3822,7 @@ Public Sub InCdts(tdau As Integer, tcuoi As Integer, loai As Integer, Optional n
             rs_cdts.MovePrevious
         Loop
 
-        If SelectSQL("SELECT Top 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '621*'") = 0 Then
+        If SelectSQL("SELECT Top 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '621%'") = 0 Then
             sodu = SelectSQL("SELECT SUM(DuNo_" + st + "-DuCo_" + st + ") AS F1, SUM(DuNo_0-DuCo_0) AS F2 FROM HethongTK WHERE MaSo=37 OR MaSo=38 OR MaSo=39 OR MaSo=42", SoDK)
             ExecuteSQL5 "UPDATE Cdts SET DauNam=DauNam+" + DoiDau(SoDK) + ",CuoiKy=CuoiKy+" + DoiDau(sodu) + " WHERE MaSo=118"
         End If
@@ -3874,7 +3890,7 @@ Public Sub InKqkd(tdau As Integer, tcuoi As Integer, cap As Integer, nn As Integ
     ExecuteSQL5 "UPDATE KQKD SET KyNay=0, KyTruoc=0"
     
     SQL = "SELECT DISTINCTROW KQKD.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKNo+'*' AND TK.SoHieu LIKE KQKD.SHTKCo+'%' " _
+        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKNo+'%' AND TK.SoHieu LIKE KQKD.SHTKCo+'%' " _
         & " Where " + WThang("ThangCT", 0, tcuoi) + " AND KQKD.SHTKNo<>'0' AND KQKD.SHTKCo<>'0' GROUP BY KQKD.Ma"
     
     SQL = SQL + " UNION SELECT DISTINCTROW KQKD.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2" _
@@ -3882,7 +3898,7 @@ Public Sub InKqkd(tdau As Integer, tcuoi As Integer, cap As Integer, nn As Integ
         & " Where (MaLoai<>3 AND MaLoai<>1) And " + WThang("ThangCT", 0, tcuoi) + " And (CLng(KQKD.SHTKNo) = 0) AND KQKD.SHTKCo<>'0' GROUP BY KQKD.Ma"
     
     'sql = sql + " UNION SELECT DISTINCTROW KQKD.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-        & " FROM (((" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKNo+'*') INNER JOIN KQKD ON HethongTK_1.SoHieu LIKE KQKD.SHTKCo+'*' " _
+        & " FROM (((" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKNo+'%') INNER JOIN KQKD ON HethongTK_1.SoHieu LIKE KQKD.SHTKCo+'%' " _
         & " Where ((KQKD.MaSoCha=0) AND (KQKD.MaTKTCNo > 0) And (KQKD.MaTKTCCo > 0) And " + WThang("ThangCT", 0, tcuoi) + ") GROUP BY KQKD.Ma"
 
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
@@ -3893,7 +3909,7 @@ Public Sub InKqkd(tdau As Integer, tcuoi As Integer, cap As Integer, nn As Integ
 
     
     SQL = "SELECT DISTINCTROW KQKD.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKCo+'*' AND TK.SoHieu LIKE KQKD.SHTKNo+'*' " _
+        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD ON HethongTK.SoHieu LIKE KQKD.SHTKCo+'%' AND TK.SoHieu LIKE KQKD.SHTKNo+'%' " _
         & " Where " + WThang("ThangCT", 0, tcuoi) + " GROUP BY KQKD.Ma"
         
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
@@ -3929,18 +3945,18 @@ Public Sub InKqkd(tdau As Integer, tcuoi As Integer, cap As Integer, nn As Integ
             ExecuteSQL5 "DELETE * FROM KQKD911"
             ExecuteSQL5 "INSERT INTO KQKD911 SELECT * FROM KQKD WHERE MaSo<>23"
     
-            ExecuteSQL5 "INSERT INTO KQKD911 (Ma, MaSo, Ten, TenE, SHTKNo, SHTKCo, MaTK, Cap, TongHop, MaSoCha) SELECT 5700000+MaSo, 10 AS MS, Space(4*(Cap-1))+Ten, Space(4*(Cap-1))+TenE, '511', SoHieu, MaSo, Cap, 1, 20 FROM HethongTK WHERE SoHieu LIKE '911*' AND Cap>1 AND Cap<=" + CStr(cap)
-            ExecuteSQL5 "INSERT INTO KQKD911 (Ma, MaSo, Ten, TenE, SHTKNo, SHTKCo, MaTK, Cap, TongHop, MaSoCha) SELECT 5750000+MaSo, 10 AS MS, Space(4*(Cap-1))+Ten, Space(4*(Cap-1))+TenE, '512', SoHieu, MaSo, Cap, 1, 20 FROM HethongTK WHERE SoHieu LIKE '911*' AND Cap>1 AND Cap<=" + CStr(cap)
+            ExecuteSQL5 "INSERT INTO KQKD911 (Ma, MaSo, Ten, TenE, SHTKNo, SHTKCo, MaTK, Cap, TongHop, MaSoCha) SELECT 5700000+MaSo, 10 AS MS, Space(4*(Cap-1))+Ten, Space(4*(Cap-1))+TenE, '511', SoHieu, MaSo, Cap, 1, 20 FROM HethongTK WHERE SoHieu LIKE '911%' AND Cap>1 AND Cap<=" + CStr(cap)
+            ExecuteSQL5 "INSERT INTO KQKD911 (Ma, MaSo, Ten, TenE, SHTKNo, SHTKCo, MaTK, Cap, TongHop, MaSoCha) SELECT 5750000+MaSo, 10 AS MS, Space(4*(Cap-1))+Ten, Space(4*(Cap-1))+TenE, '512', SoHieu, MaSo, Cap, 1, 20 FROM HethongTK WHERE SoHieu LIKE '911%' AND Cap>1 AND Cap<=" + CStr(cap)
             
             Set rs = DBKetoan.OpenRecordset("SELECT * FROM KQKD911 WHERE MaTK=0 AND MaSo > 10", dbOpenSnapshot)
             Do While Not rs.EOF
-                ExecuteSQL5 "INSERT INTO KQKD911 (Ma, MaSo, Ten, TenE, SHTKNo, SHTKCo, MaTK, Cap, TongHop, MaSoCha) SELECT " + CStr(rs!ma * 100000) + "+MaSo, " + CStr(rs!MaSo) + " AS MS, Space(4*(Cap-1))+Ten, Space(4*(Cap-1))+TenE, IIF(LEFT('" + rs!shtkno + "',3)='911',SoHieu,'" + rs!shtkno + "'), IIF(LEFT('" + rs!shtkco + "',3)='911',SoHieu,'" + rs!shtkco + "'), MaSo, Cap," + CStr(rs!TongHop) + "," + CStr(rs!MaSoCha) + " FROM HethongTK WHERE SoHieu LIKE '911*' AND Cap>1 AND Cap<=" + CStr(cap)
+                ExecuteSQL5 "INSERT INTO KQKD911 (Ma, MaSo, Ten, TenE, SHTKNo, SHTKCo, MaTK, Cap, TongHop, MaSoCha) SELECT " + CStr(rs!ma * 100000) + "+MaSo, " + CStr(rs!MaSo) + " AS MS, Space(4*(Cap-1))+Ten, Space(4*(Cap-1))+TenE, IIF(LEFT('" + rs!shtkno + "',3)='911',SoHieu,'" + rs!shtkno + "'), IIF(LEFT('" + rs!shtkco + "',3)='911',SoHieu,'" + rs!shtkco + "'), MaSo, Cap," + CStr(rs!TongHop) + "," + CStr(rs!MaSoCha) + " FROM HethongTK WHERE SoHieu LIKE '911%' AND Cap>1 AND Cap<=" + CStr(cap)
                 rs.MoveNext
             Loop
             rs.Close
                                     
             SQL = "SELECT DISTINCTROW KQKD911.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-                & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD911 ON HethongTK.SoHieu LIKE KQKD911.SHTKNo+'*' AND TK.SoHieu LIKE KQKD911.SHTKCo+'*' " _
+                & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD911 ON HethongTK.SoHieu LIKE KQKD911.SHTKNo+'%' AND TK.SoHieu LIKE KQKD911.SHTKCo+'%' " _
                 & " Where MaTK>0 AND " + WThang("ThangCT", 0, tcuoi) + " GROUP BY KQKD911.Ma"
             Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
             Do While Not rs.EOF
@@ -3950,7 +3966,7 @@ Public Sub InKqkd(tdau As Integer, tcuoi As Integer, cap As Integer, nn As Integ
             rs.Close
             
             SQL = "SELECT DISTINCTROW KQKD911.Ma, Sum(IIF(" + WThang2("ThangCT", 0, tdau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WThang("ThangCT", tdau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-                & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD911 ON HethongTK.SoHieu LIKE KQKD911.SHTKCo+'*' AND TK.SoHieu LIKE KQKD911.SHTKNo+'*' " _
+                & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN KQKD911 ON HethongTK.SoHieu LIKE KQKD911.SHTKCo+'%' AND TK.SoHieu LIKE KQKD911.SHTKNo+'%' " _
                 & " Where MaTK>0 AND " + WThang("ThangCT", 0, tcuoi) + " GROUP BY KQKD911.Ma"
             Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
             Do While Not rs.EOF
@@ -4000,15 +4016,15 @@ Public Sub XemBaoCao(sh As String, ndau As Date, ncuoi As Date)
     ExecuteSQL5 "UPDATE BaoCao SET KyNay=0, KyTruoc=0 WHERE SoHieu='" + sh + "'"
     
     SQL = "SELECT DISTINCTROW BaoCao.MaSo, Sum(IIF(" + WNgay2("ThangCT", 0, ndau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WNgay("ThangCT", ndau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKNo+'*' AND TK.SoHieu LIKE BaoCao.SHTKCo+'*' " _
+        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKNo+'%' AND TK.SoHieu LIKE BaoCao.SHTKCo+'%' " _
         & " Where " + WNgay("ThangCT", 0, ncuoi) + " AND BaoCao.SoHieu='" + sh + "' GROUP BY BaoCao.MaSo"
     
     SQL = SQL + " UNION SELECT DISTINCTROW BaoCao.MaSo, Sum(IIF(" + WNgay2("ThangCT", 0, ndau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WNgay("ThangCT", ndau, 0) + ",ChungTu.SoPS,0)) AS Kqua2" _
-        & " FROM (" + ChungTu2TKNC(1) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKCo+'*'" _
+        & " FROM (" + ChungTu2TKNC(1) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKCo+'%'" _
         & " Where (MaLoai<>3 AND MaLoai<>1) And " + WNgay("ThangCT", 0, ncuoi) + " And (CLng(BaoCao.SHTKNo) = 0) AND BaoCao.SoHieu='" + sh + "' GROUP BY BaoCao.MaSo"
     
     SQL = SQL + " UNION SELECT DISTINCTROW BaoCao.MaSo, Sum(IIF(" + WNgay2("ThangCT", 0, ndau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WNgay("ThangCT", ndau, 0) + ",ChungTu.SoPS,0)) AS Kqua2" _
-        & " FROM (" + ChungTu2TKNC(1) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKNo+'*'" _
+        & " FROM (" + ChungTu2TKNC(1) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKNo+'%'" _
         & " Where (MaLoai<>3 AND MaLoai<>1) And " + WNgay("ThangCT", 0, ncuoi) + " And (CLng(BaoCao.SHTKCo) = 0) AND BaoCao.SoHieu='" + sh + "' GROUP BY BaoCao.MaSo"
 
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
@@ -4018,7 +4034,7 @@ Public Sub XemBaoCao(sh As String, ndau As Date, ncuoi As Date)
     Loop
     
     SQL = "SELECT DISTINCTROW BaoCao.MaSo, Sum(IIF(" + WNgay2("ThangCT", 0, ndau) + ",ChungTu.SoPS,0)) AS Kqua1, Sum(IIF(" + WNgay("ThangCT", ndau, 0) + ",ChungTu.SoPS,0)) AS Kqua2 " _
-        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKCo+'*' AND TK.SoHieu LIKE BaoCao.SHTKNo+'*' " _
+        & " FROM (" + ChungTu2TKNC(0) + ") INNER JOIN BaoCao ON HethongTK.SoHieu LIKE BaoCao.SHTKCo+'%' AND TK.SoHieu LIKE BaoCao.SHTKNo+'%' " _
         & " Where " + WNgay("ThangCT", 0, ncuoi) + " AND BaoCao.SoHieu='" + sh + "' GROUP BY KQKD.MaSo"
         
     Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
@@ -4061,20 +4077,24 @@ Private Sub LaySHCT()
 End Sub
 
 Public Sub LockDB()
+    Exit Sub
     Dim T As Long, k As Integer
-    
+
     Do While True
         k = SelectSQL("SELECT Lock12 AS F1 FROM License") Mod 100
         T = T + 1
         If T > 5000 Or k \ 10 = 0 Then Exit Do
         DoEvents
     Loop
-    
-    ExecuteSQL5 "UPDATE License SET Lock12=10+ Lock12 Mod 10 + Lock12 \100"
+
+    'ExecuteSQL5 "UPDATE License SET Lock12=10+ Lock12 Mod 10 + Lock12 \100"
+    ExecuteSQL5 "UPDATE License SET Lock12 = 10 + (Lock12 % 10) + (Lock12 / 100)"
+
 End Sub
 
 Public Sub UnlockDB()
-    ExecuteSQL5 "UPDATE License SET Lock12= Lock12 Mod 10 + Lock12 \100"
+'ExecuteSQL5 "UPDATE License SET Lock12= Lock12 Mod 10 + Lock12 \100"
+    ExecuteSQL5 "UPDATE License SET Lock12 = (Lock12 % 10) + FLOOR(Lock12 / 100)"
 End Sub
 
 Private Sub ktracongno2004()
@@ -4119,7 +4139,7 @@ Private Sub ktracongno2004()
 End Sub
 
 Public Sub LaySoDauNam(fn As String)
-    Dim db As Database, Err As Integer, SQL As String, st As String, ms As Long
+    Dim db As database, Err As Integer, SQL As String, st As String, ms As Long
     
     On Error GoTo KT
     Set db = WSpace.OpenDatabase(fn, False, False, ";PWD=" + pPSW)
@@ -4186,7 +4206,7 @@ KT:
     Set db = Nothing
 End Sub
 
-Public Sub CongDDVT(FrmDB As Database, masocu As Long, tencn As String, tachsh As Integer, cnct As Boolean, pTK As Integer, pCT As String)
+Public Sub CongDDVT(FrmDB As database, masocu As Long, tencn As String, tachsh As Integer, cnct As Boolean, pTK As Integer, pCT As String)
     Dim rs As Object
     Dim mcha As Long, sh As String, i As Integer
         
@@ -4281,7 +4301,7 @@ Public Sub CongDDVT(FrmDB As Database, masocu As Long, tencn As String, tachsh A
     Set rs = Nothing
 End Sub
 
-Public Sub CongDDCN(FrmDB As Database, masocu As Long, tachsh As Integer, cnct As Boolean, pTK As Integer, pCT As String)
+Public Sub CongDDCN(FrmDB As database, masocu As Long, tachsh As Integer, cnct As Boolean, pTK As Integer, pCT As String)
     Dim rs As Object
     Dim mcha As Long, sh As String, i As Integer
         
@@ -4339,7 +4359,7 @@ Public Sub CongDDCN(FrmDB As Database, masocu As Long, tachsh As Integer, cnct A
     Set rs = Nothing
 End Sub
 
-Public Sub CongDDTS(FrmDB As Database, mactcu As Long, tencn As String, tachsh As Integer, cnct As Boolean, pTK As Integer, pCT As String)
+Public Sub CongDDTS(FrmDB As database, mactcu As Long, tencn As String, tachsh As Integer, cnct As Boolean, pTK As Integer, pCT As String)
     Dim rs As Object, rs2 As Object
     Dim mcha As Long, m1 As Long, matscu As Long, i As Integer, sh As String
     
@@ -4476,7 +4496,7 @@ Public Sub CongDDTS(FrmDB As Database, mactcu As Long, tencn As String, tachsh A
     If cnct Then SoDuTKTS Else ChuyenNamMoiTS
 End Sub
 
-Public Sub CongDK(db As Database, s As String, tencn As String, thangdb As Integer, pTK As Integer, pCT As String)
+Public Sub CongDK(db As database, s As String, tencn As String, thangdb As Integer, pTK As Integer, pCT As String)
 Dim mk As Long, dkn As Double, dkc As Double, dknt As Double, thang As String
 Dim rs As Object, rs2 As Object
     
@@ -4514,7 +4534,7 @@ Dim rs As Object, rs2 As Object
     Set rs2 = Nothing
 End Sub
 
-Public Sub CongDKVT(db As Database, s As String, tencn As String, thangdb As Integer, pTK As Integer, pCT As String)
+Public Sub CongDKVT(db As database, s As String, tencn As String, thangdb As Integer, pTK As Integer, pCT As String)
 Dim mk As Long, mv As Long, m2 As Long, dkn As Double, dkc As Double, dknt As Double, thang As String
 Dim rs As Object, rs2 As Object
     
@@ -4552,7 +4572,7 @@ Dim rs As Object, rs2 As Object
     Set rs2 = Nothing
 End Sub
 
-Public Sub CongDKCN(db As Database, s As String, tencn As String, thangdb As Integer, pTK As Integer, pCT As String)
+Public Sub CongDKCN(db As database, s As String, tencn As String, thangdb As Integer, pTK As Integer, pCT As String)
 Dim mk As Long, m2 As Long, dkn As Double, dkc As Double, thang As String
 Dim rs As Object, rs2 As Object, n As Double, c As Double, dknt As Double
     

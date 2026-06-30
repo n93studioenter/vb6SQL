@@ -2434,7 +2434,7 @@ Private Sub Command3_Click()
 
     ' T?o truy v?n v?i di?u ki?n LIKE
     Query = "SELECT * FROM Vattu " & _
-            "WHERE TenVattu LIKE '*" & UnicodeToVni(txtSearch.Text) & "*' " & _
+            "WHERE TenVattu LIKE '*" & UnicodeToVni(txtSearch.Text) & "%' " & _
             "OR SoHieu LIKE '*" & UnicodeToVni(txtSearch.Text) & "%'"
 
     ' M? Recordset
@@ -2737,7 +2737,7 @@ Public Function ChonVattu(sh As String, Optional c As Integer = 0) As String
     Dim j As Integer, i As Integer, pos As Integer, length As Integer
     
     If Len(sh) > 0 Then
-        'shtk = "SELECT DISTINCTROW TOP 1 Vattu.MaPhanLoai AS F1 FROM Vattu WHERE SoHieu LIKE '" + sh + "*' ORDER BY SoHieu"
+        'shtk = "SELECT DISTINCTROW TOP 1 Vattu.MaPhanLoai AS F1 FROM Vattu WHERE SoHieu LIKE '" + sh + "%' ORDER BY SoHieu"
         shtk = "SELECT TOP 1 Vattu.MaPhanLoai AS F1 FROM Vattu WHERE SoHieu LIKE '" & sh & "%' ORDER BY SoHieu"
         mpl = SelectSQL(shtk)
         If mpl > 0 Then

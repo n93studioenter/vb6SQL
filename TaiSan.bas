@@ -125,7 +125,7 @@ End Sub
 '======================================================================================
 Public Sub ThanhLapPhatSinh(nghiep_vu As Long, ma_tkts As Long)
 Dim tong_ng As Double, tong_hm As Double
-Dim sql As String
+Dim SQL As String
       parSoPS = 1
       ReDim arPhatSinh(0 To parSoPS) As tpPhatSinh
       ' T›nh sË ph∏t sinh
@@ -136,9 +136,9 @@ Dim sql As String
             tong_hm = tong_ng - (GiaTri.CL_NS + GiaTri.CL_TBS + GiaTri.CL_CNK + GiaTri.CL_TD)
       'End If
       ' X∏c Æﬁnh tµi kho∂n tµi s∂n
-      sql = "SELECT SoHieu AS F1 FROM LoaiTaiSan WHERE MaSo = " _
+      SQL = "SELECT SoHieu AS F1 FROM LoaiTaiSan WHERE MaSo = " _
                                                                                                                                                                           + CStr(ma_tkts)
-      arPhatSinh(0).TK_SoHieu = CStr(SelectSQL(sql))
+      arPhatSinh(0).TK_SoHieu = CStr(SelectSQL(SQL))
       arPhatSinh(0).TS_SoHieu = MaSo2SoHieu(pMaTaiSan, "TaiSan")
       ' SË hi÷u cÒa tµi kho∂n chi ph› kh u hao x∏c Æﬁnh qua loπi tµi s∂n
       arPhatSinh(1).TK_SoHieu = "214" + Mid(arPhatSinh(0).TK_SoHieu, 3, 1)
@@ -180,7 +180,7 @@ End Sub
 Public Sub TinhGiaTriTaiSan(ma_ts As Long, thg As Integer, khau_hao As Integer)
 Dim rs_giatridau As Object
 Dim rs_tongkhauhao As Object
-Dim rs_khauhao As Object, sql As String
+Dim rs_khauhao As Object, SQL As String
 With GiaTri
       If ma_ts = 0 Then Exit Sub
       
@@ -194,15 +194,15 @@ With GiaTri
     .CL_TD = 0
     
       ' L y nguy™n gi∏ vµ gi∏ trﬁ cﬂn lπi cho Æ’n thÍi Æi”m hi÷n tπi
-      sql = "SELECT Sum(NG_NS) AS TNG_NS, Sum(NG_TBS) AS TNG_TBS, Sum(NG_CNK) AS TNG_CNK, Sum(NG_TD) AS TNG_TD, " _
+      SQL = "SELECT Sum(NG_NS) AS TNG_NS, Sum(NG_TBS) AS TNG_TBS, Sum(NG_CNK) AS TNG_CNK, Sum(NG_TD) AS TNG_TD, " _
             & "Sum(CL_NS) AS TCL_NS, Sum(CL_TBS) AS TCL_TBS, Sum(CL_CNK) AS TCL_CNK, Sum(CL_TD) AS TCL_TD " _
             & "FROM CTTaiSan WHERE MaTS = " + CStr(ma_ts) + " AND " + WThang("Thang", 0, thg)
-      Set rs_giatridau = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+      Set rs_giatridau = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
       If IsNull(rs_giatridau!TNG_NS) Then
-            sql = "SELECT (NG_NS) AS TNG_NS, (NG_TBS) AS TNG_TBS, (NG_CNK) AS TNG_CNK, (NG_TD) AS TNG_TD, " _
+            SQL = "SELECT (NG_NS) AS TNG_NS, (NG_TBS) AS TNG_TBS, (NG_CNK) AS TNG_CNK, (NG_TD) AS TNG_TD, " _
                   & "(CL_NS) AS TCL_NS, (CL_TBS) AS TCL_TBS, (CL_CNK) AS TCL_CNK, (CL_TD) AS TCL_TD " _
                   & "FROM ThongSo WHERE MaTS = " + CStr(ma_ts) + " AND Thang=" + CStr(CThangDB(thg))
-            Set rs_giatridau = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+            Set rs_giatridau = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
       End If
       
         ' Nguy™n gi∏ tµi s∂n
@@ -213,12 +213,12 @@ With GiaTri
     
 If thg > 0 Then
       ' L y tÊng l≠Óng kh u hao cho Æ’n thÍi Æi”m hi÷n tπi
-      sql = "SELECT DISTINCTROW Sum(ThongSo.KH_NS) AS TKH_NS, Sum(ThongSo.KH_TBS) AS TKH_TBS, Sum(ThongSo.KH_CNK) AS TKH_CNK, Sum(ThongSo.KH_TD) AS TKH_TD " _
+      SQL = "SELECT DISTINCTROW Sum(ThongSo.KH_NS) AS TKH_NS, Sum(ThongSo.KH_TBS) AS TKH_TBS, Sum(ThongSo.KH_CNK) AS TKH_CNK, Sum(ThongSo.KH_TD) AS TKH_TD " _
             & "FROM TaiSan RIGHT JOIN ThongSo ON TaiSan.MaSo = ThongSo.MaTS " _
             & "WHERE ThongSo.MaTS = " + CStr(ma_ts) _
             & " AND " + VC("ThongSo.Thang", "IIF(TaiSan.ThangTang=0," + CStr(pThangDauKy) + ",TaiSan.ThangTang)") _
             & " AND ThongSo.Thang <= " + CStr(CThangDB(thg))
-      Set rs_tongkhauhao = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+      Set rs_tongkhauhao = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
       If (Not IsNull(rs_tongkhauhao!TKH_NS)) And (Not IsNull(rs_giatridau!TCL_NS)) Then
             ' Gi∏ trﬁ tµi s∂n
             .CL_NS = rs_giatridau!TCL_NS - (rs_tongkhauhao!TKH_NS)
@@ -229,9 +229,9 @@ If thg > 0 Then
       rs_tongkhauhao.Close
       Set rs_tongkhauhao = Nothing
       ' L≠Óng kh uhao
-      sql = "SELECT KH_NS, KH_TBS, KH_CNK, KH_TD FROM ThongSo " _
+      SQL = "SELECT KH_NS, KH_TBS, KH_CNK, KH_TD FROM ThongSo " _
                               & "WHERE Thang = " + CStr(CThangDB(thg)) + " AND MaTS = " + CStr(ma_ts)
-      Set rs_khauhao = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+      Set rs_khauhao = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
       If rs_khauhao.recordCount > 0 Then
             .KH_NS = rs_khauhao!KH_NS
             .KH_TBS = rs_khauhao!KH_TBS
@@ -285,14 +285,14 @@ End Sub
 '                                         ThÒ tÙc nµy Æ≠Óc g‰i duy nh t tı mnHoatDong: "Gi∂m tµi s∂n"
 '======================================================================================
 Public Sub GiamTaiSan(ma_ts As Long, thg_giam As Integer)
-Dim sql As String
+Dim SQL As String
       ' T›nh gi∏ trﬁ tµi s∂n trong th∏ng gi∂m (ch≠a tr›ch kh u hao)
       TinhGiaTriTaiSan ma_ts, thg_giam + 1, KH_KHONG
       ' L y m∑ tµi kho∂n tµi s∂n
-      sql = "SELECT MaTaiKhoan AS F1 FROM TaiSan WHERE MaSo = " _
+      SQL = "SELECT MaTaiKhoan AS F1 FROM TaiSan WHERE MaSo = " _
                                                                                                                                                                         + CStr(ma_ts)
       ' Thµnh lÀp ph∏t sinh
-      ThanhLapPhatSinh NV_GIAM, CLng5(SelectSQL(sql))
+      ThanhLapPhatSinh NV_GIAM, CLng5(SelectSQL(SQL))
       ' clsChungTu sœ sˆ dÙng c∏c th´ng tin l≠u trong bi’n chung GiaTri Æ” ghi
       ' vµo l≠Óng t®ng gi∂m tr™n ch¯ng tı (khi gi∂m c«n ph∂i cÀp nhÀt sË ©m).
       With GiaTri
@@ -318,17 +318,17 @@ End Sub
 '                                       Sˆ dÙng : ThÒ tÙc nµy Æ≠Óc g‰i tı thÒ tÙc GiamTaiSan vµ frmChungTu
 '======================================================================================
 Public Sub TacDongGiamTaiSan(ma_ts As Long, thg As Integer, tac_dong As Integer)
-Dim sql As String
+Dim SQL As String
       If tac_dong = TD_GIAM Then     ' Gi∂m tµi s∂n
             ExecuteSQL5 "UPDATE ThongSo SET KH_NS = 0, KH_TBS = 0, KH_CNK = 0, KH_TD = 0 " _
                                        & "WHERE MaTS = " + CStr(ma_ts) + " AND " + WThang2("Thang", thg, 0)
       Else                                ' Kh´i phÙc lπi d˜ li÷u
             Dim rs_khauhao As Object
             ' CÀp nhÀt lπi l≠Óng kh u hao vÌi d˜ li÷u cÒa th∏ng ngay tr≠Ìc th∏ng gi∂m
-            sql = "SELECT DISTINCTROW ThongSo.Thang, TaiSan.ThangGiam, ThongSo.KH_NS, ThongSo.KH_TBS, ThongSo.KH_CNK, ThongSo.KH_TD " _
+            SQL = "SELECT DISTINCTROW ThongSo.Thang, TaiSan.ThangGiam, ThongSo.KH_NS, ThongSo.KH_TBS, ThongSo.KH_CNK, ThongSo.KH_TD " _
                   & "FROM TaiSan INNER JOIN ThongSo ON (ThongSo.Thang = TaiSan.ThangGiam-1) AND (TaiSan.MaSo = ThongSo.MaTS) " _
                   & "WHERE ThongSo.MaTS = " + CStr(ma_ts)
-            Set rs_khauhao = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+            Set rs_khauhao = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
             Do While Not rs_khauhao.EOF
                   If rs_khauhao!thang = CThangDB(ThangTruoc(rs_khauhao!ThangGiam)) Then
                         ExecuteSQL5 "UPDATE DISTINCTROW TaiSan INNER JOIN ThongSo ON TaiSan.MaSo = ThongSo.MaTS " _
@@ -353,11 +353,11 @@ End Sub
 '======================================================================================
 Public Sub XoaTaiSan(ma_ts As Long)
 Dim rs_chungtu As Object
-Dim sql As String
+Dim SQL As String
 Dim ctu As New ClsChungtu
      ' Xo∏ ch¯ng tı
-      sql = "SELECT ChungTu.MaSo FROM CTTaiSan INNER JOIN ChungTu ON CTTaiSan.MaCTKT = ChungTu.MaCT WHERE CTTaiSan.MaTS = " + CStr(ma_ts) + " AND CTTaiSan.MaCTKT > 0"
-      Set rs_chungtu = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+      SQL = "SELECT ChungTu.MaSo FROM CTTaiSan INNER JOIN ChungTu ON CTTaiSan.MaCTKT = ChungTu.MaCT WHERE CTTaiSan.MaTS = " + CStr(ma_ts) + " AND CTTaiSan.MaCTKT > 0"
+      Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
       Do While Not rs_chungtu.EOF
             ctu.InitChungtu rs_chungtu!MaSo, 0, "", 0, Date, Date, 0, 0, "", 0, 0, 0, 0, 0, 0, "", 0, "", "", "", ""
             ctu.XoaChungtu
@@ -420,7 +420,7 @@ End Sub
 Public Function ThangDaKhauHao(tdau As Integer, tcuoi As Integer, loaikh As Long, shtk As String) As Boolean
     
     ThangDaKhauHao = SelectSQL("SELECT DISTINCTROW TOP 1 ChungTu.MaCT AS F1 FROM " + ChungTu2TKNC(-1) _
-        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaLoai = 12" + IIf(loaikh >= 0, " AND CT_ID = " + CStr(loaikh), "")) > 0
+        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaLoai = 12" + IIf(loaikh >= 0, " AND CT_ID = " + CStr(loaikh), "")) > 0
     
 End Function
 
@@ -428,7 +428,7 @@ Public Sub XoaChungTuKhauHao(tdau As Integer, tcuoi As Integer, loaikh As Long, 
     Dim rs As Object, ctu As New ClsChungtu
     
     Set rs = DBKetoan.OpenRecordset("SELECT DISTINCTROW ChungTu.MaSo, NgayCT, NgayGS FROM " + ChungTu2TKNC(-1) _
-        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND MaCT <> " + CStr(ctmoi) + " AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaLoai = 12 AND CT_ID = " + CStr(loaikh), dbOpenSnapshot)
+        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND MaCT <> " + CStr(ctmoi) + " AND " + WThang("ThangCT", tdau, tcuoi) + " AND MaLoai = 12 AND CT_ID = " + CStr(loaikh), dbOpenSnapshot)
     Do While Not rs.EOF
         ctu.InitChungtu rs!MaSo, 0, "", 0, rs!NgayCT, rs!NgayGS, 0, 0, "", 0, 0, 0, 0, 0, 0, "", 0, "", "", "", ""
         ctu.XoaChungtu
@@ -439,13 +439,13 @@ Public Sub XoaChungTuKhauHao(tdau As Integer, tcuoi As Integer, loaikh As Long, 
 End Sub
 
 Public Sub XoaChungtuTS(loaict As Integer, MaSoCT As Long)
-Dim sql As String
+Dim SQL As String
 
         Select Case loaict
             Case 9:
               Dim rs As Object
-                sql = "SELECT MaTS FROM CTTaiSan  WHERE MaCTKT=" + CStr(MaSoCT)
-                    Set rs = DBKetoan.OpenRecordset(sql, dbOpenSnapshot)
+                SQL = "SELECT MaTS FROM CTTaiSan  WHERE MaCTKT=" + CStr(MaSoCT)
+                    Set rs = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
                 Do While Not rs.EOF
                  XoaTaiSan rs!MaTS
                  rs.MoveNext
@@ -454,8 +454,8 @@ Dim sql As String
 '                sql = "SELECT MaTS AS F1 FROM CTTaiSan  WHERE MaCTKT=" + CStr(MaSoCT)
 '                XoaTaiSan SelectSQL(sql)
             Case 10:
-                sql = "SELECT MaTS AS F1 FROM CTTaiSan  WHERE MaCTKT=" + CStr(MaSoCT)
-                TacDongGiamTaiSan SelectSQL(sql), 13, TD_KHOIPHUC
+                SQL = "SELECT MaTS AS F1 FROM CTTaiSan  WHERE MaCTKT=" + CStr(MaSoCT)
+                TacDongGiamTaiSan SelectSQL(SQL), 13, TD_KHOIPHUC
         End Select
         
         If loaict <> 9 Then ExecuteSQL5 "DELETE FROM CTTaiSan WHERE MaCTKT = " + CStr(MaSoCT)
@@ -627,11 +627,11 @@ Public Sub SoDuTKTS()
 End Sub
 
 Public Function GTHaoMon(tkng As String, thang As Integer) As Double
-    Dim sql As String
+    Dim SQL As String
     
-    sql = "SELECT Sum(NG_NS+NG_TBS+NG_TD+NG_CNK-CL_NS-CL_TBS-CL_TD-CL_CNK) AS F1 FROM (ThongSo INNER JOIN TaiSan ON ThongSo.MaTS=TaiSan.MaSo) INNER JOIN LoaiTaiSan ON TaiSan.MaLoai=LoaiTaiSan.MaSo " _
+    SQL = "SELECT Sum(NG_NS+NG_TBS+NG_TD+NG_CNK-CL_NS-CL_TBS-CL_TD-CL_CNK) AS F1 FROM (ThongSo INNER JOIN TaiSan ON ThongSo.MaTS=TaiSan.MaSo) INNER JOIN LoaiTaiSan ON TaiSan.MaLoai=LoaiTaiSan.MaSo " _
         & " WHERE Thang=" + CStr(thang) + " AND LoaiTaiSan.Sohieu LIKE '" + tkng + "%'"
-    GTHaoMon = SelectSQL(sql)
+    GTHaoMon = SelectSQL(SQL)
 End Function
 
 Public Sub DieuChinhKH(mts As Long, thang As Integer)
@@ -650,10 +650,10 @@ Public Sub DieuChinhKH(mts As Long, thang As Integer)
 End Sub
 
 Public Function KhongDC(ms As Long) As Boolean
-    Dim sql As String
+    Dim SQL As String
     
-    sql = "SELECT Count(MaSo) AS F1 FROM CTTaiSan WHERE MaTS=" + CStr(ms) + " AND MaNhom=" + CStr(NV_DGLAI)
-    KhongDC = (SelectSQL(sql) > 0)
+    SQL = "SELECT Count(MaSo) AS F1 FROM CTTaiSan WHERE MaTS=" + CStr(ms) + " AND MaNhom=" + CStr(NV_DGLAI)
+    KhongDC = (SelectSQL(SQL) > 0)
 End Function
 
 Public Function SoTangGiamTS(shtk As String, tdau As Integer, tcuoi As Integer, mnhom As Long) As Double
@@ -666,6 +666,6 @@ Public Function SoKHTS(shtk As String, tdau As Integer, tcuoi As Integer)
 End Function
 
 Public Function NGHetKH(shtk As String, tcuoi As Integer) As Double
-    NGHetKH = SelectSQL("SELECT SUM(NG_NS+NG_TBS+NG_TD+NG_CNK) AS F1 FROM (ThongSo INNER JOIN TaiSan ON ThongSo.MaTS=TaiSan.MaSo) INNER JOIN LoaiTaiSan ON TaiSan.MaTaiKhoan=LoaiTaiSan.MaSo WHERE Thang=" + CStr(CThangDB(tcuoi)) + " AND LoaiTaiSan.SoHieu LIKE '" + shtk + "*' AND (CL_NS+CL_TBS+CL_TD+CL_CNK)=0")
+    NGHetKH = SelectSQL("SELECT SUM(NG_NS+NG_TBS+NG_TD+NG_CNK) AS F1 FROM (ThongSo INNER JOIN TaiSan ON ThongSo.MaTS=TaiSan.MaSo) INNER JOIN LoaiTaiSan ON TaiSan.MaTaiKhoan=LoaiTaiSan.MaSo WHERE Thang=" + CStr(CThangDB(tcuoi)) + " AND LoaiTaiSan.SoHieu LIKE '" + shtk + "%' AND (CL_NS+CL_TBS+CL_TD+CL_CNK)=0")
 End Function
 

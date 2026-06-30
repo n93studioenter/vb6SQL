@@ -111,7 +111,7 @@ End Function
 '===================================================================================
 Public Sub SoDuKH(thang As Integer, duno As Double, duco As Double, dunt As Double, Optional mtk As Long = 0, Optional shtk As String = "")
     Dim rs As Object, st As String
-    
+
     st = CStr(CThangDB(thang))
     If mtk > 0 Then
         Set rs = DBKetoan.OpenRecordset("SELECT Sum(DuNo_" + st + ") AS n,Sum(DuCo_" + st + ") AS c,Sum(DuNT_" + st + ") AS nt FROM SoDuKhachHang WHERE MaKhachHang=" + CStr(MaSo) + IIf(mtk > 0, " AND MaTaiKhoan=" + CStr(mtk), ""), dbOpenSnapshot)
@@ -121,7 +121,11 @@ Public Sub SoDuKH(thang As Integer, duno As Double, duco As Double, dunt As Doub
     If Not IsNull(rs!n) Then
         duno = rs!n
         duco = rs!c
-        dunt = Abs(rs!nt)
+        If Not IsNull(rs!nt) Then
+            dunt = Abs(rs!nt)
+        Else
+            dunt = 0
+        End If
     Else
         duno = 0
         duco = 0
@@ -308,9 +312,9 @@ Public Function HDChuaTT(thang As Integer, ngay As Date, shtk As String, mkh As 
     If pCongNoHD = 0 Then Exit Function
     
     SQL = "SELECT 'DK' AS SoHieu,#01/01/1980# AS NgayCT,'" + ABCtoVNI("D­ ®Çu kú") + "' AS DienGiai,CNDauNam.SoXuat,CNDauNam.DuNo_0 AS SoPS FROM CNDauNam INNER JOIN HethongTK ON CNDauNam.MaTaiKhoan=HethongTK.MaSo " _
-        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND (MaKhachHang = " + CStr(mkh) + ") AND (CNDauNam.DuNo_0>CNDauNam.SoXuat)" _
+        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND (MaKhachHang = " + CStr(mkh) + ") AND (CNDauNam.DuNo_0>CNDauNam.SoXuat)" _
         & " UNION SELECT ChungTu.SoHieu, NgayCT, DienGiai, Sum(SoXuat), Sum(SoPS) FROM " + ChungTu2TKNC(-1) _
-        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND (ChungTu.MaKH = " + CStr(mkh) + ") AND " + IIf(thang > 0, WThang("ThangCT", 0, thang), WNgay("NgayGS", CVDate("01/01/80"), ngay)) _
+        & " WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND (ChungTu.MaKH = " + CStr(mkh) + ") AND " + IIf(thang > 0, WThang("ThangCT", 0, thang), WNgay("NgayGS", CVDate("01/01/80"), ngay)) _
         + " GROUP BY MaCT,ChungTu.SoHieu,NgayCT,DienGiai HAVING Sum(SoPS)>Sum(SoXuat) ORDER BY NgayCT DESC, SoHieu DESC"
     Set rs_phieu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
     SQL = ""

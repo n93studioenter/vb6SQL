@@ -1554,7 +1554,7 @@ End Sub
 '====================================================================================================
 Private Sub OtlTk_Click()
     Dim dkn As Double, dkc As Double, dknt As Double, ckn As Double, ckc As Double, cknt As Double
-    Dim rs_tk As Object, sh As String, sql As String
+    Dim rs_tk As Object, sh As String, SQL As String
 
     txtDuNT(0).Text = "0"
     txtDuNT(1).Text = "0"
@@ -1601,7 +1601,7 @@ Private Sub OtlTk_Click()
         txtDuNT(2).Text = "0"
         ClearGrid GrdNT(0), 10
         ClearGrid GrdNT(1), 10
-        sql = "SELECT DISTINCTROW HethongTK.MaNT,NguyenTe.KyHieu," _
+        SQL = "SELECT DISTINCTROW HethongTK.MaNT,NguyenTe.KyHieu," _
             & " HethongTK.DuNo_0 AS DKNo, HethongTK.DuCo_0 AS DKCo, HethongTK.DuNT_0 AS DKNT, HethongTK.DuNo_12 AS CKNo, HethongTK.DuCo_12 AS CKCo, HethongTK.DuNT_12 AS CKNT" _
             & " FROM HethongTK LEFT JOIN NguyenTe ON HethongTK.MaNT=NguyenTe.MaSo WHERE" _
             & " HethongTK.SoHieu='" + TkNhap.sohieu + "' ORDER BY NguyenTe.KyHieu DESC"
@@ -1609,14 +1609,14 @@ Private Sub OtlTk_Click()
             ' SQL = SQL + " UNION SELECT DISTINCTROW HethongTK.MaNT, NguyenTe.KyHieu," _
               '& " 0 AS DKNo, 0 AS DKCo, Sum(HethongTK.DuNT_0) AS DKNT, 0 AS CKNo, 0 AS CKCo, Sum(HethongTK.DuNT_12) AS CKNT" _
               '& " FROM HethongTK LEFT JOIN NguyenTe ON HethongTK.MaNT=NguyenTe.MaSo WHERE" _
-              ' & " HethongTK.SoHieu LIKE '" + TkNhap.sohieu + "*' AND TKCon=0 AND MaNT>0 GROUP BY HethongTK.MaNT, NguyenTe.KyHieu ORDER BY NguyenTe.KyHieu DESC"
+              ' & " HethongTK.SoHieu LIKE '" + TkNhap.sohieu + "%' AND TKCon=0 AND MaNT>0 GROUP BY HethongTK.MaNT, NguyenTe.KyHieu ORDER BY NguyenTe.KyHieu DESC"
             SetSQL "QTheKho", "SELECT HethongTK.MaNT, NguyenTe.KyHieu," _
                             & " 0 AS DKNo, 0 AS DKCo, SUM(HethongTK.DuNT_0) AS DKNT, 0 AS CKNo, 0 AS CKCo, SUM(HethongTK.DuNT_12) AS CKNT" _
                             & " FROM HethongTK LEFT JOIN NguyenTe ON HethongTK.MaNT = NguyenTe.MaSo" _
                             & " WHERE HethongTK.SoHieu LIKE '" + TkNhap.sohieu + "%' AND TKCon = 0 AND MaNT > 0" _
                             & " GROUP BY HethongTK.MaNT, NguyenTe.KyHieu"
         End If
-        SetSQL "MienTru", sql
+        SetSQL "MienTru", SQL
         Set rs_tk = DBKetoan.OpenRecordset("SELECT * FROM MienTru ORDER BY KyHieu DESC", dbOpenSnapshot)
         Do While Not rs_tk.EOF
             If rs_tk!MaNT <= 0 Then sh = pTienStr Else sh = rs_tk!KyHieu
@@ -1688,7 +1688,7 @@ End Sub
 
 
 Private Sub SSCmdF_Click()
-    Dim sql As String
+    Dim SQL As String
     
     If Len(txtF.Text) = 0 Then
         RFocus txtF
@@ -1696,10 +1696,10 @@ Private Sub SSCmdF_Click()
     End If
     
     Me.MousePointer = 11
-    sql = "SELECT DISTINCTROW SoHieu AS F1 FROM HethongTK WHERE " _
+    SQL = "SELECT DISTINCTROW SoHieu AS F1 FROM HethongTK WHERE " _
         + IIf(SSOpt(0).Value, "SoHieu LIKE '" + txtF.Text + "'", "InStr(Ten,'" + txtF.Text + "')>0 OR InStr(TenE,'" + txtF.Text + "')>0")
-    sql = CStr(SelectSQL(sql))
-    If sql <> "0" Then ChonTk sql
+    SQL = CStr(SelectSQL(SQL))
+    If SQL <> "0" Then ChonTk SQL
     
     Me.MousePointer = 0
 End Sub
@@ -1771,7 +1771,7 @@ End Sub
 ' Thu tuc kiem tra cac thong tin nhap vao
 '====================================================================================================
 Public Function KiemTraDuLieu() As Boolean
-    Dim shmoi As String, i As Integer, sql As String
+    Dim shmoi As String, i As Integer, SQL As String
     Dim tkcha As New ClsTaikhoan
             
     KiemTraDuLieu = False
@@ -1823,9 +1823,9 @@ Public Function KiemTraDuLieu() As Boolean
                     Exit Function
                 End If
                 If TkNhap.tkcon > 0 Then
-                    sql = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM" _
+                    SQL = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM" _
                         & " HethongTK WHERE TkCha0 = " + CStr(TkNhap.MaSo)
-                    If Len(shmoi) <> Len(SelectSQL(sql)) Then
+                    If Len(shmoi) <> Len(SelectSQL(SQL)) Then
                         MsgBox "Sè hiÖu tµi kho¶n cïng cÊp ph¶i cïng ®é dµi !", vbExclamation, App.ProductName
                         RFocus txt(0)
                         Exit Function
@@ -1902,7 +1902,7 @@ End Function
 Public Function ChonTk(sh As String) As String
     Dim i As Integer, j As Integer, pos As Integer, shtk As String, length As Integer
     Dim loai As Long, count As Integer
-    Dim Item(1 To max_level) As Long
+    Dim item(1 To max_level) As Long
     
     TkNhap.sohieu = sh
     Me.tag = 0
@@ -1941,11 +1941,11 @@ Public Function ChonTk(sh As String) As String
                         j = j - 1
                     Loop
                     count = count + 1
-                    Item(count) = j
+                    item(count) = j
                     i = j
                 Loop
                 For i = count To 1 Step -1
-                    OtlTk.Expand(Item(i)) = True
+                    OtlTk.Expand(item(i)) = True
                 Next
             End If
             OtlTk.ListIndex = pos

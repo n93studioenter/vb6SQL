@@ -1194,7 +1194,7 @@ Private Sub CboVV_Click(Index As Integer)
     Select Case Index
         Case 0:      CboVVClick CboVV(0), CboVV(1)
         Case 1:
-                            sops = SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE MaDT2=" + CStr(CboVV(1).ItemData(CboVV(1).ListIndex)) + " AND HethongTK.SoHieu LIKE '1562*'")
+                            sops = SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE MaDT2=" + CStr(CboVV(1).ItemData(CboVV(1).ListIndex)) + " AND HethongTK.SoHieu LIKE '1562%'")
                             If sops <> 0 Then
                                 CP(1).Caption = Format(sops, Mask_0)
                                 CP(0).Caption = Format(Cdbl5(CP(1).Caption) + Cdbl5(CP(2).Caption) + Cdbl5(CP(3).Caption) + Cdbl5(CP(4).Caption), Mask_0)

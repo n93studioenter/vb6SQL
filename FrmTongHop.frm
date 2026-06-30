@@ -497,7 +497,7 @@ Dim pTK As Integer
 Dim pCT As String
 Dim MaCT(1 To Max1000) As Long
 Dim SoCTChon As Integer
-Dim db As Database
+Dim db As database
 
 Private Sub cboThang_Click(Index As Integer)
     Chk(5).Visible = (LstDB(0).ListCount = 1)
@@ -623,7 +623,7 @@ End Sub
 ' Thñ tôc thªm tÖp d÷ liÖu ®­îc chän vµo danh s¸ch
 '=================================================================================================================
 Private Sub ThemDB(file_name As String, thongbao As Boolean)
-    Dim db As Database
+    Dim db As database
     Dim rs_license As Object, i As Integer
     
     On Error GoTo LoiDB
@@ -688,29 +688,29 @@ End Sub
 '=================================================================================================================
 ' Thñ tôc tæng hîp sè liÖu tõ tÖp ®­îc chän vµo tÖp ®ang më
 '=================================================================================================================
-Private Function NhapPS(db As Database, thang As Integer, tcuoi As Integer, vt As Integer, cn As Integer, ts As Integer, tt As Integer, ndau As Date, ncuoi As Date) As Boolean
-Dim i As Integer, rsct As Object, rs2 As Object, soct As Long
-Dim ctu As New ClsChungtu, k As Long
-Dim MaCT As Long, mkh As Long, masocu As Long, mactcu As Long
-Dim mct As Long, m As Long, st1 As String, st2 As String, id1 As Long, id2 As Long, st As String
-Dim mtkn As Long, mtkc As Long, mvt As Long
-Dim ml As Long, idcn As Long, tencn As String, LayCTBanHang As Integer
-    
+Private Function NhapPS(db As database, thang As Integer, tcuoi As Integer, vt As Integer, cn As Integer, ts As Integer, tt As Integer, ndau As Date, ncuoi As Date) As Boolean
+    Dim i As Integer, rsct As Object, rs2 As Object, soct As Long
+    Dim ctu As New ClsChungtu, k As Long
+    Dim MaCT As Long, mkh As Long, masocu As Long, mactcu As Long
+    Dim mct As Long, m As Long, st1 As String, st2 As String, id1 As Long, id2 As Long, st As String
+    Dim mtkn As Long, mtkc As Long, mvt As Long
+    Dim ml As Long, idcn As Long, tencn As String, LayCTBanHang As Integer
+
     NhapPS = False
     On Error Resume Next
     db.TableDefs("ChungTu").Fields.Append db.TableDefs("ChungTu").CreateField("SHTKNo", dbText, 20)
     db.TableDefs("ChungTu").Fields.Append db.TableDefs("ChungTu").CreateField("SHTKCo", dbText, 20)
     On Error GoTo 0
-    
+
     Set rs2 = db.OpenRecordset("SELECT DISTINCTROW * FROM License", dbOpenSnapshot)
     idcn = rs2!tencn_id
     tencn = rs2!tencn
     pCT = LaySH(rs2!TKVattu, 2, "-")
     If Len(pCT) = 0 Or pCT = "..." Then pCT = CStr(tt)
-        
+
     If LstDB(0).ListCount > 1 Then ExecuteSQL5 "INSERT INTO Users (MaSo, TenNSD, UserRight) VALUES (" + CStr(idcn) + ",'" + IIf(tencn <> "...", tencn, rs2!tencty) + "',2)", False
     rs2.Close
-    
+
     db.Execute "UPDATE " + ChungTu2TKNC(-1) + " SET SHTKNo = HethongTK.SoHieu"
     db.Execute "UPDATE " + ChungTu2TKNC(1) + " SET SHTKCo = HethongTK.SoHieu"
     ThemTruong "HoaDon", "MaKH1", dbLong
@@ -721,7 +721,7 @@ Dim ml As Long, idcn As Long, tencn As String, LayCTBanHang As Integer
     ThemTruong "ChungTu", "U2", dbInteger
     ThemTruong "CTTaiSan", "U", dbInteger
     ThemTruong "CTTaiSan", "U2", dbInteger
-    
+
     mkh = Lng_MaxValue("MaSo", "KhachHang")
     If mkh = 0 Then
         mkh = 1
@@ -729,7 +729,7 @@ Dim ml As Long, idcn As Long, tencn As String, LayCTBanHang As Integer
         ExecuteSQL5 "INSERT INTO KhachHang (MaSo,MaPhanLoai,SoHieu) VALUES (1," + CStr(ml) + ",'#1')"
     End If
     ml = Lng_MaxValue("MaSo", "LoaiChungTu")
-        
+
     If thang > 0 Then
         For i = thang To tcuoi
             XoaCTTheoID i, i * 1000 + idcn, 0
@@ -739,7 +739,7 @@ Dim ml As Long, idcn As Long, tencn As String, LayCTBanHang As Integer
             XoaCTTheoID 0, i * 1000 + idcn, 0, ndau, ncuoi
         Next
     End If
-    
+
     Set rs2 = db.OpenRecordset("SELECT * FROM DoituongCT WHERE MaSo>1", dbOpenSnapshot, dbForwardOnly)
     Do While Not rs2.EOF
         k = SelectSQL("SELECT MaSo AS F1 FROM DoituongCT WHERE DienGiai='" + rs2!diengiai + "'")
@@ -789,7 +789,7 @@ a:
             ctu.MaKHC = 0
         End If
         'ctu.InitChungtu 0, rsct!maloai, rsct!SoHieu, rsct!ThangCT, rsct!NgayCT, rsct!NgayGS, IIf(vt > 0, rsct!MaNguon, 0), IIf(vt > 0, rsct!MaKho, 0), rsct!diengiai, mtkn, mtkc, _
-            rsct!sops, rsct!SoPS2No, rsct!SoPS2Co, IIf(vt > 0, rsct!MaVattu, 0), rsct!GhiChu, 1
+         rsct!sops, rsct!SoPS2No, rsct!SoPS2Co, IIf(vt > 0, rsct!MaVattu, 0), rsct!GhiChu, 1
         If ctu.tkno.tkcon > 0 Then
             If pTK > 0 Then
                 ctu.tkno.InitTaikhoanMaSo mtkn
@@ -822,12 +822,19 @@ a:
         End If
         ctu.MaCT = MaCT
         ctu.CT_ID = idcn + rsct!ThangCT * 1000
-        ctu.User_ID = IIf(LstDB(0).ListCount > 1, idcn, UserID)
+        ctu.User_ID = IIf(LstDB(0).ListCount > 1, idcn, userId)
         ctu.GhiChungtuTH 0, 1
         Set rs2 = db.OpenRecordset("SELECT * FROM ChungTuLQ WHERE MaCT=" + CStr(rsct!MaCT), dbOpenSnapshot, dbForwardOnly)
         Do While Not rs2.EOF
             If SelectSQL("SELECT MaSo AS F1 FROM ChungTuLQ WHERE MaCT=" + CStr(rsct!MaCT) + " AND Loai=" + CStr(rs2!loai)) = 0 Then
-                ExecuteSQL5 "INSERT INTO ChungTuLQ (MaSo,MaCT,Loai,HoTen,DiaChi,SoCTGoc) VALUES (" + CStr(Lng_MaxValue("MaSo", "ChungTuLQ") + 1) + "," + CStr(MaCT) + "," + CStr(rs2!loai) + ",'" + rs2!hoten + "','" + rs2!DiaChi + "','" + rs2!SoCTGoc + "')"
+                'ExecuteSQL5 "INSERT INTO ChungTuLQ (MaSo,MaCT,Loai,HoTen,DiaChi,SoCTGoc) VALUES (" + CStr(Lng_MaxValue("MaSo", "ChungTuLQ") + 1) + "," + CStr(MaCT) + "," + CStr(rs2!loai) + ",'" + rs2!hoten + "','" + rs2!DiaChi + "','" + rs2!SoCTGoc + "')"
+                ' ? Ðúng: B? MaSo, d? SQL Server t? tang
+                ExecuteSQL5 "INSERT INTO ChungTuLQ (MaCT, Loai, HoTen, DiaChi, SoCTGoc) VALUES (" & _
+                            CStr(MaCT) & "," & _
+                            CStr(rs2!loai) & ",'" & _
+                            Replace(rs2!hoten, "'", "''") & "','" & _
+                            Replace(rs2!DiaChi, "'", "''") & "','" & _
+                            Replace(rs2!SoCTGoc, "'", "''") & "',"
             End If
             rs2.MoveNext
         Loop
@@ -836,7 +843,7 @@ a:
             Set rs2 = db.OpenRecordset("SELECT HoaDon.* FROM HoaDon WHERE HoaDon.MaSo=" + CStr(rsct!MaSo), dbOpenSnapshot, dbForwardOnly)
             Do While Not rs2.EOF
                 ExecuteSQL5 "INSERT INTO HoaDon (MaSo,Loai,MaKhachHang,KyHieu,SoHD,NgayPH,MatHang,SoLuong,ThanhTien,TyLe,HD,KCT,HDBL,HTTT,MauSo,MaKH1) VALUES (" + CStr(ctu.MaSo) + "," + CStr(rs2!loai) + "," + CStr(mkh) _
-                    + ",'" + rs2!KyHieu + "','" + rs2!sohd + "',#" + Format(rs2!NgayPH, Mask_DB) + "#,'" + rs2!MatHang + "'," + DoiDau(rs2!SoLuong) + "," + DoiDau(rs2!ThanhTien) + "," + CStr(rs2!TyLe) + "," + CStr(rs2!HD) + "," + CStr(rs2!KCT) + "," + CStr(rs2!HDBL) + ",'" + rs2!HTTT + "','" + rs2!MauSo + "'," + CStr(rs2!MaKhachHang) + ")"
+                          + ",'" + rs2!KyHieu + "','" + rs2!sohd + "',#" + Format(rs2!NgayPH, Mask_DB) + "#,'" + rs2!MatHang + "'," + DoiDau(rs2!SoLuong) + "," + DoiDau(rs2!ThanhTien) + "," + CStr(rs2!TyLe) + "," + CStr(rs2!HD) + "," + CStr(rs2!KCT) + "," + CStr(rs2!HDBL) + ",'" + rs2!HTTT + "','" + rs2!MauSo + "'," + CStr(rs2!MaKhachHang) + ")"
                 rs2.MoveNext
             Loop
             rs2.Close
@@ -846,13 +853,13 @@ a:
                 Set rs2 = db.OpenRecordset("SELECT TOP 1 CTTaiSan.* FROM CTTaiSan WHERE MaCTKT=" + CStr(rsct!MaCT), dbOpenSnapshot, dbForwardOnly)
                 If Not rs2.EOF Then
                     ExecuteSQL5 "INSERT INTO CTTaiSan (MaSo, SoHieu, Thang, VaoSo, NgayGhi, DienGiai, " _
-                        & "MaLoai, MaNhom, MaTS, NG_NS, NG_TBS, NG_CNK, NG_TD, " _
-                        & "CL_NS, CL_TBS, CL_CNK, CL_TD, MaCTKT,ML,MN) VALUES (" + CStr(Lng_MaxValue("MaSo", "CTTaiSan") + 1) + ",'" + rs2!sohieu + "'," + CStr(rs2!thang) _
-                        + ",#" + Format(rs2!VaoSo, Mask_DB) + "#,#" + Format(rs2!NgayGhi, Mask_DB) + "#,'" _
-                        + rs2!diengiai + "'," + CStr(ml) + "," + CStr(ml) + "," + CStr(rs2!MaTS) + "," _
-                        + DoiDau(rs2!NG_NS) + "," + DoiDau(rs2!NG_TBS) + "," + DoiDau(rs2!NG_CNK) + "," + DoiDau(rs2!NG_TD) + "," _
-                        + DoiDau(rs2!CL_NS) + "," + DoiDau(rs2!CL_TBS) + "," + DoiDau(rs2!CL_CNK) + "," + DoiDau(rs2!CL_TD) + "," _
-                        + CStr(MaCT) + "," + CStr(rs2!maloai) + "," + CStr(rs2!MaNhom) + ")"
+                              & "MaLoai, MaNhom, MaTS, NG_NS, NG_TBS, NG_CNK, NG_TD, " _
+                              & "CL_NS, CL_TBS, CL_CNK, CL_TD, MaCTKT,ML,MN) VALUES (" + CStr(Lng_MaxValue("MaSo", "CTTaiSan") + 1) + ",'" + rs2!sohieu + "'," + CStr(rs2!thang) _
+                              + ",#" + Format(rs2!VaoSo, Mask_DB) + "#,#" + Format(rs2!NgayGhi, Mask_DB) + "#,'" _
+                              + rs2!diengiai + "'," + CStr(ml) + "," + CStr(ml) + "," + CStr(rs2!MaTS) + "," _
+                              + DoiDau(rs2!NG_NS) + "," + DoiDau(rs2!NG_TBS) + "," + DoiDau(rs2!NG_CNK) + "," + DoiDau(rs2!NG_TD) + "," _
+                              + DoiDau(rs2!CL_NS) + "," + DoiDau(rs2!CL_TBS) + "," + DoiDau(rs2!CL_CNK) + "," + DoiDau(rs2!CL_TD) + "," _
+                              + CStr(MaCT) + "," + CStr(rs2!maloai) + "," + CStr(rs2!MaNhom) + ")"
                     rs2.MoveNext
                 End If
                 rs2.Close
@@ -874,7 +881,7 @@ B:
     If vt > 0 Then CongDDVT db, masocu, tencn, Chk(4).Value, True, pTK, pCT
     If cn > 0 Then CongDDCN db, masocu, Chk(4).Value, True, pTK, pCT
     If ts > 0 Then CongDDTS db, mactcu, tencn, Chk(4).Value, True, pTK, pCT
-    
+
     NhapPS = True
     Label1(3).ToolTipText = CStr(soct)
 KT:

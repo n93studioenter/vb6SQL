@@ -278,7 +278,7 @@ Public Function GhiChungtu(Optional p As Integer = 0, Optional r As Integer = 0)
         If m = 0 Then
             tkno.InitTaikhoanMaSo SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '632%' AND TKCon=0 ORDER BY SoHieu")
         End If
-        'SelectSQL ("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '632*' AND TKCon=0 ORDER BY SoHieu")
+        'SelectSQL ("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '632%' AND TKCon=0 ORDER BY SoHieu")
 
         If TkCo.MaSo = 0 Or tkno.MaSo = 0 Then Exit Function
         sohieu = sohieu + "GV"
@@ -419,7 +419,7 @@ Public Function XuLyCT() As Integer
             m = SelectSQL("SELECT MaTKGV AS F1 FROM KhoHang WHERE MaSo=" + CStr(MaKho))
             If m > 0 Then tkno.InitTaikhoanMaSo m
         End If
-        If m = 0 Then tkno.InitTaikhoanMaSo SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '632*' AND TKCon=0 ORDER BY SoHieu")
+        If m = 0 Then tkno.InitTaikhoanMaSo SelectSQL("SELECT TOP 1 MaSo AS F1 FROM HethongTK WHERE SoHieu LIKE '632%' AND TKCon=0 ORDER BY SoHieu")
         If TkCo.MaSo = 0 Or tkno.MaSo = 0 Then Exit Function
         sohieu = sohieu + "GV"
         maloai = 2
@@ -688,20 +688,27 @@ End Sub
 
 Public Sub GhiThongtinCT(loai As Integer, Ten As String, DiaChi As String, ctgoc As String, makh As Long, Optional p As Integer = 0)
     Dim sh As String
-    
+
     sh = IIf(p > 0 Or maloai = 7, "P", "")
     If SelectSQL("SELECT MaCT AS F1 FROM ChungtuLQ" + sh + " WHERE MaCT=" + CStr(MaCT) + " AND Loai=" + CStr(loai)) = 0 Then
         If Len(Ten) = 0 Then Ten = "..."
         If Len(DiaChi) = 0 Then DiaChi = "..."
         If Len(ctgoc) = 0 Then ctgoc = "..."
-        ExecuteSQL5 "INSERT INTO ChungtuLQ" + sh + " (MaSo,MaCT,loai,HoTen,DiaChi,SoCTGoc,MaKH) VALUES (" + CStr(Lng_MaxValue("MaSo", "ChungTuLQ" + sh) + 1) + "," + CStr(MaCT) + "," + CStr(loai) + ",'" + Ten + "','" + DiaChi + "','" + ctgoc + "'," + CStr(makh) + ")"
+        'ExecuteSQL5 "INSERT INTO ChungtuLQ" + sh + " (MaSo,MaCT,loai,HoTen,DiaChi,SoCTGoc,MaKH) VALUES (" + CStr(Lng_MaxValue("MaSo", "ChungTuLQ" + sh) + 1) + "," + CStr(MaCT) + "," + CStr(loai) + ",'" + Ten + "','" + DiaChi + "','" + ctgoc + "'," + CStr(makh) + ")"
+        ExecuteSQL5 "INSERT INTO ChungtuLQ" & sh & " (MaCT, loai, HoTen, DiaChi, SoCTGoc, MaKH) VALUES (" & _
+                    CStr(MaCT) & "," & _
+                    CStr(loai) & ",'" & _
+                    Replace(Ten, "'", "''") & "','" & _
+                    Replace(DiaChi, "'", "''") & "','" & _
+                    Replace(ctgoc, "'", "''") & "'," & _
+                    CStr(makh) & ")"
     End If
 End Sub
 
 Public Function GhiChungtuTH(Optional p As Integer = 0, Optional r As Integer = 0) As Integer
     Dim SQL As String, sh As String
 
-    If User_ID = 0 Then User_ID = UserID
+    If User_ID = 0 Then User_ID = userId
 
     If tkno.tk_id <> TKVT_ID And tkno.tk_id <> TKGT_ID And TkCo.tk_id <> TKVT_ID And TkCo.tk_id <> TKDT_ID And tkno.tk_id <> TKCNKH_ID And TkCo.tk_id <> TKCNKH_ID And tkno.tk_id <> TKCNPT_ID And TkCo.tk_id <> TKCNPT_ID Then MaVattu = 0
     If tkno.tk_id <> TKCNKH_ID And tkno.tk_id <> TKCNPT_ID Then makh = 0
@@ -762,10 +769,10 @@ Public Function GhiChungtuTH(Optional p As Integer = 0, Optional r As Integer = 
       '+ CStr(tkno.MaTC) + "," + CStr(TkCo.MaTC) + "," + CStr(MaVattu) + ",'" + GhiChu + "'," + CStr(CT_ID) + "," + CStr(MaDT) + "," + CStr(MaDT1) + "," + CStr(MaDT2) + "," + CStr(MaDT3) + "," _
       '+ CStr(makh) + "," + CStr(CTGS) + "," + CStr(MaKHC) + "," + CStr(MaTP) + "," + CStr(dvt) + "," + CStr(User_ID) + "," + CStr(MaNV) + "," + CStr(HanTT) + ",'" + sh1 + "'," + CStr(T1) + "," + DoiDau(TLCK) + "," + DoiDau(CK) + IIf(pTygia > 0, "," + DoiDau(tygia), "") + IIf(pGiaUSD > 0, "," + DoiDau(PSUSD), "") + IIf(pProcessMode = 1 And r = 0, ",1", "") + ",'" + MauSo + "','" + LoaiHD + "','" + solo + "','" + handung + "','" + phantramchietkhau + "','" + sotienchietkhau + "','" & Format(Ngayimport, "yyyy-mm-dd HH:mm:ss") & "')"
     On Error Resume Next
-    DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$phantramchietkhau$disallow_zero_length"
-    DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$sotienchietkhau$disallow_zero_length"
-    DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$solo$disallow_zero_length"
-    DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$HanDung$disallow_zero_length"
+    'DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$phantramchietkhau$disallow_zero_length"
+    'DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$sotienchietkhau$disallow_zero_length"
+   ' DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$solo$disallow_zero_length"
+    'DBKetoan.ExecuteSQL "ALTER TABLE ChungTu DROP CONSTRAINT SSMA_CC$ChungTu$HanDung$disallow_zero_length"
     On Error GoTo 0
 
     If phantramchietkhau = "" Then phantramchietkhau = "0"
@@ -802,7 +809,7 @@ Public Function GhiChungtuTH(Optional p As Integer = 0, Optional r As Integer = 
 End Function
 
 Private Sub Class_Initialize()
-    User_ID = UserID
+    User_ID = userId
     DienGiaiE = "..."
     GhiChu = "..."
     sh1 = "..."

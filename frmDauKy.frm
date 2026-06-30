@@ -663,9 +663,9 @@ Public Sub chuyen_so_du_dau_ky()
         If (SelectSQL("select count(*)  as F1 from License where masothue = (select masothue from [" + psw + ";PWD=" + pPSW + "].License )") > 0) Then
             LockDB    'them san pham
 
-            DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '156*'"
-            DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '154*'"
-            DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '152*'"
+            DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '156%'"
+            DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '154%'"
+            DBKetoan.ExecuteSQL "update hethongtk set duno_0 = 0,duco_0 = 0 where sohieu like '152%'"
 
             ExecuteSQL5_Themmoi ("ALTER TABLE phanloaivattu  ADD MaPhanLoaiCu Number")
             '     DBKetoan.ExecuteSQL "update phanloaivattu set MaPhanLoaiCu = 0"
@@ -858,7 +858,7 @@ End Function
 '        Set rs_tinh = DBKetoan.OpenRecordset("select  *  from hethongtk where Cap>0 AND SoHieu  = '" + rs_ktra!sohieu + "' ORDER BY SoHieu", dbOpenSnapshot)
 '        If (SelectSQL("select sum(duno_0) as f1 from hethongtk where Cap > 0 AND Len(SoHieu)> len('" + rs_ktra!sohieu + "')  and sohieu like '" + rs_ktra!sohieu + "?'") <> rs_tinh!DuNo_0) Or (SelectSQL("select sum(duco_0) as f1 from hethongtk where Cap > 0 AND Len(SoHieu)> len('" + rs_ktra!sohieu + "')  and sohieu like '" + rs_ktra!sohieu + "?'") <> rs_tinh!DuCo_0) Then
 '                    If (SelectSQL("select count(*) as f1 from hethongtk where  sohieu like '" + rs_ktra!sohieu + "?'") > 0) Then
-'                     no = SelectSQL("select sum(duno_0) as f1 from hethongtk where  Len(SoHieu)> len('" + rs_ktra!sohieu + "') and sohieu like '" + rs_ktra!sohieu + "*' and ")
+'                     no = SelectSQL("select sum(duno_0) as f1 from hethongtk where  Len(SoHieu)> len('" + rs_ktra!sohieu + "') and sohieu like '" + rs_ktra!sohieu + "%' and ")
 '                     co = SelectSQL("select sum(duco_0) as f1 from hethongtk where    Len(SoHieu)> len('" + rs_ktra!sohieu + "') and sohieu like '" + rs_ktra!sohieu + "*")
 '                                If (no <> rs_tinh!DuNo_0) Then
 '                                     DBKetoan.ExecuteSQL "update HethongTK set duno_0 =" + str(Abs(rs_tinh!DuNo_0 - no)) + " where val(sohieu) = (select min(val(sohieu)) from HethongTK where val(sohieu) >0 and sohieu like '" + rs_ktra!sohieu + "?" + "')"

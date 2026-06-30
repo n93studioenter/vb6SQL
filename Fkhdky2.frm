@@ -551,7 +551,7 @@ Private Sub LietKeTonKho(mkho As Long)
     Set rs_ton = DBKetoan.OpenRecordset("SELECT HethongTK.MaSo,HethongTK.Kieu,HethongTK.SoHieu AS SHTK,CNDauNam.MaKhachHang,KhachHang.SoHieu,KhachHang.Ten," _
         & " CNDauNam.DuNo_0 AS DuNo,CNDauNam.DuCo_0 AS DuCo,CNDauNam.DuNT_0 AS DuNT,HanTT " _
         & " FROM ((CNDauNam INNER JOIN KhachHang ON CNDauNam.MaKhachHang = KhachHang.MaSo) INNER JOIN HethongTK ON CNDauNam.MaTaiKhoan=HethongTK.MaSo) INNER JOIN PhanLoaiKhachHang ON KhachHang.MaPhanLoai=PhanLoaiKhachHang.MaSo" _
-        & " WHERE PhanLoaiKhachHang.SoHieu LIKE '" + MaSo2SoHieu(mkho, "PhanLoaiKhachHang") + "*' AND (CNDauNam.DuNo_0 <> 0 OR CNDauNam.DuCo_0 <> 0) ORDER BY HethongTK.SoHieu DESC, KhachHang.SoHieu DESC", dbOpenSnapshot)
+        & " WHERE PhanLoaiKhachHang.SoHieu LIKE '" + MaSo2SoHieu(mkho, "PhanLoaiKhachHang") + "%' AND (CNDauNam.DuNo_0 <> 0 OR CNDauNam.DuCo_0 <> 0) ORDER BY HethongTK.SoHieu DESC, KhachHang.SoHieu DESC", dbOpenSnapshot)
     Do While Not rs_ton.EOF
         GrdVT.AddItem rs_ton!shtk + Chr(9) + rs_ton!sohieu + Chr(9) + rs_ton!Ten + Chr(9) + Format(rs_ton!duno, Mask_0) + Chr(9) + Format(rs_ton!duco, Mask_0) + Chr(9) + Format(rs_ton!dunt, Mask_2) + Chr(9) + CStr(rs_ton!HanTT) + Chr(9) + CStr(rs_ton!MaSo) + Chr(9) + CStr(rs_ton!MaKhachHang), 0
         rs_ton.MoveNext

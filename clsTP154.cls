@@ -111,11 +111,11 @@ Public Function Kiem_tra_qd15() As Integer
  Dim SQL  As String
 '    Dim rs_tk As Object
 '    kt = 0
-'     Set rs_tk = DBKetoan.OpenRecordset("select * from HethongTK where SoHieu LIKE '621*'", dbOpenSnapshot)
+'     Set rs_tk = DBKetoan.OpenRecordset("select * from HethongTK where SoHieu LIKE '621%'", dbOpenSnapshot)
 '     Do While Not rs_tk.EOF
 '       kt = 1
 '     Loop
-      SQL = "SELECT SUM(maso) AS F1 from HethongTK where SoHieu LIKE '621*'"
+      SQL = "SELECT SUM(maso) AS F1 from HethongTK where SoHieu LIKE '621%'"
       Kiem_tra_qd15 = SelectSQL(SQL)
 End Function
 Public Function SoCPNVL(tdau As Integer, tcuoi As Integer) As Double
@@ -123,24 +123,24 @@ Public Function SoCPNVL(tdau As Integer, tcuoi As Integer) As Double
    
    If Kiem_tra_qd15() > 0 Then
    
-                  SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '621*' AND " _
+                  SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '621%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPNVL = SelectSQL(SQL)
-    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '152*' AND TK.SoHieu LIKE '621*' AND " _
+    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '152%' AND TK.SoHieu LIKE '621%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPNVL = SoCPNVL - SelectSQL(SQL)
     If SoCPNVL = 0 Then
-        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154*' AND TK.SoHieu LIKE '621*' AND " _
+        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154%' AND TK.SoHieu LIKE '621%' AND " _
             + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
         SoCPNVL = SelectSQL(SQL)
     End If
 Else
     If SoCPNVL = 0 Then
-        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154*' and( TK.SoHieu not LIKE '214*' and TK.SoHieu not LIKE '334*') AND " _
+        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154%' and( TK.SoHieu not LIKE '214%' and TK.SoHieu not LIKE '334%') AND " _
          + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
         SoCPNVL = SelectSQL(SQL)
          
-         SQL = " SELECT SUM(SoPS) AS F1 FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKNo=HethongTK.MaSo) WHERE HethongTK.SoHieu LIKE '154*' and ChungTu.MaTKCo = 0 and " _
+         SQL = " SELECT SUM(SoPS) AS F1 FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKNo=HethongTK.MaSo) WHERE HethongTK.SoHieu LIKE '154%' and ChungTu.MaTKCo = 0 and " _
         + WThang("ThangCT", tdau, tcuoi) + " And chungtu.MaTP = " + CStr(MaSo)
              SoCPNVL = SoCPNVL + SelectSQL(SQL)
     End If
@@ -150,23 +150,23 @@ End Function
 Public Function SoCPNC(tdau As Integer, tcuoi As Integer) As Double
     Dim SQL As String
     If Kiem_tra_qd15() > 0 Then
-     SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '622*' AND " _
+     SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '622%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPNC = SelectSQL(SQL)
     If SoCPNC = 0 Then
-        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154*' AND TK.SoHieu LIKE '622*' AND " _
+        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154%' AND TK.SoHieu LIKE '622%' AND " _
             + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
         SoCPNC = SelectSQL(SQL)
     End If
 Else
-SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '334*' AND " _
+SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '334%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPNC = SelectSQL(SQL)
     If SoCPNC = 0 Then
-        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154*' AND TK.SoHieu LIKE '334*' AND " _
+        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154%' AND TK.SoHieu LIKE '334%' AND " _
             + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
         SoCPNC = SelectSQL(SQL)
-        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '334*' AND TK.SoHieu LIKE '154*' AND " _
+        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '334%' AND TK.SoHieu LIKE '154%' AND " _
             + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
         
         SoCPNC = SoCPNC - SelectSQL(SQL)
@@ -193,21 +193,21 @@ End Function
 Public Function SoCPM(tdau As Integer, tcuoi As Integer) As Double
     Dim SQL As String
     If Kiem_tra_qd15() > 0 Then
-            SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '623*' AND " _
+            SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '623%' AND " _
                 + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
             SoCPM = SelectSQL(SQL)
             If SoCPM = 0 Then
-                SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154*' AND TK.SoHieu LIKE '623*' AND " _
+                SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154%' AND TK.SoHieu LIKE '623%' AND " _
                     + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
                 SoCPM = SelectSQL(SQL)
             End If
 Else
 
-    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '214*' AND " _
+    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '214%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPM = SelectSQL(SQL)
     If SoCPM = 0 Then
-        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154*' AND TK.SoHieu LIKE '214*' AND " _
+        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154%' AND TK.SoHieu LIKE '214%' AND " _
             + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
         SoCPM = SelectSQL(SQL)
     End If
@@ -268,11 +268,11 @@ End Function
 Public Function SoCPSXCTT(tdau As Integer, tcuoi As Integer) As Double
     Dim SQL As String
     
-    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '627*' AND " _
+    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '627%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPSXCTT = SelectSQL(SQL)
     If SoCPSXCTT = 0 Then
-        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154*' AND TK.SoHieu LIKE '627*' AND " _
+        SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE HethongTK.SoHieu LIKE '154%' AND TK.SoHieu LIKE '627%' AND " _
             + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
         SoCPSXCTT = SelectSQL(SQL)
     End If
@@ -281,7 +281,7 @@ End Function
 Public Function SoCPBH(tdau As Integer, tcuoi As Integer) As Double
     Dim SQL As String
     
-    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '641*' AND " _
+    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '641%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPBH = SelectSQL(SQL)
 End Function
@@ -289,11 +289,11 @@ End Function
 Public Function SoCPQL(tdau As Integer, tcuoi As Integer) As Double
     Dim SQL As String, kq As Double
     
-    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE (HethongTK.SoHieu LIKE '911*' AND (TK.SoHieu LIKE '142*' OR TK.SoHieu LIKE '242*')) AND " _
+    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE (HethongTK.SoHieu LIKE '911%' AND (TK.SoHieu LIKE '142%' OR TK.SoHieu LIKE '242%')) AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     kq = SelectSQL(SQL)
     
-    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '642*' AND " _
+    SQL = "SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(-1) + " WHERE HethongTK.SoHieu LIKE '642%' AND " _
         + WThang("ThangCT", tdau, tcuoi) + " AND MaTP=" + CStr(MaSo)
     SoCPQL = SelectSQL(SQL) + kq
 End Function
@@ -335,11 +335,11 @@ Public Function GiaThanhCK(thang As Integer) As Double
         
     If thang > 0 Then
         GiaThanhCK = SoDK() + SoCPNVL(pThangDauKy, thang) + SoCPNC(pThangDauKy, thang) + SoCPM(pThangDauKy, thang) + SoCPNVLPB(pThangDauKy, thang) + SoCPNCPB(pThangDauKy, thang) + SoCPMPB(pThangDauKy, thang) + SoCPSXCTT(pThangDauKy, thang) + SoCPSXC(pThangDauKy, thang)
-        X = SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '154*' AND MaTP=" + CStr(MaSo) + " AND " + WThang("ThangCT", 0, thang))
+        X = SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '154%' AND MaTP=" + CStr(MaSo) + " AND " + WThang("ThangCT", 0, thang))
         'If GiaThanhCK >= x Then
             GiaThanhCK = GiaThanhCK - X
         'Else
-        '    GiaThanhCK = GiaThanhCK - SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '154*' AND MaTP=" + CStr(MaSo) + " AND " + WThang("ThangCT", thang, thang))
+        '    GiaThanhCK = GiaThanhCK - SelectSQL("SELECT SUM(SoPS) AS F1 FROM " + ChungTu2TKNC(1) + " WHERE HethongTK.SoHieu LIKE '154%' AND MaTP=" + CStr(MaSo) + " AND " + WThang("ThangCT", thang, thang))
         'End If
     Else
         GiaThanhCK = SoDK()

@@ -914,7 +914,7 @@ Public Function ChonTP(sh As String) As String
     Dim j As Integer, i As Integer, pos As Integer, length As Integer
     
     If Len(sh) > 0 Then
-        shtk = "SELECT DISTINCTROW TOP 1 MaPhanLoai AS F1 FROM TP154 WHERE SoHieu LIKE '" + sh + "*' ORDER BY SoHieu"
+        shtk = "SELECT DISTINCTROW TOP 1 MaPhanLoai AS F1 FROM TP154 WHERE SoHieu LIKE '" + sh + "%' ORDER BY SoHieu"
         mpl = SelectSQL(shtk)
         If mpl > 0 Then
             If CboLoai.ItemData(CboLoai.ListIndex) <> mpl Then SetListIndex CboLoai, mpl

@@ -659,7 +659,7 @@ Public Function ChonNV(sh As String) As String
     Dim j As Integer, i As Integer, pos As Integer, length As Integer
     
     If Len(sh) > 0 Then
-        shtk = "SELECT DISTINCTROW TOP 1 MaPhanLoai AS F1 FROM NhanVien WHERE SoHieu LIKE '" + sh + "*' ORDER BY SoHieu"
+        shtk = "SELECT DISTINCTROW TOP 1 MaPhanLoai AS F1 FROM NhanVien WHERE SoHieu LIKE '" + sh + "%' ORDER BY SoHieu"
         mpl = SelectSQL(shtk)
         If mpl > 0 And CboLoai.ListIndex >= 0 Then
             If CboLoai.ItemData(CboLoai.ListIndex) <> mpl Then SetListIndex CboLoai, mpl
@@ -761,7 +761,7 @@ Private Sub MedNgay_LostFocus()
 End Sub
 
 Private Sub SSCmdF_Click()
-    Dim sql As String
+    Dim SQL As String
     
     If Len(txtF.Text) = 0 Then
         RFocus txtF
@@ -769,13 +769,13 @@ Private Sub SSCmdF_Click()
     End If
     
     Me.MousePointer = 11
-    sql = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM NhanVien WHERE MaSo>" + CStr(MaDaTim)
-    If SSOpt(0).Value Then sql = sql + " AND SoHieu LIKE '" + txtF.Text + "%'"
-    If SSOpt(1).Value Then sql = sql + " AND InStr(Ten,'" + txtF.Text + "')>0"
-    If SSOpt(2).Value Then sql = sql + " AND CMND LIKE '" + txtF.Text + "%'"
-    sql = CStr(SelectSQL(sql))
-    If sql <> "0" Then
-        ChonNV sql
+    SQL = "SELECT DISTINCTROW Top 1 SoHieu AS F1 FROM NhanVien WHERE MaSo>" + CStr(MaDaTim)
+    If SSOpt(0).Value Then SQL = SQL + " AND SoHieu LIKE '" + txtF.Text + "%'"
+    If SSOpt(1).Value Then SQL = SQL + " AND InStr(Ten,'" + txtF.Text + "')>0"
+    If SSOpt(2).Value Then SQL = SQL + " AND CMND LIKE '" + txtF.Text + "%'"
+    SQL = CStr(SelectSQL(SQL))
+    If SQL <> "0" Then
+        ChonNV SQL
         MaDaTim = onv.MaSo
     Else
         MaDaTim = 0

@@ -223,7 +223,7 @@ Begin VB.Form frmMain
          EndProperty
          BeginProperty Panel4 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
             Style           =   6
-            TextSave        =   "25/06/26"
+            TextSave        =   "30/06/26"
             Key             =   ""
             Object.Tag             =   ""
          EndProperty
@@ -3069,12 +3069,12 @@ Private Sub Form_Activate()
         LbCty(17).Caption = SelectSQL("select Password AS f1 from  tbInvoiceInfo")
     End If
     'CheckAndCreateTBCpu
-    ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD IdNhap text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD IdTemplate text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD StatusPH text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbCpu ADD PcName text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbRegister ADD Printername text")
-    ExecuteSQL5_Themmoi ("ALTER TABLE tbInvoiceTemplate ADD KHHD text")
+    ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD IdNhap NVARCHAR(200)")
+    ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD IdTemplate NVARCHAR(200)")
+    ExecuteSQL5_Themmoi ("ALTER TABLE HoaDon ADD StatusPH NVARCHAR(200)")
+    ExecuteSQL5_Themmoi ("ALTER TABLE tbCpu ADD PcName NVARCHAR(200)")
+    ExecuteSQL5_Themmoi ("ALTER TABLE tbRegister ADD Printername NVARCHAR(200)")
+    ExecuteSQL5_Themmoi ("ALTER TABLE tbInvoiceTemplate ADD KHHD NVARCHAR(200)")
     Dim cmg As Long
     cmg = SelectSQL("select CMG AS f1 from  License")
     If cmg = 249991 Then
@@ -3352,16 +3352,16 @@ Private Sub LoadMenuform()
     serverpath = originPaths & "\Hoadon\serverpath.txt"
 
 
-    Dim uncPath As String
-    uncPath = ReadTxt(serverpath)
-    Dim txtPath As String
-    txtPath = uncPath & "\" & "Tools\version.txt"
-    Dim content As String
-    content = ReadTxt(txtPath)
-    Dim originPath As String
-    originPath = App.path & "\Hoadon\version.txt"
-    content = ReadTxt(originPath)
-    mnVersion.Caption = "Version " & content
+   ' Dim uncPath As String
+   ' uncPath = ReadTxt(serverpath)
+    'Dim txtPath As String
+   ' txtPath = uncPath & "\" & "Tools\version.txt"
+    'Dim content As String
+    'content = ReadTxt(txtPath)
+   ' Dim originPath As String
+    'originPath = App.path & "\Hoadon\version.txt"
+    'content = ReadTxt(originPath)
+    'mnVersion.Caption = "Version " & content
     Dim hMenu As Long
     Dim hSub As Long
     Dim hSub2 As Long
@@ -3689,14 +3689,26 @@ Private Sub testsql()
     Set rs = Nothing
 End Sub
 Private Sub Form_Load()
-'
+
     Dim strSQL As String
 
     ' 1. Thêm c?t m?i v?i ki?u mong mu?n
-    strSQL = "ALTER TABLE tbimportdetail ADD TTien_New DECIMAL(18,2) NULL"
+    ' ? Ðúng cho Access
+     strSQL = "ALTER TABLE tbimport ALTER COLUMN TPhi FLOAT  NULL"
     ExecuteSQL5 strSQL
-    
-    
+     strSQL = "ALTER TABLE tbimport ALTER COLUMN TgTCThue FLOAT  NULL"
+    ExecuteSQL5 strSQL
+     strSQL = "ALTER TABLE tbimport ALTER COLUMN TgTThue FLOAT  NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE tbimportdetail ALTER COLUMN TTien DECIMAL(18,2) NULL"
+    ExecuteSQL5 strSQL
+
+    strSQL = "ALTER TABLE ChungTuLQ ALTER COLUMN HoTen NVARCHAR(300) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE ChungTuLQ ALTER COLUMN DiaChi NVARCHAR(300) NULL"
+    ExecuteSQL5 strSQL
+
+
     frmMain.sbStatusBar.Panels(4).ToolTipText = "Log On Time: " + Format(Time, "hh:mm:ss")
     Dim check162 As String
     check162 = SelectSQL("SELECT SoHieu AS F1 FROM HeThongTK where SoHieu = '621' ")
@@ -3798,7 +3810,7 @@ Private Sub Form_Load()
                        "SELECT COUNT(*) AS F1 " & _
                        "FROM (" & _
                      " SELECT MaCT FROM ChungTu " & _
-                     " WHERE SoHieu NOT LIKE '*GV*' " & _
+                     " WHERE SoHieu NOT LIKE '%GV%' " & _
                      " GROUP BY MaCT" & _
                        ") AS T" _
                      )
@@ -4873,7 +4885,7 @@ Private Sub XKTheoNgay()
                     "WHERE NgayCT = #" & Format(item, "yyyy-mm-dd") & "# " & _
                     "AND MaVattu <> 0 " & _
                     "AND SoPS2Co <>0" & _
-                    "AND sohieu NOT LIKE '*GV*'"
+                    "AND sohieu NOT LIKE '%GV%'"
             Set rs_chungtu = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
 
             If Not rs_chungtu.EOF Then
@@ -5348,7 +5360,7 @@ Private Sub GetLicense()
                        "SELECT COUNT(*) AS F1 " & _
                        "FROM (" & _
                      " SELECT MaCT FROM ChungTu " & _
-                     " WHERE SoHieu NOT LIKE '*GV*' " & _
+                     " WHERE SoHieu NOT LIKE '%GV%' " & _
                      " GROUP BY MaCT" & _
                        ") AS T" _
                      )

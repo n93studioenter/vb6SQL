@@ -78,7 +78,7 @@ End Function
 ' Hµm tr¶ vÒ sè d­ tµi kho¶n cuèi ngµy, chØ cho tµi kho¶n chi tiÕt
 '======================================================================================
 Public Sub SoDuKHNgay(mkh As Long, ngay As Date, duno As Double, duco As Double, dunt As Double, Optional mtk As Long = 0, Optional shtk As String = "")
-    Dim rs As Object, thang As Integer, sql As String, X As Double, y1 As Double, y2 As Double, kieu As Boolean
+    Dim rs As Object, thang As Integer, SQL As String, X As Double, y1 As Double, y2 As Double, kieu As Boolean
     
     If mtk > 0 Then
         Set rs = DBKetoan.OpenRecordset("SELECT Sum(DuNo_0) AS n,Sum(DuCo_0) AS c,Sum(DuNT_0) AS nt FROM SoDuKhachHang WHERE MaKhachHang=" + CStr(mkh) + IIf(mtk > 0, " AND MaTaiKhoan=" + CStr(mtk), ""), dbOpenSnapshot)
@@ -119,7 +119,7 @@ Public Sub SoPhatSinhN(mkh As Long, ndau As Date, ncuoi As Date, psn As Double, 
 End Sub
 
 Public Sub DanhDiemCN(mpl As Long)
-    Dim sql As String
+    Dim SQL As String
     
     SetSQL "QChitiet", "SELECT DISTINCTROW KhachHang.SoHieu, Ten,PhanLoaiKhachHang.SoHieu AS SHPL,TenPhanLoai,PhanLoaiKhachHang.PLCha,DiaChi,MST,Tel,Fax,TaiKhoan,PhanLoaiKhachHang.MaSo AS MPL" _
         & " FROM KhachHang INNER JOIN PhanLoaiKhachHang ON KhachHang.MaPhanLoai=PhanLoaiKhachHang.MaSo WHERE LEFT(KhachHang.SoHieu,1)<>'X'"
@@ -135,7 +135,7 @@ Public Sub SoDuTKCN2(thang As Integer)
     Dim n As Double, c As Double, TK As New ClsTaikhoan
     
      st = CStr(CThangDB(thang))
-    Set rs_tk = DBKetoan.OpenRecordset("SELECT MaTaiKhoan, Sum(SoDuKhachHang.DuNo_" + st + ") As DuNo, Sum(SoDuKhachHang.DuCo_" + st + ") As DuCo FROM SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + pSHPT + "*' OR HethongTK.SoHieu LIKE '331*' GROUP BY MaTaiKhoan", dbOpenSnapshot, dbForwardOnly)
+    Set rs_tk = DBKetoan.OpenRecordset("SELECT MaTaiKhoan, Sum(SoDuKhachHang.DuNo_" + st + ") As DuNo, Sum(SoDuKhachHang.DuCo_" + st + ") As DuCo FROM SoDuKhachHang INNER JOIN HethongTK ON SoDuKhachHang.MaTaiKhoan=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + pSHPT + "%' OR HethongTK.SoHieu LIKE '331%' GROUP BY MaTaiKhoan", dbOpenSnapshot, dbForwardOnly)
     Do While Not rs_tk.EOF
         n = SelectSQL("SELECT DuNo_" + st + " As F1, DuCo_" + st + " As F2 FROM HethongTK WHERE MaSo=" + CStr(rs_tk!MaTaiKhoan), c)
         TK.InitTaikhoanMaSo rs_tk!MaTaiKhoan
@@ -159,8 +159,8 @@ End Function
 Public Function DoanhThuTK(shtk As String, tdau As Integer, tcuoi As Integer, thue As Double) As Double
     
     SetSQL "MienTru", "SELECT MaCT, First(TyLe) AS TL FROM " + ChungTu2TKHD(0) + " WHERE HoaDon.Loai=1 AND " + WThang("ThangCT", tdau, tcuoi) + " GROUP BY MaCT"
-    DoanhThuTK = SelectSQL("SELECT Sum(SoPS) AS F1, Sum(iif(IsNull(TL),0,Fix(0.5+SoPS*TL/100))) AS F2 FROM (" + ChungTu2TKNC(1) + ") LEFT JOIN MienTru ON ChungTu.MaCT=MienTru.MaCT WHERE HethongTK.SoHieu LIKE '" + shtk + "*' AND " + WThang("ThangCT", tdau, tcuoi), thue)
-    DoanhThuTK = DoanhThuTK - SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE MaLoai<>3 AND HethongTK.SoHieu LIKE '" + shtk + "*' AND (Not TK.SoHieu LIKE '3332*') AND " + WThang("ThangCT", tdau, tcuoi))
+    DoanhThuTK = SelectSQL("SELECT Sum(SoPS) AS F1, Sum(iif(IsNull(TL),0,Fix(0.5+SoPS*TL/100))) AS F2 FROM (" + ChungTu2TKNC(1) + ") LEFT JOIN MienTru ON ChungTu.MaCT=MienTru.MaCT WHERE HethongTK.SoHieu LIKE '" + shtk + "%' AND " + WThang("ThangCT", tdau, tcuoi), thue)
+    DoanhThuTK = DoanhThuTK - SelectSQL("SELECT Sum(SoPS) AS F1 FROM " + ChungTu2TKNC(0) + " WHERE MaLoai<>3 AND HethongTK.SoHieu LIKE '" + shtk + "%' AND (Not TK.SoHieu LIKE '3332%') AND " + WThang("ThangCT", tdau, tcuoi))
 End Function
 
 Public Sub SoDuKH(mkh As Long, thang As Integer, duno As Double, duco As Double, dunt As Double, Optional mtk As Long = 0, Optional shtk As String = "")
@@ -210,16 +210,16 @@ Public Function SoNoTheoHoaDon(mtk As Long, mkh As Long, loai As Integer) As Dou
 End Function
 
 Public Sub BangKeTichSo2(shtk As String, mcn As Long, ndau As Date, ncuoi As Date, Optional nx As Integer = 0)
-    Dim rs As Object, n As Date, sql As String, ms As Long, sdn As Double, sdc As Double, n1 As Date
+    Dim rs As Object, n As Date, SQL As String, ms As Long, sdn As Double, sdc As Double, n1 As Date
     Dim sh As String, X As Double, rs2 As Object, k As Integer, mtk As Long, mbc As Long
     
     If shtk <> "" Then
         sh = shtk
         k = SelectSQL("SELECT TOP 1 Kieu AS F1,MaSo AS F2 FROM HethongTK WHERE SoHieu LIKE '" + sh + "%'", mtk)
     
-        sql = "SELECT -1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKNo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKCo=TK.MaSo WHERE MaKH=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "*' AND CT_ID<>700000000 GROUP BY NgayGS" _
-            & " UNION SELECT 1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKCo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKNo=TK.MaSo WHERE MaKHC=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "*' AND CT_ID<>700000000 GROUP BY NgayGS"
-        SetSQL "MienTru", sql
+        SQL = "SELECT -1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKNo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKCo=TK.MaSo WHERE MaKH=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "%' AND CT_ID<>700000000 GROUP BY NgayGS" _
+            & " UNION SELECT 1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKCo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKNo=TK.MaSo WHERE MaKHC=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "%' AND CT_ID<>700000000 GROUP BY NgayGS"
+        SetSQL "MienTru", SQL
         Set rs = DBKetoan.OpenRecordset("SELECT * FROM MienTru ORDER BY NgayGS", dbOpenSnapshot)
         SoDuKHNgay mcn, ndau - 1, sdn, sdc, X, , sh
         If nx = 0 Then ExecuteSQL5 "DELETE * FROM BaoCaoCP2"
@@ -256,13 +256,13 @@ Public Sub BangKeTichSo2(shtk As String, mcn As Long, ndau As Date, ncuoi As Dat
         End If
         ExecuteSQL5 "DELETE * FROM BaoCaoCP2 WHERE Kq1=0 AND Kq2=0 AND Kq3=0 AND Kq4=0 AND MaSo>" + CStr(mbc)
         n = SelectSQL("SELECT TOP 1 Ngay1 AS F1 FROM BaoCaoCP2 WHERE MaSo>" + CStr(mbc) + " ORDER BY Ngay1")
-        X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "*' AND Ngay<=#" + Format(n, Mask_DB) + "# AND MaKH=" + CStr(mcn) + " ORDER BY Ngay DESC")
-        'If X = 0 Then X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "*' AND Ngay<=#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC")
+        X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "%' AND Ngay<=#" + Format(n, Mask_DB) + "# AND MaKH=" + CStr(mcn) + " ORDER BY Ngay DESC")
+        'If X = 0 Then X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "%' AND Ngay<=#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC")
         ExecuteSQL5 "UPDATE BaoCaoCP2 SET Kq6=" + DoiDau(Format(X, Mask_2)) + " WHERE MaSo>" + CStr(mbc)
         n = ncuoi + 1
         Set rs = DBKetoan.OpenRecordset("SELECT * FROM BaoCaoCP2 WHERE MaSo>" + CStr(mbc) + " ORDER BY Ngay1 DESC", dbOpenSnapshot)
         Do While Not rs.EOF
-            Set rs2 = DBKetoan.OpenRecordset("SELECT Ngay,LS FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "*' AND Ngay>=#" + Format(rs!ngay1, Mask_DB) + "# AND Ngay<#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC", dbOpenSnapshot)
+            Set rs2 = DBKetoan.OpenRecordset("SELECT Ngay,LS FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "%' AND Ngay>=#" + Format(rs!ngay1, Mask_DB) + "# AND Ngay<#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC", dbOpenSnapshot)
             Do While Not rs2.EOF
                 ms = ms + 1
                 ExecuteSQL5 "INSERT INTO BaoCaoCP2 (MaSo,SoHieu,Ten,MaCha,Cap,Kq3,Kq4,Ngay1,Kq6) VALUES (" + CStr(ms) + ",'" + CStr(ms) + "','" + shtk + "'," + CStr(mtk) + "," + CStr(n - rs2!ngay) + "," + CStr(rs!Kq3) + "," + CStr(rs!Kq4) + ",#" + Format(rs2!ngay, Mask_DB) + "#," + DoiDau(Format(rs2!ls, Mask_2)) + ")"
@@ -300,16 +300,16 @@ Public Sub BangKeTichSo2(shtk As String, mcn As Long, ndau As Date, ncuoi As Dat
 End Sub
 
 Public Sub BangKeTichSo(shtk As String, mcn As Long, ndau As Date, ncuoi As Date, Optional nx As Integer = 0)
-    Dim rs As Object, n As Date, sql As String, ms As Long, sdn As Double, sdc As Double, n1 As Date
+    Dim rs As Object, n As Date, SQL As String, ms As Long, sdn As Double, sdc As Double, n1 As Date
     Dim sh As String, X As Double, rs2 As Object, k As Integer, mtk As Long, mbc As Long
     
     If shtk <> "" Then
         sh = shtk
         k = SelectSQL("SELECT TOP 1 Kieu AS F1,MaSo AS F2 FROM HethongTK WHERE SoHieu LIKE '" + sh + "%'", mtk)
     
-        sql = "SELECT -1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKNo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKCo=TK.MaSo WHERE MaKH=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "*' AND CT_ID<>700000000 GROUP BY NgayGS" _
-            & " UNION SELECT 1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKCo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKNo=TK.MaSo WHERE MaKHC=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "*' AND CT_ID<>700000000 GROUP BY NgayGS"
-        SetSQL "MienTru", sql
+        SQL = "SELECT -1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKNo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKCo=TK.MaSo WHERE MaKH=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "%' AND CT_ID<>700000000 GROUP BY NgayGS" _
+            & " UNION SELECT 1 AS LoaiPS,NgayGS,Sum(SoPS) AS PS FROM (ChungTu INNER JOIN HethongTK ON ChungTu.MaTKCo=HethongTK.MaSo) LEFT JOIN HethongTK AS TK ON ChungTu.MaTKNo=TK.MaSo WHERE MaKHC=" + CStr(mcn) + " AND " + WNgay("NgayGS", ndau, ncuoi) + " AND HethongTK.SoHieu LIKE '" + sh + "%' AND CT_ID<>700000000 GROUP BY NgayGS"
+        SetSQL "MienTru", SQL
         Set rs = DBKetoan.OpenRecordset("SELECT * FROM MienTru ORDER BY NgayGS", dbOpenSnapshot)
         SoDuKHNgay mcn, ndau - 1, sdn, sdc, X, , sh
         If nx = 0 Then ExecuteSQL5 "DELETE * FROM BaoCaoCP2"
@@ -346,13 +346,13 @@ Public Sub BangKeTichSo(shtk As String, mcn As Long, ndau As Date, ncuoi As Date
         End If
         ExecuteSQL5 "DELETE * FROM BaoCaoCP2 WHERE Kq1=0 AND Kq2=0 AND Kq3=0 AND Kq4=0 AND MaSo>" + CStr(mbc)
         n = SelectSQL("SELECT TOP 1 Ngay1 AS F1 FROM BaoCaoCP2 WHERE MaSo>" + CStr(mbc) + " ORDER BY Ngay1")
-        X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "*' AND Ngay<=#" + Format(n, Mask_DB) + "# AND MaKH=" + CStr(mcn) + " ORDER BY Ngay DESC")
-        'If X = 0 Then X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "*' AND Ngay<=#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC")
+        X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "%' AND Ngay<=#" + Format(n, Mask_DB) + "# AND MaKH=" + CStr(mcn) + " ORDER BY Ngay DESC")
+        'If X = 0 Then X = SelectSQL("SELECT TOP 1 LS AS F1 FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "%' AND Ngay<=#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC")
         ExecuteSQL5 "UPDATE BaoCaoCP2 SET Kq6=" + DoiDau(Format(X, Mask_2)) + " WHERE MaSo>" + CStr(mbc)
         n = ncuoi + 1
         Set rs = DBKetoan.OpenRecordset("SELECT * FROM BaoCaoCP2 WHERE MaSo>" + CStr(mbc) + " ORDER BY Ngay1 DESC", dbOpenSnapshot)
         Do While Not rs.EOF
-            Set rs2 = DBKetoan.OpenRecordset("SELECT Ngay,LS FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "*' AND Ngay>=#" + Format(rs!ngay1, Mask_DB) + "# AND Ngay<#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC", dbOpenSnapshot)
+            Set rs2 = DBKetoan.OpenRecordset("SELECT Ngay,LS FROM LaiSuat INNER JOIN HethongTK ON LaiSuat.MaTK=HethongTK.MaSo WHERE HethongTK.SoHieu LIKE '" + sh + "%' AND Ngay>=#" + Format(rs!ngay1, Mask_DB) + "# AND Ngay<#" + Format(n, Mask_DB) + "# ORDER BY Ngay DESC", dbOpenSnapshot)
             Do While Not rs2.EOF
                 ms = ms + 1
                 ExecuteSQL5 "INSERT INTO BaoCaoCP2 (MaSo,SoHieu,Ten,MaCha,Cap,Kq3,Kq4,Ngay1,Kq6) VALUES (" + CStr(ms) + ",'" + CStr(ms) + "','" + shtk + "'," + CStr(mtk) + "," + CStr(n - rs2!ngay) + "," + CStr(rs!Kq3) + "," + CStr(rs!Kq4) + ",#" + Format(rs2!ngay, Mask_DB) + "#," + DoiDau(Format(rs2!ls, Mask_2)) + ")"

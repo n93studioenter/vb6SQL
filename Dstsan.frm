@@ -619,7 +619,7 @@ Public Function ChonTaiSan(sh As String, tdau As Integer, tcuoi As Integer) As S
     
     Set rs = DBKetoan.OpenRecordset("SELECT LoaiTaiSan.MaSo AS MaTK, LoaiTaiSan_1.MaSo AS MaLoai, LoaiTaiSan_2.MaSo AS MaNhom, TaiSan.SoHieu, TaiSan.ThangTang, TaiSan.ThangGiam" _
         & " FROM ((LoaiTaiSan RIGHT JOIN TaiSan ON LoaiTaiSan.MaSo = TaiSan.MaTaiKhoan) LEFT JOIN LoaiTaiSan AS LoaiTaiSan_1 ON TaiSan.MaLoai = LoaiTaiSan_1.MaSo) LEFT JOIN LoaiTaiSan AS LoaiTaiSan_2 ON TaiSan.MaNhom = LoaiTaiSan_2.MaSo" _
-        & " WHERE TaiSan.SoHieu LIKE '" + sh + "*' AND " + WThang("ThangTang", 0, tcuoi) + " AND " + WThang("ThangGiam", tdau, 0) + " ORDER BY TaiSan.SoHieu", dbOpenSnapshot)
+        & " WHERE TaiSan.SoHieu LIKE '" + sh + "%' AND " + WThang("ThangTang", 0, tcuoi) + " AND " + WThang("ThangGiam", tdau, 0) + " ORDER BY TaiSan.SoHieu", dbOpenSnapshot)
     If rs.recordCount > 0 Then
         SetListIndex Combo(3), IIf(rs!ThangGiam < tcuoi, rs!ThangGiam, tcuoi)
         SetListIndex Combo(0), rs!MaTK
