@@ -227,44 +227,47 @@ End Sub
 
 Public Sub GhiSoPSKH(TK As ClsTaikhoan, thang As Integer, ps As Double, nt As Double, loai As Integer)
     Dim SQL As String, i As Integer, st As String, st3 As String, j As Integer
-    
+
     st = CStr(CThangDB(thang))
-    SQL = "UPDATE SoDuKhachHang SET " + IIf(loai < 0, "No_", "Co_") + st + "=" + IIf(loai < 0, "No_", "Co_") + st + "+" + DoiDau(ps)
+    ' SQL = "UPDATE SoDuKhachHang SET " + IIf(loai < 0, "No_", "Co_") + st + "=" + IIf(loai < 0, "No_", "Co_") + st + "+" + DoiDau(ps)
+    SQL = "UPDATE SoDuKhachHang SET " & _
+          IIf(loai < 0, "No_", "Co_") & st & " = ISNULL(" & IIf(loai < 0, "No_", "Co_") & st & ", 0) + " & DoiDau(ps)
     If MaNT > 0 Then SQL = SQL + IIf(loai < 0, ",No_", ",Co_") + st + "_NT=" + IIf(loai < 0, "No_", "Co_") + st + "_NT+" + DoiDau(nt)
 a:
     ExecuteSQL5 SQL + " WHERE MaTaiKhoan= " + CStr(TK.MaSo) + " AND MaKhachHang=" + CStr(MaSo)
     If DBKetoan.RecordsAffected = 0 Then
         'ExecuteSQL5 "INSERT INTO SoDuKhachHang (MaSo, MaTaiKhoan,MaKhachHang) VALUES (" + CStr(Lng_MaxValue("MaSo", "SoDuKhachHang") + 1) + "," + CStr(TK.MaSo) + "," + CStr(MaSo) + ")"
-         ExecuteSQL5 "INSERT INTO SoDuKhachHang (MaTaiKhoan,MaKhachHang) VALUES (" + CStr(TK.MaSo) + "," + CStr(MaSo) + ")"
+        ExecuteSQL5 "INSERT INTO SoDuKhachHang (MaTaiKhoan,MaKhachHang) VALUES (" + CStr(TK.MaSo) + "," + CStr(MaSo) + ")"
         GoTo a
     End If
-    
+
     SQL = "UPDATE SoDuKhachHang SET MaTaiKhoan = MaTaiKhoan"
     For i = CThangDB(thang) To 12
-          st3 = CStr(CThangDB(ThangTruoc(thang)))
-          st = "DuNo_" + st3 + " - DuCo_" + st3
-          For j = CThangDB(thang) To i
-                st3 = CStr(j)
-                st = st + " + No_" + st3 + " - Co_" + st3
-          Next
-          st3 = CStr(i)
-          SQL = SQL + ", DuNo_" + st3 + " = IIF(" + st + " > 0, " + st + ", 0), DuCo_" + st3 + " =  IIF(" + st + " < 0, -(" + st + "), 0)"
+        st3 = CStr(CThangDB(ThangTruoc(thang)))
+        st = "DuNo_" + st3 + " - DuCo_" + st3
+        For j = CThangDB(thang) To i
+            st3 = CStr(j)
+            st = st + " + No_" + st3 + " - Co_" + st3
+        Next
+        st3 = CStr(i)
+        ' SQL = SQL + ", DuNo_" + st3 + " = IIF(" + st + " > 0, " + st + ", 0), DuCo_" + st3 + " =  IIF(" + st + " < 0, -(" + st + "), 0)"
+        SQL = SQL + ", DuNo_" + st3 + " = IIF(ISNULL(" + st + ", 0) > 0, ISNULL(" + st + ", 0), 0), DuCo_" + st3 + " = IIF(ISNULL(" + st + ", 0) < 0, -ISNULL(" + st + ", 0), 0)"
     Next
     ExecuteSQL5 SQL + " WHERE MaTaiKhoan= " + CStr(TK.MaSo) + " AND MaKhachHang=" + CStr(MaSo)
-    
+
     If MaNT > 0 Then
         SQL = "UPDATE SoDuKhachHang SET MaTaiKhoan = MaTaiKhoan"
         For i = CThangDB(thang) To 12
-              st = "DuNT_" + CStr(CThangDB(ThangTruoc(thang)))
-              For j = CThangDB(thang) To i
-                    st3 = CStr(j)
-                    If TK.kieu < 0 Then
-                        st = st + " + No_" + st3 + "_NT - Co_" + st3 + "_NT"
-                    Else
-                        st = st + " - No_" + st3 + "_NT + Co_" + st3 + "_NT"
-                    End If
-              Next
-              SQL = SQL + ", DuNT_" + CStr(i) + " = " + st
+            st = "DuNT_" + CStr(CThangDB(ThangTruoc(thang)))
+            For j = CThangDB(thang) To i
+                st3 = CStr(j)
+                If TK.kieu < 0 Then
+                    st = st + " + No_" + st3 + "_NT - Co_" + st3 + "_NT"
+                Else
+                    st = st + " - No_" + st3 + "_NT + Co_" + st3 + "_NT"
+                End If
+            Next
+            SQL = SQL + ", DuNT_" + CStr(i) + " = " + st
         Next
         ExecuteSQL5 SQL + " WHERE MaTaiKhoan= " + CStr(TK.MaSo) + " AND MaKhachHang=" + CStr(MaSo)
     End If

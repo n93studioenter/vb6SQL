@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}#1.1#0"; "ieframe.dll"
 Object = "{C932BA88-4374-101B-A56C-00AA003668DC}#1.1#0"; "msmask32.ocx"
 Object = "{A8B3B723-0B5A-101B-B22E-00AA0037B2FC}#1.0#0"; "GRID32.OCX"
 Object = "{0D452EE1-E08F-101A-852E-02608C4D0BB4}#2.0#0"; "FM20.DLL"
@@ -35,6 +36,32 @@ Begin VB.Form FrmChungtu
    Tag             =   "0"
    WhatsThisButton =   -1  'True
    WhatsThisHelp   =   -1  'True
+   Begin SHDocVwCtl.WebBrowser WebBrowser1 
+      Height          =   855
+      Left            =   2400
+      TabIndex        =   200
+      Top             =   5280
+      Visible         =   0   'False
+      Width           =   1335
+      ExtentX         =   2355
+      ExtentY         =   1508
+      ViewMode        =   0
+      Offline         =   0
+      Silent          =   0
+      RegisterAsBrowser=   0
+      RegisterAsDropTarget=   1
+      AutoArrange     =   0   'False
+      NoClientEdge    =   0   'False
+      AlignLeft       =   0   'False
+      NoWebView       =   0   'False
+      HideFileNames   =   0   'False
+      SingleClick     =   0   'False
+      SingleSelection =   0   'False
+      NoFolders       =   0   'False
+      Transparent     =   0   'False
+      ViewID          =   "{0057D0E0-3573-11CF-AE69-08002B2E1262}"
+      Location        =   "http:///"
+   End
    Begin VB.CommandButton Command10 
       Caption         =   "Dß CT bank"
       Height          =   375
@@ -2864,6 +2891,15 @@ Begin VB.Form FrmChungtu
       FixedRows       =   0
       FixedCols       =   0
    End
+   Begin VB.Label Label6 
+      BackColor       =   &H00E0E0E0&
+      Caption         =   "Label6"
+      Height          =   255
+      Left            =   8760
+      TabIndex        =   199
+      Top             =   8280
+      Width           =   735
+   End
    Begin VB.Label lblTongCT 
       BackColor       =   &H00E0E0E0&
       Caption         =   "Tæng sè chøng tõ trong phÇn mÒm"
@@ -3846,10 +3882,10 @@ End Type
 
 Private UniMenu() As UniMenuItem
 Private Declare Function GetMenuItemInfoW Lib "user32" _
-                                          (ByVal hMenu As Long, ByVal item As Long, _
+                                          (ByVal hMenu As Long, ByVal Item As Long, _
                                            ByVal fByPos As Long, mii As MENUITEMINFOW) As Long
 Private Declare Function SetMenuItemInfoW Lib "user32" _
-                                          (ByVal hMenu As Long, ByVal item As Long, _
+                                          (ByVal hMenu As Long, ByVal Item As Long, _
                                            ByVal fByPos As Long, ByRef mii As MENUITEMINFOW) As Long
 
 Private Declare Function DrawMenuBar Lib "user32" _
@@ -4003,7 +4039,7 @@ Dim rs_ktra711 As Object
 Dim stt As Integer
 Dim IndexFirst As Integer
 Dim IdDuyet As Integer
-Dim item As ClsFileImport
+Dim Item As ClsFileImport
 Dim i As Integer
 Dim displayInfo As String
 Dim xmlDoc As Object
@@ -4145,8 +4181,8 @@ End Sub
 Public Sub DisplayFileImportList()
 
     IdDuyet = 1
-    Set item = fileImportList(IdDuyet)
-    DuyetItemList item.patTH
+    Set Item = fileImportList(IdDuyet)
+    DuyetItemList Item.patTH
 
     ' Hi?n th? thông tin
 End Sub
@@ -4435,10 +4471,10 @@ Private Sub btnImport_Click()
     End If
 
     IndexFirst = 1
-    Set item = fileImportList(IndexFirst)
+    Set Item = fileImportList(IndexFirst)
     Dim notk As String
     With fileImportList(IndexFirst)
-        Xulyimport item
+        Xulyimport Item
     End With
 
 
@@ -4449,47 +4485,47 @@ Private Sub Another()
     Timer4.Enabled = True
 
 End Sub
-Private Sub Xulyimport(ByVal item As ClsFileImport)
+Private Sub Xulyimport(ByVal Item As ClsFileImport)
 
     Dim QueryUpdate As String
     Dim rstUPdate As String
-    QueryUpdate = "UPDATE tbimport SET Status = 1 where ID= " & item.id & ""
+    QueryUpdate = "UPDATE tbimport SET Status = 1 where ID= " & Item.id & ""
     'Set rstUPdate = DBKetoan.OpenRecordset(QueryUpdate, dbOpenSnapshot)
     ExecuteSQL5 QueryUpdate
 
 
     ' Do data tu tbimport len form
-    If item.notk = "711" Then
+    If Item.notk = "711" Then
         OptLoai(0).Value = True
         OptLoai_LostFocus 0
         RFocus CboThang
 
     End If
-    If item.notk Like "635*" Then
+    If Item.notk Like "635*" Then
         OptLoai(4).Value = True
         OptLoai_LostFocus 4
         RFocus CboThang
     End If
     ' If item.notk = "6422" Or item.notk = "6421" Then
-    If item.notk Like "642*" Or item.notk Like "242*" Then
+    If Item.notk Like "642*" Or Item.notk Like "242*" Then
         OptLoai(0).Value = True
         OptLoai_LostFocus 0
         RFocus CboThang
     End If
 
-    If (item.notk Like "15*") And (item.notk <> "154") Then
+    If (Item.notk Like "15*") And (Item.notk <> "154") Then
         'If item.notk = "152" Or item.notk = "156" Or item.notk = "153" Or item.notk = "155" Then
         OptLoai(1).Value = True
         OptLoai_LostFocus 1
         RFocus CboThang
     End If
-    If item.notk Like "154*" Then
+    If Item.notk Like "154*" Then
         OptLoai(1).Value = True
         OptLoai_LostFocus 1
         RFocus CboThang
     End If
 
-    If item.cotk Like "511*" Then
+    If Item.cotk Like "511*" Then
         ' If item.notk = "5111" Then
         OptLoai(8).Value = True
         OptLoai_LostFocus 8
@@ -4497,27 +4533,27 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
     End If
 
     Dim myDate As Date
-    myDate = CDate(item.ngay)
-    txt(0).Text = item.sohd
-    txtVT(1).Text = item.khHD
+    myDate = CDate(Item.ngay)
+    txt(0).Text = Item.sohd
+    txtVT(1).Text = Item.khHD
 
     CboThang.Text = month(myDate) & "/" & year(myDate)
-    MedNgay(0).Text = Format(item.ngay, "dd/mm/yy")
+    MedNgay(0).Text = Format(Item.ngay, "dd/mm/yy")
 
     ' If Month(myDate) <> Month(Date) Then
     ' MedNgay(1).Text = DateSerial(Year(Date), Month(Date), 1)
     'Else
-    MedNgay(1).Text = Format(item.ngay, "dd/mm/yy")
+    MedNgay(1).Text = Format(Item.ngay, "dd/mm/yy")
     'End If
 
     Dim rs_ktra As Object
     Dim Query As String
     Dim rst As String
 
-    If Len(item.mst) < 10 Then
-        Query = "SELECT Ten,SoHieu, DiaChi, MST FROM KhachHang WHERE SoHieu = '" & item.mst & "'"
+    If Len(Item.mst) < 10 Then
+        Query = "SELECT Ten,SoHieu, DiaChi, MST FROM KhachHang WHERE SoHieu = '" & Item.mst & "'"
     Else
-        Query = "SELECT Ten, DiaChi, MST FROM KhachHang WHERE MST = '" & item.mst & "'"
+        Query = "SELECT Ten, DiaChi, MST FROM KhachHang WHERE MST = '" & Item.mst & "'"
     End If
     Set rs_ktra = DBKetoan.OpenRecordset(Query, dbOpenSnapshot)
     If Not rs_ktra.EOF Then
@@ -4544,7 +4580,7 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
 
     ' txtchungtu(0).Text = 6422
     With fileImportList(IndexFirst)
-        If item.notk Like "63*" Then
+        If Item.notk Like "63*" Then
             txtchungtu(0).Text = .notk
             tempchungtu = .notk
         Else
@@ -4554,7 +4590,7 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
 
     End With
     With fileImportList(IndexFirst)
-        If item.notk Like "64*" Or item.notk Like "15*" Or item.notk Like "63*" Then
+        If Item.notk Like "64*" Or Item.notk Like "15*" Or Item.notk Like "63*" Then
             txtchungtu(0).Text = .notk
             tempchungtu = .notk
         Else
@@ -4579,12 +4615,12 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
             '1331 thue
-            txtchungtu(0).Text = item.ThueTK
+            txtchungtu(0).Text = Item.ThueTK
             txtChungtu_LostFocus (0)
-            txtchungtu(2).Text = item.VAT
+            txtchungtu(2).Text = Item.VAT
             Dim number As Long
             Dim VAT As Integer
-            VAT = CInt(item.VAT)
+            VAT = CInt(Item.VAT)
             number = CLng(Replace(txtchungtu(5).Text, ",", ""))
             number = number * VAT / 100
             txtchungtu(5).Text = number * (-1)
@@ -4592,7 +4628,7 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
             txtChungtu_KeyPress 6, 13
             '3311
             RFocus txtchungtu(0)
-            txtchungtu(0).Text = item.cotk
+            txtchungtu(0).Text = Item.cotk
             txtChungtu_LostFocus (0)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
@@ -4689,7 +4725,7 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
             RFocus txtchungtu(2)
             txtchungtu(2).Text = rs_ktra154!sohieu
             txtChungtu_LostFocus (2)
-            txtchungtu(5).Text = item.TgTCThue
+            txtchungtu(5).Text = Item.TgTCThue
             txtChungtu_LostFocus (5)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
@@ -4705,7 +4741,7 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
             If Not rs_check.EOF Then
             Else
                 RFocus txtchungtu(2)
-                txtchungtu(5).Text = item.TongTien
+                txtchungtu(5).Text = Item.TongTien
                 txtChungtu_LostFocus (5)
                 RFocus txtchungtu(6)
                 txtChungtu_KeyPress 6, 13
@@ -4717,9 +4753,9 @@ Private Sub Xulyimport(ByVal item As ClsFileImport)
             '1331
             txtchungtu(0).Text = 1331
             txtChungtu_LostFocus (0)
-            txtchungtu(2).Text = item.VAT
+            txtchungtu(2).Text = Item.VAT
             txtChungtu_LostFocus (2)
-            txtchungtu(5).Text = item.TgTThue
+            txtchungtu(5).Text = Item.TgTThue
             txtChungtu_LostFocus (5)
             RFocus txtchungtu(6)
             txtChungtu_KeyPress 6, 13
@@ -11169,11 +11205,55 @@ Public Sub cmdReset_Click()
 End Sub
 
 Private Sub Command5_Click()
+    If 1 > 2 Then
+        WebBrowser1.Visible = True
+        Dim namct As Integer
+        namct = SelectSQL("SELECT NamTC as F1 FROM License ")
+        Dim mypath As String
+        Dim folderName As String
+        folderName = "HD" & namct
+        mypath = App.path & "\Hoadon\" & folderName
+        Dim LoaiHD As String
+        If FrmChungtu.txtPhanloaichungtu.Text = 1 Or FrmChungtu.txtPhanloaichungtu.Text = 0 Then
+            LoaiHD = "\HDVao"
+        Else
+            LoaiHD = "\HDRa"
+        End If
+        Dim kyhhd As String
+        kyhhd = FrmChungtu.txtVT(1).Text
+        If Left(kyhhd, 1) = "1" Then
+            kyhhd = Mid(kyhhd, 2)    ' B? di ký t? d?u tiên
+        End If
 
-'Kiem tra dang hoa don truoc
-'txt(0)
-'txtVT(1)
-'MedNgay(0)
+        Dim mst As String
+        Dim sohd As String
+        sohd = FrmChungtu.txt(0).Text
+        Do While Left(sohd, 1) = "0" And sohd <> ""
+            sohd = Mid(sohd, 2)
+        Loop
+
+        'mypath = mypath & LoaiHD & "\" & month(CDate(FrmChungtu.CboThang.Text)) & "\" & sohd & "_" & kyhhd & ".html"
+        If LoaiHD = "\HDVao" Then
+            mst = FrmChungtu.txtVT(9).Text
+        Else
+            mst = SelectSQL("select MaSoThue AS f1 from  License")
+        End If
+        If mst = "8046549703" Then
+            mst = "048172000197"
+        End If
+        mypath = mypath & LoaiHD & "\" & month(CDate(FrmChungtu.CboThang.Text)) & "\" & mst & "_" & sohd & "_" & kyhhd & ".html"
+
+        Dim FilePath As String
+        FilePath = mypath
+        WebBrowser1.Navigate FilePath
+        WebBrowser1.Width = Grid2.Width
+        WebBrowser1.Height = Grid2.Height * 2
+        Exit Sub
+    End If
+    'Kiem tra dang hoa don truoc
+    'txt(0)
+    'txtVT(1)
+    'MedNgay(0)
     Dim rsport As Object
     Set rsport = DBKetoan.OpenRecordset("select IdNhap AS f1,HoaDon.MaSo FROM HoaDon " & _
                                         "inner join ChungTu on HoaDon.MaSo = ChungTu.MaSo " & _
@@ -11192,9 +11272,9 @@ Private Sub Command5_Click()
                 End If
             End If
 
-            Dim url As String
-            url = App.path & "\HoaDon\HdNhap\" & IdNhap & ".pdf"
-            Shell "rundll32.exe url.dll,FileProtocolHandler " & url, vbNormalFocus
+            Dim URL As String
+            URL = App.path & "\HoaDon\HdNhap\" & IdNhap & ".pdf"
+            Shell "rundll32.exe url.dll,FileProtocolHandler " & URL, vbNormalFocus
 
             rsport.Close
             Set rsport = Nothing
@@ -14829,7 +14909,11 @@ Public Function HienPhieuTrenManHinh(p As Integer) As Integer
     '  End If
 
 
-    If pSongNgu Then txt(2).Text = rs_chungtu!DienGiaiE
+    If pSongNgu Then
+        If rs_chungtu!DienGiaiE <> Null Then
+            txt(2).Text = rs_chungtu!DienGiaiE
+        End If
+    End If
     SetListIndex CboNguon(3), rs_chungtu!CTGS
     uID = rs_chungtu!User_ID
     LbUser.Caption = TenUser(uID)
@@ -17262,3 +17346,7 @@ End Function
 
 
 
+Public Sub ReceiveTDContent(content As String)
+    MsgBox "Nh?n du?c n?i dung: " & content
+    ' X? lý n?i dung ? dây
+End Sub

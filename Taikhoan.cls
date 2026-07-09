@@ -557,7 +557,8 @@ Public Sub TinhSoDu(thang As Integer, sops As Double, loaips As Integer, sopsnt 
         If loaips < 0 Then
             SQL = "UPDATE HethongTK SET No_" + st + " = No_" + st + " + " + DoiDau(sops)
         Else
-            SQL = "UPDATE HethongTK SET Co_" + st + " = Co_" + st + " + " + DoiDau(sops)
+           ' SQL = "UPDATE HethongTK SET Co_" + st + " = Co_" + st + " + " + DoiDau(sops)
+           SQL = "UPDATE HethongTK SET Co_" & st & " = ISNULL(Co_" & st & ", 0) + " & DoiDau(sops)
         End If
         j = CThangDB(ThangTruoc(thang))
     Else

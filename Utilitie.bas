@@ -607,19 +607,19 @@ Public Sub SetRptInfonew()
     ' --- Xác d?nh công ty hi?n t?i (c?n có bi?n pCompanyCode) ---
     Dim TableCount As Integer
     On Error Resume Next    ' Dùng d? tránh l?i n?u không l?y du?c s? lu?ng
-    TableCount = frmMain.Rpt.Database.Tables.count
+    TableCount = frmMain.Rpt.database.Tables.count
     On Error GoTo 0    ' T?t ch? d? b? qua l?i
     ' --- QUAN TR?NG: Xóa location c?ng ---
-    For Each crxTable In frmMain.Rpt.Database.Tables
+    For Each crxTable In frmMain.Rpt.database.Tables
         crxTable.Location = crxTable.Name
     Next crxTable
 
     ' --- Formulas (gi? nguyên) ---
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -642,9 +642,9 @@ Public Sub SetRptInfo()
 
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -2351,7 +2351,7 @@ Public Function CInt5(st As String) As Double
 End Function
 
 Public Function CLng5(st As String) As Long
-    If IsNumeric(st) Then CLng5 = CLng(st) Else CLng5 = 0
+    If IsNumeric(st) Then CLng5 = CDbl(st) Else CLng5 = 0
 End Function
 
 Public Sub FCenter(f As Form)
@@ -2676,7 +2676,7 @@ Public Function ThangCuoiNamTC() As Integer
 End Function
 
 Public Sub CopyTable(fname As String, tbl As String)
-    Dim db As Database, tdf As TableDef, i As Integer
+    Dim db As database, tdf As TableDef, i As Integer
     
     If Len(Dir(fname)) = 0 Then Exit Sub
     If BangDaCo(tbl) Then XoaBang tbl

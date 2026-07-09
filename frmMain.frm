@@ -208,23 +208,19 @@ Begin VB.Form frmMain
          BeginProperty Panel1 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
             Object.Width           =   8819
             MinWidth        =   8819
-            Key             =   ""
             Object.Tag             =   ""
          EndProperty
          BeginProperty Panel2 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
             Object.Width           =   12347
             MinWidth        =   12347
-            Key             =   ""
             Object.Tag             =   ""
          EndProperty
          BeginProperty Panel3 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
-            Key             =   ""
             Object.Tag             =   ""
          EndProperty
          BeginProperty Panel4 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
             Style           =   6
-            TextSave        =   "30/06/26"
-            Key             =   ""
+            TextSave        =   "09/07/26"
             Object.Tag             =   ""
          EndProperty
       EndProperty
@@ -2412,6 +2408,10 @@ Begin VB.Form frmMain
          Caption         =   "Xo¸ tªn vËt t­ thõa"
          Index           =   22
       End
+      Begin VB.Menu mnVT 
+         Caption         =   "Tính giaù voán"
+         Index           =   23
+      End
    End
    Begin VB.Menu mnCongno 
       Caption         =   "C«n&g nî"
@@ -3352,13 +3352,13 @@ Private Sub LoadMenuform()
     serverpath = originPaths & "\Hoadon\serverpath.txt"
 
 
-   ' Dim uncPath As String
-   ' uncPath = ReadTxt(serverpath)
+    ' Dim uncPath As String
+    ' uncPath = ReadTxt(serverpath)
     'Dim txtPath As String
-   ' txtPath = uncPath & "\" & "Tools\version.txt"
+    ' txtPath = uncPath & "\" & "Tools\version.txt"
     'Dim content As String
     'content = ReadTxt(txtPath)
-   ' Dim originPath As String
+    ' Dim originPath As String
     'originPath = App.path & "\Hoadon\version.txt"
     'content = ReadTxt(originPath)
     'mnVersion.Caption = "Version " & content
@@ -3442,6 +3442,7 @@ Private Sub LoadMenuform()
     SetMenuUnicode hSub, 17, U(68, 97, 110, 104, 32, 115, 225, 99, 104, 32, 118, 7853, 116, 32, 116, 432, 32, 104, 224, 110, 103, 32, 104, 111, 225)
     SetMenuUnicode hSub, 18, U(84, 7921, 32, 273, 7897, 110, 103, 32, 110, 104, 7853, 112, 32, 107, 104, 111)
     SetMenuUnicode hSub, 19, U(88, 111, 225, 32, 118, 7853, 116, 32, 116, 432, 32, 116, 104, 7915, 97)
+    SetMenuUnicode hSub, 20, U(84, 237, 110, 104, 32, 103, 105, 225, 32, 118, 7889, 110)
     ' =====================================================
     ' CÔNG N?
     ' =====================================================
@@ -3688,17 +3689,18 @@ Private Sub testsql()
     
     Set rs = Nothing
 End Sub
-Private Sub Form_Load()
-
+Private Sub ALterTable()
     Dim strSQL As String
 
     ' 1. Thêm c?t m?i v?i ki?u mong mu?n
     ' ? Ðúng cho Access
-     strSQL = "ALTER TABLE tbimport ALTER COLUMN TPhi FLOAT  NULL"
+    strSQL = "ALTER TABLE ChungTu ALTER COLUMN CT_ID FLOAT  NULL"
     ExecuteSQL5 strSQL
-     strSQL = "ALTER TABLE tbimport ALTER COLUMN TgTCThue FLOAT  NULL"
+    strSQL = "ALTER TABLE tbimport ALTER COLUMN TPhi FLOAT  NULL"
     ExecuteSQL5 strSQL
-     strSQL = "ALTER TABLE tbimport ALTER COLUMN TgTThue FLOAT  NULL"
+    strSQL = "ALTER TABLE tbimport ALTER COLUMN TgTCThue FLOAT  NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE tbimport ALTER COLUMN TgTThue FLOAT  NULL"
     ExecuteSQL5 strSQL
     strSQL = "ALTER TABLE tbimportdetail ALTER COLUMN TTien DECIMAL(18,2) NULL"
     ExecuteSQL5 strSQL
@@ -3708,7 +3710,56 @@ Private Sub Form_Load()
     strSQL = "ALTER TABLE ChungTuLQ ALTER COLUMN DiaChi NVARCHAR(300) NULL"
     ExecuteSQL5 strSQL
 
+    strSQL = "ALTER TABLE KhachHang ADD contact_id NVARCHAR(255) NULL"
 
+    'Vattu
+    strSQL = "ALTER TABLE Vattu ADD TendoName NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE Vattu ADD TendoSku NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE Vattu ADD TendoUom NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE Vattu ADD TendoId NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE Vattu ADD TendoPrice FLOAT NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE Vattu ADD TendokhoInventory FLOAT NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE Vattu ADD TendoQuality FLOAT NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE Vattu ADD TendoSkuId NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+
+    'Hoadon
+    strSQL = "ALTER TABLE HoaDon ADD IdTemplate NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE HoaDon ADD TendoHDid NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE HoaDon ADD TendoHDState NVARCHAR(255) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE HoaDon ADD has_e_invoice FLOAT NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE HoaDon ALTER COLUMN MatHang NVARCHAR(500) NULL"
+    ExecuteSQL5 strSQL
+    'tbImort
+    strSQL = "ALTER TABLE tbimport ALTER COLUMN Noidung NVARCHAR(500) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE tbimport ALTER COLUMN Ten NVARCHAR(500) NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE tbimportdetail ALTER COLUMN Ten NVARCHAR(500) NULL"
+    ExecuteSQL5 strSQL
+
+    'Chung tu
+    strSQL = "ALTER TABLE ChungTu ALTER COLUMN DienGiai NVARCHAR(500) NULL"
+    ExecuteSQL5 strSQL
+    'He thong tk
+    strSQL = "ALTER TABLE HeThongTK ADD PSNLK2006 FLOAT NULL"
+    ExecuteSQL5 strSQL
+    strSQL = "ALTER TABLE HeThongTK ADD PSCLK2006 FLOAT NULL"
+    ExecuteSQL5 strSQL
+End Sub
+Private Sub Form_Load()
+    ALterTable
     frmMain.sbStatusBar.Panels(4).ToolTipText = "Log On Time: " + Format(Time, "hh:mm:ss")
     Dim check162 As String
     check162 = SelectSQL("SELECT SoHieu AS F1 FROM HeThongTK where SoHieu = '621' ")
@@ -4065,6 +4116,67 @@ Public Sub mnCn_Click(Index As Integer)
     HienThongBao "", 1
 End Sub
 
+Private Sub KTSLT()
+    Screen.MousePointer = vbHourglass
+
+    Dim fileNumber As Integer
+    Dim FilePath As String
+    Dim content As String
+    FilePath = App.path & "\\HoaDon\\status.txt"
+    content = "11"
+    fileNumber = FreeFile
+    On Error Resume Next
+    Open FilePath For Output As #fileNumber
+    If Err.number = 0 Then
+        Print #fileNumber, content;
+        Close #fileNumber
+        'MsgBox "Ðã ghi dè file version.txt thành công!", vbInformation
+    Else
+        MsgBox "L?i khi ghi dè file!", vbExclamation
+    End If
+
+
+    Dim exePath2 As String
+    Dim cmd2 As String
+    DoEvents  ' Ð? d?m b?o ?ng d?ng có th?i gian kh?i d?ng
+    exePath2 = App.path & "\Tools\Debug\SaovietTax.exe"
+    ' Dùng runas v?i trust level th?p hon
+    cmd2 = "runas /trustlevel:0x20000 """ & exePath2 & """"
+    Shell cmd2, vbHide
+    Screen.MousePointer = vbDefault
+
+End Sub
+Private Sub KTTK()
+    Screen.MousePointer = vbHourglass
+
+    Dim fileNumber As Integer
+    Dim FilePath As String
+    Dim content As String
+    FilePath = App.path & "\\HoaDon\\status.txt"
+    content = "12"
+    fileNumber = FreeFile
+    On Error Resume Next
+    Open FilePath For Output As #fileNumber
+    If Err.number = 0 Then
+        Print #fileNumber, content;
+        Close #fileNumber
+        'MsgBox "Ðã ghi dè file version.txt thành công!", vbInformation
+    Else
+        MsgBox "L?i khi ghi dè file!", vbExclamation
+    End If
+
+
+    Dim exePath2 As String
+    Dim cmd2 As String
+    DoEvents  ' Ð? d?m b?o ?ng d?ng có th?i gian kh?i d?ng
+    exePath2 = App.path & "\Tools\Debug\SaovietTax.exe"
+    ' Dùng runas v?i trust level th?p hon
+    cmd2 = "runas /trustlevel:0x20000 """ & exePath2 & """"
+    Shell cmd2, vbHide
+    Screen.MousePointer = vbDefault
+
+End Sub
+
 Private Sub mnDL_Click(Index As Integer)
 
     If Index = 1 Then
@@ -4091,22 +4203,15 @@ Private Sub mnDL_Click(Index As Integer)
             GoTo KT
         End If
         KiemTraVatTu
-        '            Dim i  As Integer
-        '            Dim rs As Object
-        '            Set rs = DBKetoan.OpenRecordset("SELECT mavattu,sum(luong_0) as luong from VTdaunam ", dbOpenSnapshot)
-        '            For i = 0 To rs.RecordCount
-        '            ExecuteSQL5 ("update solothuoc set ")
-        '            Next
-        '
-        '            SoLoThuoc
+        'KTSLT
 
     Case 20:
 
         FrmNguyente.Show 1
 
     Case 1:
-        KiemTraTaiKhoan
-
+        'KiemTraTaiKhoan
+        KTTK
     Case 3:
         If FPsw.GetPswX() = "UCDIT" Then
             SQL = FrmGetStr.GetString("LÖnh xö lý:", App.ProductName)
@@ -4138,7 +4243,7 @@ Private Sub mnDL_Click(Index As Integer)
                 End If
                 If rs_ktra!Type <> 2 And rs_ktra!Type <> 1 Then
                     'MsgBox "§¨ng ký license ®Ó ®­îc thùc hiÖn chøc n¨ng nµy"
-                    
+
                     s = ChrW(208) & ChrW(259) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(107) & ChrW(253) & ChrW(32) & ChrW(108) & ChrW(105) & ChrW(99) & ChrW(101) & ChrW(110) & ChrW(115) & ChrW(101) & ChrW(32) & ChrW(273) & ChrW(7875) & ChrW(32) & ChrW(273) & ChrW(432) & ChrW(7907) & ChrW(99) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(7921) & ChrW(99) & ChrW(32) & ChrW(104) & ChrW(105) & ChrW(7879) & ChrW(110) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(7913) & ChrW(99) & ChrW(32) & ChrW(110) & ChrW(259) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(110) & ChrW(224) & ChrW(121)
                     MessageBoxW Me.hwnd, StrPtr(s), StrPtr("Thông báo"), vbOKOnly
 
@@ -4585,8 +4690,41 @@ Private Sub mnviet_Click()
 End Sub
 
 
+Private Sub TGiaVon()
+    Screen.MousePointer = vbHourglass
+
+    Dim fileNumber As Integer
+    Dim FilePath As String
+    Dim content As String
+    FilePath = App.path & "\\HoaDon\\status.txt"
+    content = "13"
+    fileNumber = FreeFile
+    On Error Resume Next
+    Open FilePath For Output As #fileNumber
+    If Err.number = 0 Then
+        Print #fileNumber, content;
+        Close #fileNumber
+        'MsgBox "Ðã ghi dè file version.txt thành công!", vbInformation
+    Else
+        MsgBox "L?i khi ghi dè file!", vbExclamation
+    End If
+
+
+    Dim exePath2 As String
+    Dim cmd2 As String
+    DoEvents  ' Ð? d?m b?o ?ng d?ng có th?i gian kh?i d?ng
+    exePath2 = App.path & "\Tools\Debug\SaovietTax.exe"
+    ' Dùng runas v?i trust level th?p hon
+    cmd2 = "runas /trustlevel:0x20000 """ & exePath2 & """"
+    Shell cmd2, vbHide
+    Screen.MousePointer = vbDefault
+
+End Sub
 Public Sub mnVT_Click(Index As Integer)
 
+    If Index = 23 Then
+    TGiaVon
+    End If
     If Index = 22 Then
         Dim response As Integer
 
@@ -4629,7 +4767,7 @@ Public Sub mnVT_Click(Index As Integer)
             ExecuteSQL5 SQL
             'MsgBox "Xo¸ thµnh c«ng !"
             Dim s As String
-             s = ChrW(88) & ChrW(243) & ChrW(97) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(224) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(99) & ChrW(244) & ChrW(110) & ChrW(103)
+            s = ChrW(88) & ChrW(243) & ChrW(97) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(224) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(99) & ChrW(244) & ChrW(110) & ChrW(103)
             MessageBoxW Me.hwnd, StrPtr(s), StrPtr("Thông báo"), vbOKOnly
 
         End If
@@ -4750,7 +4888,7 @@ Public Sub mnVT_Click(Index As Integer)
         Else
             If Not GetDate2.GetDate("TÝnh gi¸ vèn b¸n hµng", d1, d2) Then Exit Sub
         End If
-        
+
         s = ChrW(76) & ChrW(7853) & ChrW(112) & ChrW(32) & ChrW(108) & ChrW(7841) & ChrW(105) & ChrW(32) & ChrW(99) & ChrW(225) & ChrW(99) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(7913) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(116) & ChrW(7915) & ChrW(32) & ChrW(103) & ChrW(105) & ChrW(225) & ChrW(32) & ChrW(118) & ChrW(7889) & ChrW(110) & ChrW(32) & ChrW(273) & ChrW(227) & ChrW(32) & ChrW(116) & ChrW(237) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(63) & ChrW(32) & ChrW(40)
         s = s & ChrW(78) & ChrW(7871) & ChrW(117) & ChrW(32) & ChrW(107) & ChrW(104) & ChrW(244) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(236) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(432) & ChrW(417) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(116) & ChrW(114) & ChrW(236) & ChrW(110) & ChrW(104) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(7881)
         s = s & ChrW(32) & ChrW(108) & ChrW(7853) & ChrW(112) & ChrW(32) & ChrW(99) & ChrW(225) & ChrW(99) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(7913) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(116) & ChrW(7915) & ChrW(32) & ChrW(103) & ChrW(105) & ChrW(225) & ChrW(32) & ChrW(118) & ChrW(7889) & ChrW(110) & ChrW(32) & ChrW(99) & ChrW(242) & ChrW(110) & ChrW(32) & ChrW(116) & ChrW(104) & ChrW(105) & ChrW(7871) & ChrW(117) & ChrW(41)
@@ -4851,15 +4989,15 @@ Private Sub XKTheoNgay()
     ngayCTArray = Split(ngayCTList, ",")
 
     ' Duy?t qua m?ng và hi?n th? t?ng ph?n t?
-    Dim item As Variant
+    Dim Item As Variant
     If UBound(ngayCTArray) >= 0 Then
-        For Each item In ngayCTArray
-            If item = "" Then
+        For Each Item In ngayCTArray
+            If Item = "" Then
                 Exit Sub
             End If
             '   Luu tb  tbNhapkhotp
             Dim d As Date
-            d = CDate(item)
+            d = CDate(Item)
             Dim currentDateTime As Date
             currentDateTime = Now
             Dim KyHieu As String
@@ -4882,7 +5020,7 @@ Private Sub XKTheoNgay()
             'Lay danh sach chung tu den ngay hien tai
             Query = "SELECT * " & _
                     "FROM ChungTu " & _
-                    "WHERE NgayCT = #" & Format(item, "yyyy-mm-dd") & "# " & _
+                    "WHERE NgayCT = #" & Format(Item, "yyyy-mm-dd") & "# " & _
                     "AND MaVattu <> 0 " & _
                     "AND SoPS2Co <>0" & _
                     "AND sohieu NOT LIKE '%GV%'"
@@ -4973,7 +5111,7 @@ Private Sub XKTheoNgay()
                     rs_chungtu.MoveNext
                 Wend    ' K?t thúc vòng l?p While
             End If
-        Next item
+        Next Item
     End If
     Command_Click 0
 End Sub

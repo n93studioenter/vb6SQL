@@ -2007,14 +2007,14 @@ End Sub
 '======================================================================================
 
 
- Public Sub LietKeChungtu(shtk As String, mvt As Long, mts As Long, mcn As Long, shd As String)
+Public Sub LietKeChungtu(shtk As String, mvt As Long, mts As Long, mcn As Long, shd As String)
     Dim SQL As String, loaict As String, i As Integer, mct As Long, uID As Long, mct1 As Long, mloai As Integer
     Dim rs_chungtu As Object, st As Double, ovr As Integer, sh As String
 
     Me.MousePointer = 11
     st = Cdbl5(txtShTk(5).Text)
     sh = IIf(ChkLoai(7).Value = 1 Or pPhieu > 0, "P", "")
-    
+
     ' ============ PH?N 1: XÂY D?NG SQL CHO MIENTRU (ÐÃ S?A L?I CONVERT) ============
     SQL = "SELECT MaCT, " & _
           "SUM(CASE WHEN MaTKCo > 0 THEN SoPS ELSE 0 END) AS TPS, " & _
@@ -2090,8 +2090,8 @@ End Sub
 
     ' GROUP BY
     SQL = SQL + " GROUP BY ChungTu" + sh + ".MaCT, User_ID, ChungTu" + sh + ".MaLoai, " & _
-                "ChungTu" + sh + ".SoHieu, ChungTu" + sh + ".NgayCT, ChungTu" + sh + ".NgayGS, " & _
-                "ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") & ", TPS, tylechietkhau, chietkhau "
+          "ChungTu" + sh + ".SoHieu, ChungTu" + sh + ".NgayCT, ChungTu" + sh + ".NgayGS, " & _
+          "ChungTu" + sh + ".DienGiai" + IIf(pNN = 1, "E", "") & ", TPS, tylechietkhau, chietkhau "
 
     ' ORDER BY (ÐÃ S?A - B? val)
     Select Case ord
@@ -2105,7 +2105,7 @@ End Sub
 
     ClearGrid GrdChungtu, GrdChungtu.tag
     ClearGrid FrmChungtu.Grid2, FrmChungtu.Grid2.tag
-    
+
     Dim so
     so = GrdChungtu.Rows - 1
     If so > 0 Then
@@ -2121,9 +2121,9 @@ End Sub
     chuoidieukien_intoanbo = SQL
 
     Debug.Print "SQL: " & SQL
-    
+
     Set rs_chungtu = DBKetoan.OpenRecordset(SQL, dbOpenSnapshot)
-    
+
     Do While Not rs_chungtu.EOF
         If mct <> rs_chungtu!MaCT Then
             mct = rs_chungtu!MaCT
@@ -2138,18 +2138,18 @@ End Sub
                 mloai = rs_chungtu!maloai
             End If
         End If
-        
+
         If GrdChungtu.Rows < MaxGridRow Then
             ' ============ THÊM VÀO GrdChungtu (B? THAM S? 0) ============
             GrdChungtu.AddItem rs_chungtu!sohieu & Chr(9) & Format(rs_chungtu!NgayCT, Mask_D) & Chr(9) _
                              & Format(rs_chungtu!NgayGS, Mask_D) & Chr(9) & rs_chungtu!dg & Chr(9) _
                              & Format(rs_chungtu!tps, Mask_0) & Chr(9) & CStr(mct)
-            
+
             ' X? lý an toàn cho tylechietkhau và chietkhau
             Dim tyleValue As Double, chietkhauValue As Double
             If IsNull(rs_chungtu!tylechietkhau) Then tyleValue = 0 Else tyleValue = CDbl(rs_chungtu!tylechietkhau)
             If IsNull(rs_chungtu!chietkhau) Then chietkhauValue = 0 Else chietkhauValue = CDbl(rs_chungtu!chietkhau)
-            
+
             ' ============ THÊM VÀO FrmChungtu.Grid2 (B? THAM S? 0) ============
             FrmChungtu.Grid2.AddItem rs_chungtu!sohieu & Chr(9) & Format(rs_chungtu!NgayCT, Mask_D) & Chr(9) _
                                    & Format(rs_chungtu!NgayGS, Mask_D) & Chr(9) & rs_chungtu!dg & Chr(9) _
@@ -2162,9 +2162,9 @@ End Sub
         End If
         rs_chungtu.MoveNext
     Loop
-    
-    FrmChungtu.Label(28).Caption = "S? ch?ng t? phân h? dang dùng: " & str(rs_chungtu.recordCount)
-    
+
+    'FrmChungtu.Label(28).Caption = "S? ch?ng t? phân h? dang dùng: " & str(rs_chungtu.recordCount)
+    FrmChungtu.Label6.Caption = str(rs_chungtu.recordCount)
     ' ============ THÊM DÒNG TR?NG VÀO GrdChungtu (B? THAM S? 0) ============
     Dim kk
     kk = 0
@@ -2173,13 +2173,13 @@ End Sub
                          & "" & Chr(9) & "" & Chr(9) & "" & Chr(9) & ""
         kk = kk + 1
     Loop
-    
+
     If so_cong = 0 Then
         Dim s As String
         s = ChrW(75) & ChrW(104) & ChrW(244) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(99) & ChrW(243) & ChrW(32) & ChrW(99) & ChrW(104) & ChrW(7913) & ChrW(110) & ChrW(103) & ChrW(32) & ChrW(116) & ChrW(7915) & ChrW(32) & ChrW(112) & ChrW(104) & ChrW(225) & ChrW(116) & ChrW(32) & ChrW(115) & ChrW(105) & ChrW(110) & ChrW(104)
         MessageBoxW Me.hwnd, StrPtr(s), StrPtr("Thông báo"), vbOKOnly
     End If
-    
+
     ' ============ THÊM DÒNG TR?NG VÀO FrmChungtu.Grid2 (B? THAM S? 0) ============
     Do While so_cong < 15
         FrmChungtu.Grid2.AddItem " " & Chr(9) & "" & Chr(9) _
@@ -2197,11 +2197,11 @@ End Sub
     GrdChungtu.col = 0
     rs_chungtu.Close
     Set rs_chungtu = Nothing
-    
+
     On Error Resume Next
     GrdChungtu.Row = Row
     SetGridIndex GrdChungtu, Row + 1
-    
+
     With GrdChungtu
         .col = 5
         If Len(.Text) = 0 Then MaCTChon = 0 Else MaCTChon = CLng5(.Text)
@@ -2210,10 +2210,10 @@ End Sub
 
     If Not GrdChungtu.RowIsVisible(Row) Then GrdChungtu.TopRow = Row - 8
     On Error GoTo 0
-    
+
     If ovr > 0 Then ErrMsg er_NhieuCT
     If so_cong <> 0 Then Hide
-    
+
 KT:
     Me.MousePointer = 0
 End Sub
