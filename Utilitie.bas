@@ -617,9 +617,9 @@ Public Sub SetRptInfonew()
     ' --- Formulas (gi? nguyên) ---
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -627,7 +627,7 @@ Public Sub SetRptInfonew()
     Next
 
     ' --- Connect d?ng theo công ty ---
-    frmMain.Rpt.Connect = "Provider=SQLOLEDB;Data Source=" & sServer & _
+    frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=" & sServer & _
                           ";Initial Catalog=" & sDatabase & _
                           ";User ID=sa;Password=123456"
 
@@ -642,9 +642,9 @@ Public Sub SetRptInfo()
 
     frmMain.Rpt.Formulas(0) = "TenCty='" + pTenCty + "'"
     If Len(Trim(pTenCn)) = 0 Or Left(pTenCn, 1) = "." Then
-        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='MST: " + frmMain.LbCty(8).Caption + "'"
     Else
-        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.lbCty(8).Caption + "'"
+        frmMain.Rpt.Formulas(1) = "TenCn='" + pTenCn + " - MST: " + frmMain.LbCty(8).Caption + "'"
     End If
     frmMain.Rpt.Formulas(2) = "Nam=" + CStr(pNamTC)
     For i = 3 To 128
@@ -655,7 +655,7 @@ Public Sub SetRptInfo()
     ' frmMain.Rpt.DataFiles(0) = pDataPath
 
     ' Ch? dùng Connect
-    frmMain.Rpt.Connect = "Provider=SQLOLEDB;Data Source=pc43\SQLEXPRESS;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
+    frmMain.Rpt.connect = "Provider=SQLOLEDB;Data Source=192.168.1.33,1433;Initial Catalog=thanhhuongbendinh;User ID=sa;Password=123456"
     'frmMain.Rpt.connect = "DSN=Saovietdns;UID=sa;PWD=123456"
 
     frmMain.Rpt.WindowShowPrintSetupBtn = True

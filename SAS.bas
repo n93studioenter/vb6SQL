@@ -2628,7 +2628,7 @@ c:
         ExecuteSQL5 "UPDATE HethongTK SET MaTC=0 WHERE Cap=1 AND SoHieu LIKE '413%'"
     End If
 d:
-    If frmMain.Lb(0).tag < 3 Then
+    If frmMain.lb(0).tag < 3 Then
         TK.InitTaikhoanSohieu "1385"
         If TK.MaSo > 0 Then GoTo E
         If MsgBox("Bæ sung c¸c tµi kho¶n 1385, 3385, 417, 419 ?", vbYesNo + vbExclamation, App.ProductName) <> vbYes Then GoTo E
@@ -2674,7 +2674,7 @@ k:
     Set Rel = Nothing
     
     pSongNgu = s
-    ExecuteSQL5 "UPDATE License SET MV=(MV MOD 10000)+10000,MKUP=" + CStr(pRev) + ",TenCty_ID = " + CStr(Int_StrToCode(pTenCty)) + ",TenCn_ID = " + CStr(Int_StrToCode(pTenCn)) + ",MST_ID = " + CStr(Int_StrToCode(frmMain.lbCty(8).Caption))
+    ExecuteSQL5 "UPDATE License SET MV=(MV MOD 10000)+10000,MKUP=" + CStr(pRev) + ",TenCty_ID = " + CStr(Int_StrToCode(pTenCty)) + ",TenCn_ID = " + CStr(Int_StrToCode(pTenCn)) + ",MST_ID = " + CStr(Int_StrToCode(frmMain.LbCty(8).Caption))
     frmXuly.Gau.Max = 21
     frmXuly.Hide
       MsgBox "CËp nhËt kÕt thóc!", vbInformation, App.ProductName
@@ -3627,7 +3627,7 @@ Private Function QueryDaCo2(qname As String, qname2 As String) As Boolean
 End Function
 
 Public Function ChoNhapTiep() As Boolean
-    If DEMO = 1 Or frmMain.Lb(0).tag = 5 Or (CInt5(Left(frmMain.lbCty(8).Caption, 2)) = 0 And pNoiBo = 0 And pVersion <> 3) Or pVersion = 2 Then
+    If DEMO = 1 Or frmMain.lb(0).tag = 5 Or (CInt5(Left(frmMain.LbCty(8).Caption, 2)) = 0 And pNoiBo = 0 And pVersion <> 3) Or pVersion = 2 Then
         SetSQL "MienTru", "SELECT MaCT FROM ChungTu WHERE MaCT>0 GROUP BY MaCT"
         ChoNhapTiep = SelectSQL("SELECT Count(MaCT) AS F1 FROM MienTru") < 200
         ChoNhapTiep = True
@@ -4165,7 +4165,7 @@ Public Sub LaySoDauNam(fn As String)
         GoTo KT
     End If
     
-    If SQL <> frmMain.lbCty(0).Caption Or st <> frmMain.lbCty(1).Caption Then
+    If SQL <> frmMain.LbCty(0).Caption Or st <> frmMain.LbCty(1).Caption Then
         If MsgBox("Tªp d÷ liÖu kh¸c tªn c«ng ty hoÆc tªn chi nh¸nh, tiÕp tôc ?", vbCritical + vbYesNo, App.ProductName) = vbNo Then GoTo KT
     End If
     

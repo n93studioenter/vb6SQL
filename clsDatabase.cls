@@ -27,10 +27,10 @@ Private Sub Class_Initialize()
     Set m_TableDefs = New Collection
 End Sub
 
-Public Function Connect(server As String, db As String, uID As String, PWD As String) As Boolean
+Public Function connect(server As String, db As String, uID As String, PWD As String) As Boolean
     On Error Resume Next
     Conn.Open "Provider=SQLOLEDB;Data Source=" & server & ";Initial Catalog=" & db & ";User ID=" & uID & ";Password=" & PWD & ";"
-    Connect = (Err.number = 0)
+    connect = (Err.number = 0)
 End Function
 
 Public Sub ExecuteSQL(SQL As String, Optional Options As Variant = dbFailOnError)
@@ -654,14 +654,14 @@ Public Sub Closes()
     Conn.Close
 End Sub
 
-Public Function OpenDatabase(FileName As String, Exclusive As Boolean, ReadOnly As Boolean, Connect As String) As clsDatabase
+Public Function OpenDatabase(FileName As String, Exclusive As Boolean, ReadOnly As Boolean, connect As String) As clsDatabase
     Dim db As New clsDatabase
     Dim sServer As String, sDB As String, sUser As String, sPwd As String
-    sServer = "pc43\SQLEXPRESS"
+    sServer = "192.168.1.33,1433"
     sDB = "thanhhuongbendinh"
     sUser = "sa"
     sPwd = "123456"
-    db.Connect sServer, sDB, sUser, sPwd
+    db.connect sServer, sDB, sUser, sPwd
     Set OpenDatabase = db
 End Function
 
@@ -731,11 +731,11 @@ End Function
 
 Public Property Get QueryDefByIndex(idx As Integer) As Object
     Dim i As Integer
-    Dim item As Variant
+    Dim Item As Variant
     i = 1
-    For Each item In m_QueryDefs
+    For Each Item In m_QueryDefs
         If i = idx + 1 Then
-            Set QueryDefByIndex = item
+            Set QueryDefByIndex = Item
             Exit Property
         End If
         i = i + 1
